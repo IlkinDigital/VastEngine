@@ -1,0 +1,6 @@
+﻿# Visual Studio files
+.vs
+*.sln
+*.vcxproj
+*.filters
+*.user
