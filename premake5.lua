@@ -1,6 +1,6 @@
 workspace "VastEngine"
     architecture "x64"
-    --startproject "Vast-Editor"
+    startproject "Vast-Editor"
 
     configurations
     {
@@ -21,7 +21,7 @@ project "Vast"
     staticruntime "on"
 
     targetdir ("Binaries/" .. outputdir .. "/%{prj.name}")
-    objdir ("Binaries-Int" .. outputdir .. "/%{prj.name}")
+    objdir ("Binaries-Int/" .. outputdir .. "/%{prj.name}")
 
     files
     {
@@ -37,6 +37,55 @@ project "Vast"
     includedirs
     {
         "%{prj.name}/Source"
+    }
+
+    filter "system:windows"
+        systemversion "latest"
+
+        defines
+        {
+            "VAST_PLATFORM_WINDOWS"
+        }
+
+    filter "configurations:Debug"
+        defines "VAST_CONFIG_DEBUG"
+        runtime "Debug"
+        symbols "on"
+
+    filter "configurations:Release"
+        defines "VAST_CONFIG_RELEASE"
+        runtime "Release"
+        optimize "on"
+
+    filter "configurations:Distribution"
+        defines "VAST_CONFIG_DISTRIBUTION"
+        runtime "Release"
+        optimize "on"
+
+project "Vast-Editor"
+    location "Vast-Editor"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++20"
+    staticruntime "on"
+
+    targetdir ("Binaries/" .. outputdir .. "/%{prj.name}")
+    objdir ("Binaries-Int/" .. outputdir .. "/%{prj.name}")
+
+    files
+    {
+        "%{prj.name}/Source/**.h",
+        "%{prj.name}/Source/**.cpp"
+    }
+
+    includedirs
+    {
+        "Vast/Source"
+    }
+
+    links
+    {
+        "Vast"
     }
 
     filter "system:windows"
