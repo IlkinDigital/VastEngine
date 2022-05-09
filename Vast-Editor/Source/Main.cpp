@@ -1,8 +1,9 @@
 #include <Vast.h>
-
-#include <iostream>
+#include <Vast/ApplicationCore/Window.h>
 
 int main()
 {
-	std::cout << "Hello Vast!" << std::endl;
+	Vast::Logger::Init();
+	Vast::WindowProps p("hi");
+	VAST_TRACE("Hello Vast from application");
 }

@@ -6,4 +6,6 @@
 * 
 */
 
-#include "Types.h"
+#include "CoreTypes.h"
+
+#include "Logging/Logger.h"

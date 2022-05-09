@@ -12,6 +12,11 @@ workspace "VastEngine"
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 Include = {}
+Include["spdlog"] = "Vast/Vendor/spdlog/include"
+
+group "Dependencies"
+    include "Vast/Vendor/spdlog"
+group ""
 
 project "Vast"
     location "Vast"
@@ -36,7 +41,13 @@ project "Vast"
 
     includedirs
     {
-        "%{prj.name}/Source"
+        "%{prj.name}/Source",
+        "%{Include.spdlog}"
+    }
+
+    links
+    {
+        "spdlog"
     }
 
     filter "system:windows"
@@ -80,7 +91,8 @@ project "Vast-Editor"
 
     includedirs
     {
-        "Vast/Source"
+        "Vast/Source",
+        "%{Include.spdlog}"
     }
 
     links
