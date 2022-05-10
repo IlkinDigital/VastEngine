@@ -13,9 +13,11 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 Include = {}
 Include["spdlog"] = "Vast/Vendor/spdlog/include"
+Include["glfw"] = "Vast/Vendor/glfw/include"
 
 group "Dependencies"
     include "Vast/Vendor/spdlog"
+    include "Vast/Vendor/glfw"
 group ""
 
 project "Vast"
@@ -42,12 +44,14 @@ project "Vast"
     includedirs
     {
         "%{prj.name}/Source",
-        "%{Include.spdlog}"
+        "%{Include.spdlog}",
+        "%{Include.glfw}"
     }
 
     links
     {
-        "spdlog"
+        "spdlog",
+        "glfw"
     }
 
     filter "system:windows"

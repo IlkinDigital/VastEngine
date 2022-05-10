@@ -8,4 +8,6 @@
 
 #include "CoreTypes.h"
 
+#include "Assertion.h"
 #include "Logging/Logger.h"
+

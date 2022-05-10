@@ -19,6 +19,18 @@ namespace Vast {
 	class Window
 	{
 	public:
+		virtual ~Window() = default;
+
+		virtual void OnUpdate() = 0;
+
+		virtual uint32 GetWidth() const = 0;
+		virtual uint32 GetHeight() const = 0;
+
+		virtual bool IsVSync() const = 0;
+		virtual void SetVSync(bool flag) = 0;
+
+		virtual void* GetNativeWindow() const = 0;
+
 		static Scope<Window> Create(const WindowProps& props);
 	};
 

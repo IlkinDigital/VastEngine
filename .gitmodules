@@ -1,3 +1,6 @@
 [submodule "Vast/Vendor/spdlog"]
 	path = Vast/Vendor/spdlog
 	url = https://github.com/LesterDigital/spdlog.git
+[submodule "Vast/Vendor/glfw"]
+	path = Vast/Vendor/glfw
+	url = https://github.com/LesterDigital/glfw.git
