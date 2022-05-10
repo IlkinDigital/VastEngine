@@ -2,7 +2,7 @@
 
 pushd ..\
 
-call Vendor\premake5\Binaries\premake5.exe vs2022
+call Vendor\premake\premake5.exe vs2022
 
 popd
 
