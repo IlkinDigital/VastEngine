@@ -4,5 +4,7 @@
 *.vcxproj
 *.filters
 *.user
-Binaries-Int
-Binaries
+
+# Binaries
+Binaries-Int/
+Binaries/
