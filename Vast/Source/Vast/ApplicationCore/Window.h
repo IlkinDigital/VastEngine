@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Vast/Core/CoreMinimal.h"
+#include "CoreMinimal.h"
+#include "Vast/Events/Event.h"
 
 namespace Vast {
 
@@ -19,6 +20,8 @@ namespace Vast {
 	class Window
 	{
 	public:
+		using EventCallback = std::function<void(Event&)>;
+	public:
 		virtual ~Window() = default;
 
 		virtual void OnUpdate() = 0;
@@ -28,6 +31,8 @@ namespace Vast {
 
 		virtual bool IsVSync() const = 0;
 		virtual void SetVSync(bool flag) = 0;
+
+		virtual void SetEventCallback(const EventCallback& callback) = 0;
 
 		virtual void* GetNativeWindow() const = 0;
 

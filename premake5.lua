@@ -44,6 +44,7 @@ project "Vast"
     includedirs
     {
         "%{prj.name}/Source",
+        "%{prj.name}/Source/Vast/Core", -- to easily access commonly used headers
         "%{Include.spdlog}",
         "%{Include.glfw}"
     }
@@ -96,6 +97,7 @@ project "Vast-Editor"
     includedirs
     {
         "Vast/Source",
+        "Vast/Source/Vast/Core",
         "%{Include.spdlog}"
     }
 

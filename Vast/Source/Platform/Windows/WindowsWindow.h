@@ -2,7 +2,7 @@
 
 #include "Vast/ApplicationCore/Window.h"
 
-#include <GLFW/glfw3.h>
+struct GLFWwindow;
 
 namespace Vast {
 
@@ -20,6 +20,8 @@ namespace Vast {
 		bool IsVSync() const override { return m_Data.VSyncFlag; }
 		void SetVSync(bool flag) override;
 
+		void SetEventCallback(const EventCallback& callback) { m_Data.Callback = callback; }
+
 		void* GetNativeWindow() const override;
 	private:
 		void Init(const WindowProps& props);
@@ -32,6 +34,8 @@ namespace Vast {
 			String Title;
 			uint32 Width, Height;
 			bool VSyncFlag;
+
+			EventCallback Callback;
 		};
 		WindowData m_Data;
 	};
