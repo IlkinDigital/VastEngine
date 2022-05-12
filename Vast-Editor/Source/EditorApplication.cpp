@@ -1,17 +1,18 @@
 #include <Vast.h>
 
+#include "EditorLayer.h"
+
 class EditorApp : public Vast::Application
 {
 public:
 	EditorApp(const Vast::String& name)
 		: Application(name)
 	{
-		VAST_TRACE("Hello");
+		PushLayer(new Vast::EditorLayer("Vast-Editor"));
 	}
 
 	~EditorApp() override
 	{
-		VAST_TRACE("Bye");
 	}
 };
 
