@@ -37,7 +37,7 @@ namespace Vast {
 		if (!s_GLFWInitialized)
 		{
 			int success = glfwInit();
-			VAST_ASSERT(success, "GLFW couldn't intialize");
+			VAST_CORE_ASSERT(success, "GLFW couldn't intialize");
 			s_GLFWInitialized = success;
 		}
 
