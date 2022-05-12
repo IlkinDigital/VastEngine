@@ -5,10 +5,19 @@
 
 namespace Vast {
 
+	Application* Application::s_Instance = nullptr;
+
 	Application::Application(const String& name)
 	{
+		VAST_ASSERT(!s_Instance, "Application already exists");
+
+		s_Instance = this;
+
 		m_Window = Window::Create({ name });
 		m_Window->SetEventCallback(VAST_BIND_EVENT(OnEvent));
+		
+		m_ImGuiLayer = new ImGuiLayer();
+		PushOverlay(m_ImGuiLayer);
 	}
 
 	Application::~Application()
@@ -70,6 +79,15 @@ namespace Vast {
 		{
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
+
+			// ---- Draw GUI ------------------
+			m_ImGuiLayer->Begin();
+			
+			for (Layer* layer : m_LayerStack)
+				layer->OnGUIRender();
+			
+			m_ImGuiLayer->End();
+			// --------------------------------
 
 			m_Window->OnUpdate();
 		}

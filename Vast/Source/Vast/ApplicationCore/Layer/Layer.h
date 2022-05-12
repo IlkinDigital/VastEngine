@@ -12,10 +12,16 @@ namespace Vast {
 			: m_Name(name) {}
 		virtual ~Layer() = default;
 
-		virtual void OnAttach() {}
-		virtual void OnDetach() {}
-		virtual void OnUpdate() {}
 		virtual void OnEvent(Event& event) {}
+
+		// When created
+		virtual void OnAttach() {}
+		// When destroyed
+		virtual void OnDetach() {}
+		// In the run loop
+		virtual void OnUpdate() {}
+		// When UI is being drawn
+ 		virtual void OnGUIRender() {}
 
 		const String& GetName() const { return m_Name; }
 	protected:

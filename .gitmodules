@@ -4,3 +4,6 @@
 [submodule "Vast/Vendor/glfw"]
 	path = Vast/Vendor/glfw
 	url = https://github.com/LesterDigital/glfw.git
+[submodule "Vast/Vendor/imgui"]
+	path = Vast/Vendor/imgui
+	url = https://github.com/LesterDigital/imgui.git

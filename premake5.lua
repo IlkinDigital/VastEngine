@@ -11,14 +11,19 @@ workspace "VastEngine"
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
-Include = {}
-Include["spdlog"] = "Vast/Vendor/spdlog/include"
-Include["glfw"] = "Vast/Vendor/glfw/include"
-
 group "Dependencies"
     include "Vast/Vendor/spdlog"
     include "Vast/Vendor/glfw"
+    include "Vast/Vendor/glad"
+    include "Vast/Vendor/imgui"
 group ""
+
+Include = {}
+Include["spdlog"] = "Vast/Vendor/spdlog/include"
+Include["glfw"] = "Vast/Vendor/glfw/include"
+Include["glad"] = "Vast/Vendor/glad/include"
+Include["imgui"] = "Vast/Vendor/imgui"
+
 
 project "Vast"
     location "Vast"
@@ -49,13 +54,18 @@ project "Vast"
         "%{prj.name}/Source",
         "%{prj.name}/Source/Vast/Core", -- to easily access commonly used headers
         "%{Include.spdlog}",
-        "%{Include.glfw}"
+        "%{Include.glfw}",
+        "%{Include.glad}",
+        "%{Include.imgui}"
     }
 
     links
     {
         "spdlog",
-        "glfw"
+        "glfw",
+        "imgui",
+        "glad",
+        "opengl32.lib"
     }
 
     filter "system:windows"
