@@ -30,6 +30,9 @@ project "Vast"
     targetdir ("Binaries/" .. outputdir .. "/%{prj.name}")
     objdir ("Binaries-Int/" .. outputdir .. "/%{prj.name}")
 
+    pchheader "vastpch.h"
+    pchsource "Vast/Source/vastpch.cpp"
+
     files
     {
         "%{prj.name}/Source/**.h",

@@ -1,3 +1,4 @@
+#include "vastpch.h"
 #include "Application.h"
 
 #include "Vast/Events/EventDispatcher.h"

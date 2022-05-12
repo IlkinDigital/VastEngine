@@ -1,3 +1,4 @@
+#include "vastpch.h"
 #include "WindowsWindow.h"
 
 #include <GLFW/glfw3.h>
