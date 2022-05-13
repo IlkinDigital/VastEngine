@@ -17,7 +17,6 @@ namespace Vast {
 		glfwMakeContextCurrent(m_WindowHandle);
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		VAST_CORE_ASSERT(status, "Failed to initialize glad");
-
 	}
 
 	void OpenGLContext::SwapBuffers()

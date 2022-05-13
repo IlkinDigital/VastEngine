@@ -26,7 +26,7 @@ namespace Vast {
 		{
 			ImGui::Begin("Test");
 
-			ImGui::Text("Testing ImGuiLayer");
+			ImGui::Text("Testing ImGuiLayer, %f, %f, %f");
 
 			ImGui::End();
 		}
@@ -38,8 +38,9 @@ namespace Vast {
 
 		void OnEvent(Event& event) override
 		{
-			VAST_TRACE("{0}", event.ToString());
+			//VAST_TRACE("{0}", event.ToString());
 		}
+	private:
 	};
 
 }

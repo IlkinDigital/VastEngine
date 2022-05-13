@@ -1,12 +1,16 @@
 #pragma once
 
-#include "Vast/Core/CoreMinimal.h"
+#include "CoreMinimal.h"
 
 #include "Window.h"
-#include "Vast/Events/ApplicationEvent.h"
+#include "Events/ApplicationEvent.h"
 
-#include "Vast/ApplicationCore/Layer/LayerStack.h"
-#include "Vast/GUI/ImGuiLayer.h"
+#include "ApplicationCore/Layer/LayerStack.h"
+#include "GUI/ImGuiLayer.h"
+
+#include "Renderer/Buffers/VertexBuffer.h"
+#include "Renderer/Buffers/IndexBuffer.h"
+#include "Renderer/Shader.h"
 
 namespace Vast {
 
@@ -39,6 +43,11 @@ namespace Vast {
 
 		LayerStack m_LayerStack;
 		bool m_Running = true;
+
+		// TEMPORARY
+		Ref<VertexBuffer> m_VertexBuffer;
+		Ref<IndexBuffer> m_IndexBuffer;
+		Ref<Shader> m_Shader;
 	private:
 		static Application* s_Instance;
 	};

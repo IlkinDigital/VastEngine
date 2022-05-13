@@ -19,9 +19,14 @@ namespace Vast {
 
 	void LayerStack::PopLayer(Layer* layer)
 	{
-		for (auto it = m_Layers.begin() + m_InsertionIndex; it != m_Layers.end(); it++)
+		for (auto it = m_Layers.begin() + m_InsertionIndex; it != m_Layers.end(); ++it)
+		{
 			if (*it == layer)
+			{
 				m_Layers.erase(it);
+				layer->OnDetach();
+			}
+		}
 	}
 
 	void LayerStack::PushOverlay(Layer* overlay)
@@ -32,9 +37,14 @@ namespace Vast {
 
 	void LayerStack::PopOverlay(Layer* overlay)
 	{
-		for (auto it = m_Layers.begin(); it != m_Layers.begin() + m_InsertionIndex; it++)
+		for (auto it = m_Layers.begin(); it != m_Layers.begin() + m_InsertionIndex; ++it)
+		{
 			if (*it == overlay)
+			{
 				m_Layers.erase(it);
+				overlay->OnDetach();
+			}
+		}
 
 		m_InsertionIndex--;
 	}

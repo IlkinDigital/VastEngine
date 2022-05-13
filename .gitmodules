@@ -7,3 +7,6 @@
 [submodule "Vast/Vendor/imgui"]
 	path = Vast/Vendor/imgui
 	url = https://github.com/LesterDigital/imgui.git
+[submodule "Vast/Vendor/glm"]
+	path = Vast/Vendor/glm
+	url = https://github.com/g-truc/glm.git

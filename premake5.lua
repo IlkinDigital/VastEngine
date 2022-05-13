@@ -23,7 +23,7 @@ Include["spdlog"] = "Vast/Vendor/spdlog/include"
 Include["glfw"] = "Vast/Vendor/glfw/include"
 Include["glad"] = "Vast/Vendor/glad/include"
 Include["imgui"] = "Vast/Vendor/imgui"
-
+Include["glm"] = "Vast/Vendor/glm"
 
 project "Vast"
     location "Vast"
@@ -41,7 +41,9 @@ project "Vast"
     files
     {
         "%{prj.name}/Source/**.h",
-        "%{prj.name}/Source/**.cpp"
+        "%{prj.name}/Source/**.cpp",
+        "%{prj.name}/Vendor/glm/glm/**.inl",
+        "%{prj.name}/Vendor/glm/glm/**.hpp"
     }
 
     defines
@@ -52,11 +54,13 @@ project "Vast"
     includedirs
     {
         "%{prj.name}/Source",
+        "Vast/Source/Vast",
         "%{prj.name}/Source/Vast/Core", -- to easily access commonly used headers
         "%{Include.spdlog}",
         "%{Include.glfw}",
         "%{Include.glad}",
-        "%{Include.imgui}"
+        "%{Include.imgui}",
+        "%{Include.glm}"
     }
 
     links
@@ -111,10 +115,12 @@ project "Vast-Editor"
     includedirs
     {
         "Vast/Source",
+        "Vast/Source/Vast",
         "Vast/Source/Vast/Core",
         "%{Include.spdlog}",
         "%{Include.glad}",
-        "%{Include.imgui}"
+        "%{Include.imgui}",
+        "%{Include.glm}"
     }
 
     links
