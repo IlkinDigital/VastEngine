@@ -45,6 +45,9 @@ namespace Vast {
 		m_Window = glfwCreateWindow((int)m_Data.Width, (int)m_Data.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		VAST_INFO("Created a {0} window: W({1}), H({2})", m_Data.Title, m_Data.Width, m_Data.Height);
 
+		m_Context = GraphicsContext::Create((void*)m_Window);
+		m_Context->Init();
+
 		glfwSetWindowUserPointer(m_Window, &m_Data);
 		SetVSync(true);
 		
@@ -136,13 +139,14 @@ namespace Vast {
 	void WindowsWindow::Shutdown()
 	{
 		glfwDestroyWindow(m_Window);
+
+		// TODO: glfwTerminate
 	}
 
 	void WindowsWindow::OnUpdate()
 	{
-		glfwSwapBuffers(m_Window);
-
 		glfwPollEvents();
+		m_Context->SwapBuffers();
 	}
 
 	void WindowsWindow::SetVSync(bool flag)

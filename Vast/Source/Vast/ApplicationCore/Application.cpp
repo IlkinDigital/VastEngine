@@ -3,6 +3,8 @@
 
 #include "Vast/Events/EventDispatcher.h"
 
+#include <glad/glad.h>
+
 namespace Vast {
 
 	Application* Application::s_Instance = nullptr;
@@ -80,6 +82,7 @@ namespace Vast {
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 
+
 			// ---- Draw GUI ------------------
 			m_ImGuiLayer->Begin();
 			
@@ -90,6 +93,9 @@ namespace Vast {
 			// --------------------------------
 
 			m_Window->OnUpdate();
+
+			glClear(GL_COLOR_BUFFER_BIT);
+			glClearColor(0.8f, 0.2f, 0.4f, 1.0f);
 		}
 	}
 

@@ -2,6 +2,8 @@
 
 #include "Vast.h"
 
+#include <imgui.h>
+
 namespace Vast {
 
 	class EditorLayer : public Layer
@@ -18,6 +20,15 @@ namespace Vast {
 		void OnUpdate() override
 		{
 
+		}
+
+		void OnGUIRender() override
+		{
+			ImGui::Begin("Test");
+
+			ImGui::Text("Testing ImGuiLayer");
+
+			ImGui::End();
 		}
 
 		void OnDetach() override

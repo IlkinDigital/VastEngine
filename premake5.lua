@@ -62,9 +62,9 @@ project "Vast"
     links
     {
         "spdlog",
-        "glfw",
-        "imgui",
-        "glad",
+        "GLFW",
+        "Glad",
+        "ImGui",
         "opengl32.lib"
     }
 
@@ -73,7 +73,8 @@ project "Vast"
 
         defines
         {
-            "VAST_PLATFORM_WINDOWS"
+            "VAST_PLATFORM_WINDOWS",
+            "GLFW_INCLUDE_NONE"
         }
 
     filter "configurations:Debug"
@@ -111,7 +112,9 @@ project "Vast-Editor"
     {
         "Vast/Source",
         "Vast/Source/Vast/Core",
-        "%{Include.spdlog}"
+        "%{Include.spdlog}",
+        "%{Include.glad}",
+        "%{Include.imgui}"
     }
 
     links

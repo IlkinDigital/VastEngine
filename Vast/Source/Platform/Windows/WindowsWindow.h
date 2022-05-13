@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Vast/ApplicationCore/Window.h"
+#include "Vast/Renderer/GraphicsContext.h"
 
 struct GLFWwindow;
 
@@ -28,6 +29,8 @@ namespace Vast {
 		void Shutdown();
 	private:
 		GLFWwindow* m_Window;
+
+		Scope<GraphicsContext> m_Context;
 
 		struct WindowData
 		{

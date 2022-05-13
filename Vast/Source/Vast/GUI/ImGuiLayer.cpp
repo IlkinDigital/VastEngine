@@ -10,7 +10,6 @@
 // TODO: Make platform independent
 #include <GLFW/glfw3.h>
 
-
 namespace Vast {
 
 	void ImGuiLayer::OnAttach()
@@ -27,7 +26,7 @@ namespace Vast {
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
 		// Setup Dear ImGui style
-		ImGui::StyleColorsClassic();
+		ImGui::StyleColorsDark();
 
 		// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -43,7 +42,7 @@ namespace Vast {
 
 		// Setup Platform/Renderer bindings
 		ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplOpenGL3_Init("#version 430 core");
+		ImGui_ImplOpenGL3_Init("#version 410 core");
 	}
 
 	void ImGuiLayer::OnDetach()
