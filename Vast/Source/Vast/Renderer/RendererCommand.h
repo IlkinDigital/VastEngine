@@ -11,10 +11,12 @@ namespace Vast {
 		{
 			s_Interface->Clear();
 		}
+
 		static void SetClearColor(const Vector4& color)
 		{
 			s_Interface->SetClearColor(color);
 		}
+
 		static void DrawIndexed(uint32 indexCount)
 		{
 			s_Interface->DrawIndexed(indexCount);

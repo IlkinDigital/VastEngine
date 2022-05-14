@@ -1,6 +1,8 @@
 #include "vastpch.h"
 #include "OpenGLShader.h"
 
+#include "Math/MathUtils.h"
+
 #include <glad/glad.h>
 
 namespace Vast {
@@ -24,6 +26,12 @@ namespace Vast {
 	void OpenGLShader::Unbind() const
 	{
 		glUseProgram(0);
+	}
+
+	void OpenGLShader::UploadUniformMat4(const String& name, const Mat4& data) const
+	{
+		GLuint location = glGetUniformLocation(m_Program, name.c_str());
+		glUniformMatrix4fv(location, 1, GL_FALSE, ValuePointer(data));
 	}
 
 	void OpenGLShader::Compile(const String& vertexSource, const String& fragSource)

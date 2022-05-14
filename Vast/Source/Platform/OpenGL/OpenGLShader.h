@@ -10,10 +10,12 @@ namespace Vast {
 		OpenGLShader(const String& name, const String& vertexSource, const String& fragSource);
 		~OpenGLShader() override;
 
+		const String& GetName() const override { return m_Name; }
+	
 		void Bind() const override;
 		void Unbind() const override;
 	
-		const String& GetName() const override { return m_Name; }
+		void UploadUniformMat4(const String& name, const Mat4& data) const override;
 	private:
 		void Compile(const String& vertexSource, const String& fragSource);
 	private:

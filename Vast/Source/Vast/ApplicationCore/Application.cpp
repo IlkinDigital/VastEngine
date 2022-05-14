@@ -5,6 +5,8 @@
 
 #include "Renderer/RendererCommand.h"
 
+#include "Input/Input.h"
+
 #include <glad/glad.h>
 
 namespace Vast {
@@ -56,10 +58,11 @@ namespace Vast {
 			layout (location = 1) in vec4 a_Color;
 
 			out vec4 v_Color;
+			uniform mat4 u_ViewProjection;
 
 			void main()
 			{
-				gl_Position = a_Pos;
+				gl_Position = u_ViewProjection * a_Pos;
 				v_Color = a_Color;
 			}
 		)";
@@ -80,6 +83,9 @@ namespace Vast {
 
 		m_Shader = Shader::Create("BasicShader", vertSrc, fragSrc);
 		m_Shader->Bind();
+
+		m_Camera.SetPosition({ 0.25f, 0.5f, 0.0f });
+		m_Shader->UploadUniformMat4("u_ViewProjection", m_Camera.GetViewProjection());
 
 		RendererCommand::SetClearColor({ 0.15f, 0.15f, 0.15f, 1.0f });
 	}
@@ -145,6 +151,8 @@ namespace Vast {
 				layer->OnUpdate();
 
 			RendererCommand::Clear();
+
+			
 
 			RendererCommand::DrawIndexed(3);
 

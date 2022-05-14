@@ -11,6 +11,8 @@
 #include "Renderer/VertexArray.h"
 #include "Renderer/Shader.h"
 
+#include "Cameras/OrthographicCamera.h"
+
 namespace Vast {
 
 	class Application
@@ -48,6 +50,8 @@ namespace Vast {
 		Ref<VertexBuffer> m_VertexBuffer;
 		Ref<IndexBuffer> m_IndexBuffer;
 		Ref<Shader> m_Shader;
+
+		OrthographicCamera m_Camera = OrthographicCamera(-1.6f, 1.6f, -0.9f, 0.9f);
 	private:
 		static Application* s_Instance;
 	};
