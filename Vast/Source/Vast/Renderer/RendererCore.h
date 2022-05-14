@@ -4,6 +4,8 @@
 
 namespace Vast {
 
+	enum class RendererAPI { None = 0, OpenGL };
+
 	using RendererID = uint32;
 	
 	enum class ShaderDataType

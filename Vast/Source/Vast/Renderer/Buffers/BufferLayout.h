@@ -27,6 +27,9 @@ namespace Vast {
 		{
 			CalculateStrideAndOffsets();
 		}
+
+		const DArray<BufferElement>& GetElements() const { return m_Elements; }
+		uint32 GetStride() const { return m_Stride; }
 	private:
 		void CalculateStrideAndOffsets()
 		{

@@ -8,8 +8,7 @@
 #include "ApplicationCore/Layer/LayerStack.h"
 #include "GUI/ImGuiLayer.h"
 
-#include "Renderer/Buffers/VertexBuffer.h"
-#include "Renderer/Buffers/IndexBuffer.h"
+#include "Renderer/VertexArray.h"
 #include "Renderer/Shader.h"
 
 namespace Vast {
@@ -45,6 +44,7 @@ namespace Vast {
 		bool m_Running = true;
 
 		// TEMPORARY
+		Ref<VertexArray> m_VertexArray;
 		Ref<VertexBuffer> m_VertexBuffer;
 		Ref<IndexBuffer> m_IndexBuffer;
 		Ref<Shader> m_Shader;

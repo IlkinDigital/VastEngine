@@ -1,7 +1,9 @@
 #include "vastpch.h"
 #include "Application.h"
 
-#include "Vast/Events/EventDispatcher.h"
+#include "Events/EventDispatcher.h"
+
+#include "Renderer/RendererCommand.h"
 
 #include <glad/glad.h>
 
@@ -22,33 +24,43 @@ namespace Vast {
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
 
-		float vertices[3 * 3]
+		float vertices[7 * 3]
 		{
-			 0.5f, -0.5f, 0.0f,
-			 0.0f,  0.5f, 0.0f,
-			-0.5f, -0.5f, 0.0f
+			 0.5f, -0.5f, 0.0f, 0.9f, 0.5f, 0.3f, 1.0f,
+			 0.0f,  0.5f, 0.0f, 0.3f, 0.9f, 0.5f, 1.0f,
+			-0.5f, -0.5f, 0.0f, 0.5f, 0.3f, 0.9f, 1.0f
 		};
-
-		m_VertexBuffer = VertexBuffer::Create(vertices, 3 * 3 * sizeof(float));
 
 		GLuint indices[3]
 		{
 			0, 1, 2
 		};
 
+		m_VertexArray = VertexArray::Create();
+
+		m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
+		m_VertexBuffer->SetLayout({
+			{ ShaderDataType::Float3, "Position" },
+			{ ShaderDataType::Float4, "Color" }
+		});
+
 		m_IndexBuffer = IndexBuffer::Create(indices, 3);
 
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, nullptr);
+		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
+		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
 
 		const String vertSrc = R"(
 			#version 430 core
 
 			layout (location = 0) in vec4 a_Pos;
+			layout (location = 1) in vec4 a_Color;
+
+			out vec4 v_Color;
 
 			void main()
 			{
 				gl_Position = a_Pos;
+				v_Color = a_Color;
 			}
 		)";
 
@@ -56,16 +68,20 @@ namespace Vast {
 			#version 430 core
 			
 			layout (location = 0) out vec4 color;
-
+			
+			in vec4 v_Color;
+			
 			void main()
 			{
-				color = vec4(0.2, 0.4, 0.8, 1.0);
+				color = v_Color;
 			}
 
 		)";
 
 		m_Shader = Shader::Create("BasicShader", vertSrc, fragSrc);
 		m_Shader->Bind();
+
+		RendererCommand::SetClearColor({ 0.15f, 0.15f, 0.15f, 1.0f });
 	}
 
 	Application::~Application()
@@ -128,8 +144,9 @@ namespace Vast {
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 
-			glClear(GL_COLOR_BUFFER_BIT);
-			glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
+			RendererCommand::Clear();
+
+			RendererCommand::DrawIndexed(3);
 
 			// ---- Draw GUI ------------------
 			m_ImGuiLayer->Begin();
