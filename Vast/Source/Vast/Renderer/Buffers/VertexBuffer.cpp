@@ -5,8 +5,13 @@
 
 namespace Vast {
  
-    Ref<VertexBuffer> Vast::VertexBuffer::Create(float* vertices, uint32 size)
+    Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32 size)
     {
         return CreateRef<OpenGLVertexBuffer>(vertices, size);
+    }
+
+    Ref<VertexBuffer> VertexBuffer::Create(uint32 size)
+    {
+        return CreateRef<OpenGLVertexBuffer>(size);
     }
 }

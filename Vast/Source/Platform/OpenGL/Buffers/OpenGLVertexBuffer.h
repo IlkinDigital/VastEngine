@@ -8,6 +8,7 @@ namespace Vast {
 	{
 	public:
 		OpenGLVertexBuffer(float* vertices, uint32 size);
+		OpenGLVertexBuffer(uint32 size);
 		~OpenGLVertexBuffer() override;
 
 		const BufferLayout& GetLayout() const override { return m_Layout; }

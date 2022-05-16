@@ -1,10 +1,11 @@
 #pragma once
 
+#include "Camera.h"
 #include "Math/Math.h"
 
 namespace Vast {
 	
-	class PerspectiveCamera
+	class PerspectiveCamera : public Camera
 	{
 	public:
 		PerspectiveCamera(float fov, float aspectRatio, float zNear, float zFar);
@@ -12,7 +13,6 @@ namespace Vast {
 		void SetProjection(float fov, float aspectRatio, float zNear, float zFar);
 
 		const Mat4& GetView() const { return m_View; }
-		const Mat4& GetProjection() const { return m_Projection; }
 		const Mat4& GetViewProjection() const { return m_ViewProjection; }
 
 		void SetPosition(const Vector3& position) { m_Position = position; CalculateView(); }
@@ -23,7 +23,6 @@ namespace Vast {
 		void CalculateView();
 	private:
 		Mat4 m_View;
-		Mat4 m_Projection;
 		Mat4 m_ViewProjection;
 
 		Vector3 m_Position = { 0.0f, 0.0f, 0.0f };

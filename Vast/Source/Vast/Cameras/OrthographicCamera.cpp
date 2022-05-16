@@ -4,7 +4,7 @@
 namespace Vast {
 
 	OrthographicCamera::OrthographicCamera(float left, float right, float bottom, float top)
-		: m_View(1.0f), m_Projection(1.0f), m_ViewProjection(1.0f), m_Position(0.0f), m_Rotation(0.0f)
+		: m_View(1.0f), m_ViewProjection(1.0f), m_Position(0.0f), m_Rotation(0.0f)
 	{
 		SetProjection(left, right, bottom, top);
 	}

@@ -4,6 +4,7 @@
 #include "Events/EventDispatcher.h"
 
 #include "Renderer/RendererCommand.h"
+#include "Renderer/Renderer2D.h"
 
 #include "Input/Input.h"
 
@@ -25,6 +26,12 @@ namespace Vast {
 		
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
+
+		// Init renderer
+		Renderer2D::Init();
+		
+		RendererCommand::SetClearColor({ 0.15f, 0.15f, 0.15f, 1.0f });
+
 	}
 
 	Application::~Application()
@@ -90,6 +97,8 @@ namespace Vast {
 	{
 		while (m_Running)
 		{
+			RendererCommand::Clear();
+
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
 

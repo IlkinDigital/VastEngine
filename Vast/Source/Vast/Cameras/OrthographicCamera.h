@@ -1,10 +1,11 @@
 #pragma once
 
+#include "Camera.h"
 #include "Math/MathOperations.h"
 
 namespace Vast {
 
-	class OrthographicCamera
+	class OrthographicCamera : public Camera
 	{
 	public:
 		OrthographicCamera(float left, float right, float bottom, float top);
@@ -12,7 +13,6 @@ namespace Vast {
 		void SetProjection(float left, float right, float bottom, float top);
 
 		const Mat4& GetView() const { return m_View; }
-		const Mat4& GetProjection() const { return m_Projection; }
 		const Mat4& GetViewProjection() const { return m_ViewProjection; }
 
 		void SetPosition(const Vector3& position) { m_Position = position; CalculateView(); }
@@ -23,7 +23,6 @@ namespace Vast {
 		void CalculateView();
 	private:
 		Mat4 m_View;
-		Mat4 m_Projection;
 		Mat4 m_ViewProjection;
 
 		Vector3 m_Position;

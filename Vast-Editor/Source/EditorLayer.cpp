@@ -1,5 +1,7 @@
 #include "EditorLayer.h"
 
+#include "Renderer/Renderer2D.h"
+
 #include <imgui.h>
 
 namespace Vast {
@@ -8,69 +10,6 @@ namespace Vast {
 	{
 		Window& window = Application::Get().GetWindow();
 		m_Camera = CreateRef<PerspectiveCamera>(1.0f, (float)window.GetWidth() / (float)window.GetHeight(), 0.01f, 1000.0f);
-
-		float vertices[7 * 3]
-		{
-			 0.5f, -0.5f, 0.0f, 0.9f, 0.5f, 0.3f, 1.0f,
-			 0.0f,  0.5f, 0.0f, 0.3f, 0.9f, 0.5f, 1.0f,
-			-0.5f, -0.5f, 0.0f, 0.5f, 0.3f, 0.9f, 1.0f
-		};
-
-		uint32 indices[3]
-		{
-			0, 1, 2
-		};
-
-		m_VertexArray = VertexArray::Create();
-
-		m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
-		m_VertexBuffer->SetLayout({
-			{ ShaderDataType::Float3, "Position" },
-			{ ShaderDataType::Float4, "Color" }
-			});
-
-		m_IndexBuffer = IndexBuffer::Create(indices, 3);
-
-		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
-		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
-
-		const String vertSrc = R"(
-			#version 430 core
-
-			layout (location = 0) in vec4 a_Pos;
-			layout (location = 1) in vec4 a_Color;
-
-			out vec4 v_Color;
-			uniform mat4 u_ViewProjection;
-
-			void main()
-			{
-				gl_Position = u_ViewProjection * a_Pos;
-				v_Color = a_Color;
-			}
-		)";
-
-		const String fragSrc = R"(
-			#version 430 core
-			
-			layout (location = 0) out vec4 color;
-			
-			in vec4 v_Color;
-			
-			void main()
-			{
-				color = v_Color;
-			}
-
-		)";
-
-		m_Shader = Shader::Create("BasicShader", vertSrc, fragSrc);
-		m_Shader->Bind();
-
-		m_Camera->SetPosition({ 0.0f, 0.0f, 5.0f });
-		m_Shader->UploadUniformMat4("u_ViewProjection", m_Camera->GetViewProjection());
-
-		RendererCommand::SetClearColor({ 0.15f, 0.15f, 0.15f, 1.0f });
 	}
 
 	void EditorLayer::OnGUIRender()
@@ -87,24 +26,36 @@ namespace Vast {
 
 	void EditorLayer::OnUpdate()
 	{
-		RendererCommand::Clear();
-
 		Vector3& pos = m_CameraPosition;
 
 		if (Input::IsPressed(Key::W))
-			m_Camera->SetPosition({ pos.x, pos.y + m_CameraSpeed, pos.z });
+			pos.y += m_CameraSpeed;
 		if (Input::IsPressed(Key::S))
-			m_Camera->SetPosition({ pos.x, pos.y - m_CameraSpeed, pos.z });
+			pos.y -= m_CameraSpeed;
 		if (Input::IsPressed(Key::D))
-			m_Camera->SetPosition({ pos.x + m_CameraSpeed, pos.y, pos.z });
+			pos.x += m_CameraSpeed;
 		if (Input::IsPressed(Key::A))
-			m_Camera->SetPosition({ pos.x - m_CameraSpeed, pos.y, pos.z });
+			pos.x -= m_CameraSpeed;
 
 		m_Camera->SetPosition(pos);
 		m_Camera->SetRotation(m_CameraRotation);
-		m_Shader->UploadUniformMat4("u_ViewProjection", m_Camera->GetViewProjection());
 
-		RendererCommand::DrawIndexed(3);
+		Renderer2D::BeginScene(*m_Camera, m_Camera->GetView());
+
+		Renderer2D::DrawQuad(Math::Transform(
+			{ -0.5f, -0.5f, 0.0f },
+			{ 0.0f, 0.0f, 0.0f },
+			{ 1.0f, 1.0f, 1.0f }
+		), { 0.2f, 0.8f, 0.5f, 1.0f });
+
+		Renderer2D::DrawQuad(Math::Transform(
+			{ 1.0f, 1.0f, 0.0f },
+			{ 0.0f, 0.0f, 0.0f },
+			{ 1.0f, 1.0f, 1.0f }
+		), { 0.5f, 0.3f, 0.7f, 1.0f });
+
+		Renderer2D::EndScene();
+
 	}
 
 

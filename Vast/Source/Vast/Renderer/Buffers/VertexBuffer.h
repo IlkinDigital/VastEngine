@@ -18,6 +18,7 @@ namespace Vast {
 		virtual void SetVertexData(const void* data, uint32 size) = 0;
 
 		static Ref<VertexBuffer> Create(float* vertices, uint32 size);
+		static Ref<VertexBuffer> Create(uint32 size);
 	};
 
 }

@@ -26,6 +26,15 @@ namespace Vast::Math {
 		return glm::scale(transform, scale);
 	}
 
+	Mat4 Transform(const Vector3& position, const Vector3& rotation, const Vector3& scale)
+	{
+		return Translate(Mat4(1.0f), position)
+			* Rotate(Mat4(1.0f), rotation.x, { 1.0f, 0.0f, 0.0f })
+			* Rotate(Mat4(1.0f), rotation.y, { 0.0f, 1.0f, 0.0f })
+			* Rotate(Mat4(1.0f), rotation.z, { 0.0f, 0.0f, 1.0f })
+			* Scale(Mat4(1.0f), scale);
+	}
+
 	Mat4 Inverse(const Mat4& matrix)
 	{
 		return glm::inverse(matrix);
