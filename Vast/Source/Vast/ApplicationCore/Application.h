@@ -37,6 +37,7 @@ namespace Vast {
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& event);
+		bool OnWindowResize(WindowResizeEvent& event);
 	private:
 		Scope<Window> m_Window;
 		String m_Name;
@@ -45,13 +46,6 @@ namespace Vast {
 		LayerStack m_LayerStack;
 		bool m_Running = true;
 
-		// TEMPORARY
-		Ref<VertexArray> m_VertexArray;
-		Ref<VertexBuffer> m_VertexBuffer;
-		Ref<IndexBuffer> m_IndexBuffer;
-		Ref<Shader> m_Shader;
-
-		OrthographicCamera m_Camera = OrthographicCamera(-1.6f, 1.6f, -0.9f, 0.9f);
 	private:
 		static Application* s_Instance;
 	};

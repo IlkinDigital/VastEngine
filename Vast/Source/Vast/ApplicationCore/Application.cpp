@@ -25,69 +25,6 @@ namespace Vast {
 		
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
-
-		float vertices[7 * 3]
-		{
-			 0.5f, -0.5f, 0.0f, 0.9f, 0.5f, 0.3f, 1.0f,
-			 0.0f,  0.5f, 0.0f, 0.3f, 0.9f, 0.5f, 1.0f,
-			-0.5f, -0.5f, 0.0f, 0.5f, 0.3f, 0.9f, 1.0f
-		};
-
-		GLuint indices[3]
-		{
-			0, 1, 2
-		};
-
-		m_VertexArray = VertexArray::Create();
-
-		m_VertexBuffer = VertexBuffer::Create(vertices, sizeof(vertices));
-		m_VertexBuffer->SetLayout({
-			{ ShaderDataType::Float3, "Position" },
-			{ ShaderDataType::Float4, "Color" }
-		});
-
-		m_IndexBuffer = IndexBuffer::Create(indices, 3);
-
-		m_VertexArray->AddVertexBuffer(m_VertexBuffer);
-		m_VertexArray->SetIndexBuffer(m_IndexBuffer);
-
-		const String vertSrc = R"(
-			#version 430 core
-
-			layout (location = 0) in vec4 a_Pos;
-			layout (location = 1) in vec4 a_Color;
-
-			out vec4 v_Color;
-			uniform mat4 u_ViewProjection;
-
-			void main()
-			{
-				gl_Position = u_ViewProjection * a_Pos;
-				v_Color = a_Color;
-			}
-		)";
-
-		const String fragSrc = R"(
-			#version 430 core
-			
-			layout (location = 0) out vec4 color;
-			
-			in vec4 v_Color;
-			
-			void main()
-			{
-				color = v_Color;
-			}
-
-		)";
-
-		m_Shader = Shader::Create("BasicShader", vertSrc, fragSrc);
-		m_Shader->Bind();
-
-		m_Camera.SetPosition({ 0.25f, 0.5f, 0.0f });
-		m_Shader->UploadUniformMat4("u_ViewProjection", m_Camera.GetViewProjection());
-
-		RendererCommand::SetClearColor({ 0.15f, 0.15f, 0.15f, 1.0f });
 	}
 
 	Application::~Application()
@@ -100,6 +37,7 @@ namespace Vast {
 	{
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<WindowCloseEvent>(VAST_BIND_EVENT(OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(VAST_BIND_EVENT(OnWindowResize));
 
 		for (auto it = m_LayerStack.begin(); it != m_LayerStack.end(); ++it)
 		{
@@ -143,18 +81,18 @@ namespace Vast {
 		return true;
 	}
 
+	bool Application::OnWindowResize(WindowResizeEvent& event)
+	{
+		glViewport(0.0f, 0.0f, event.GetWidth(), event.GetHeight());
+		return false;
+	}
+
 	void Application::Run()
 	{
 		while (m_Running)
 		{
 			for (Layer* layer : m_LayerStack)
 				layer->OnUpdate();
-
-			RendererCommand::Clear();
-
-			
-
-			RendererCommand::DrawIndexed(3);
 
 			// ---- Draw GUI ------------------
 			m_ImGuiLayer->Begin();

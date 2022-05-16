@@ -8,6 +8,8 @@ namespace Vast {
 	{
 	public:
 		OpenGLInterface() = default;
+
+		void SetViewport(float x, float y, float width, float height) override;
 		
 		void SetClearColor(const Vector4& color) override;
 		const Vector4& GetClearColor() const override;

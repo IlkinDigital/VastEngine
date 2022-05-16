@@ -10,6 +10,11 @@ namespace Vast {
 		glClear(GL_COLOR_BUFFER_BIT);
 	}
 
+	void OpenGLInterface::SetViewport(float x, float y, float width, float height)
+	{
+		glViewport(x, y, width, height);
+	}
+
 	void OpenGLInterface::SetClearColor(const Vector4& color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);

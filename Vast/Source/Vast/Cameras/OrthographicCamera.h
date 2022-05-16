@@ -17,6 +17,8 @@ namespace Vast {
 
 		void SetPosition(const Vector3& position) { m_Position = position; CalculateView(); }
 		void SetRotation(float rotation) { m_Rotation = rotation; CalculateView(); }
+
+		const Vector3& GetPosition() const { return m_Position; }
 	private:
 		void CalculateView();
 	private:

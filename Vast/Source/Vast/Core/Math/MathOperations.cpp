@@ -1,6 +1,9 @@
 #include "vastpch.h"
 #include "MathOperations.h"
 
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
+
 namespace Vast::Math {
 
 	Mat4 Translate(const Mat4& transform, const Vector3& position)

@@ -2,8 +2,6 @@
 
 #include "Vast.h"
 
-#include <imgui.h>
-
 namespace Vast {
 
 	class EditorLayer : public Layer
@@ -12,35 +10,25 @@ namespace Vast {
 		EditorLayer(const String& name)
 			: Layer(name) {}
 
-		void OnAttach() override
-		{
-			VAST_WARN("{0} layer has attached", m_Name);
-		}
+		void OnAttach() override;
 
-		void OnUpdate() override
-		{
+		void OnUpdate() override;
 
-		}
+		void OnGUIRender() override;
 
-		void OnGUIRender() override
-		{
-			ImGui::Begin("Test");
+		void OnDetach() override;
 
-			ImGui::Text("Testing ImGuiLayer, %f, %f, %f");
-
-			ImGui::End();
-		}
-
-		void OnDetach() override
-		{
-			VAST_WARN("{0} layer has detached", m_Name);
-		}
-
-		void OnEvent(Event& event) override
-		{
-			//VAST_TRACE("{0}", event.ToString());
-		}
+		void OnEvent(Event& event) override;
 	private:
+		bool OnWindowResize(WindowResizeEvent& event);
+	private:
+		Ref<VertexArray> m_VertexArray;
+		Ref<VertexBuffer> m_VertexBuffer;
+		Ref<IndexBuffer> m_IndexBuffer;
+		Ref<Shader> m_Shader;
+
+		OrthographicCamera m_Camera = OrthographicCamera(-1.6f, 1.6f, -0.9f, 0.9f);
+		float m_CameraSpeed = 0.05f;
 	};
 
 }

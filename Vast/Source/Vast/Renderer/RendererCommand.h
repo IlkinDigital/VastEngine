@@ -7,6 +7,11 @@ namespace Vast {
 	class RendererCommand
 	{
 	public:
+		static void SetViewport(float x, float y, float width, float height)
+		{
+			s_Interface->SetViewport(x, y, width, height);
+		}
+
 		static void Clear()
 		{
 			s_Interface->Clear();
