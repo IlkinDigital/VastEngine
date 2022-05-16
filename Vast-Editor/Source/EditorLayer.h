@@ -27,7 +27,9 @@ namespace Vast {
 		Ref<IndexBuffer> m_IndexBuffer;
 		Ref<Shader> m_Shader;
 
-		OrthographicCamera m_Camera = OrthographicCamera(-1.6f, 1.6f, -0.9f, 0.9f);
+		Ref<PerspectiveCamera> m_Camera;
+		Vector3 m_CameraPosition{};
+		Vector3 m_CameraRotation{};
 		float m_CameraSpeed = 0.05f;
 	};
 

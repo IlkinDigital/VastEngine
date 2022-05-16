@@ -83,7 +83,6 @@ namespace Vast {
 
 	bool Application::OnWindowResize(WindowResizeEvent& event)
 	{
-		glViewport(0.0f, 0.0f, event.GetWidth(), event.GetHeight());
 		return false;
 	}
 

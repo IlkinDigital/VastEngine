@@ -31,7 +31,7 @@ namespace Vast {
 	void OpenGLShader::UploadUniformMat4(const String& name, const Mat4& data) const
 	{
 		GLuint location = glGetUniformLocation(m_Program, name.c_str());
-		glUniformMatrix4fv(location, 1, GL_FALSE, ValuePointer(data));
+		glUniformMatrix4fv(location, 1, GL_FALSE, Math::ValuePointer(data));
 	}
 
 	void OpenGLShader::Compile(const String& vertexSource, const String& fragSource)

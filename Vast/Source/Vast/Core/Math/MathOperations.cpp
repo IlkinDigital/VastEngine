@@ -6,6 +6,11 @@
 
 namespace Vast::Math {
 
+	float Radians(float degrees)
+	{
+		return glm::radians(degrees);
+	}
+
 	Mat4 Translate(const Mat4& transform, const Vector3& position)
 	{
 		return glm::translate(transform, position);
@@ -26,9 +31,14 @@ namespace Vast::Math {
 		return glm::inverse(matrix);
 	}
 
-	Mat4 OrthographicMatrix(float left, float right, float bottom, float top, float oNear, float oFar)
+	Mat4 OrthographicMatrix(float left, float right, float bottom, float top, float zNear, float zFar)
 	{
-		return glm::ortho(left, right, bottom, top, oNear, oFar);
+		return glm::ortho(left, right, bottom, top, zNear, zFar);
+	}
+
+	Mat4 Perspective(float fov, float aspectRatio, float zNear, float zFar)
+	{
+		return glm::perspective(fov, aspectRatio, zNear, zFar);
 	}
 
 }

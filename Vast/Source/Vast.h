@@ -29,4 +29,5 @@
 
 // ---- Other ------------------------------
 #include "Cameras/OrthographicCamera.h"
+#include "Cameras/PerspectiveCamera.h"
 // -----------------------------------------
