@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "Vast/Events/Event.h"
 
+#include "Clock/Timestep.h"
+
 namespace Vast {
 
 	class Layer
@@ -19,7 +21,7 @@ namespace Vast {
 		// When destroyed
 		virtual void OnDetach() {}
 		// In the run loop
-		virtual void OnUpdate() {}
+		virtual void OnUpdate(Timestep ts) {}
 		// When UI is being drawn
  		virtual void OnGUIRender() {}
 

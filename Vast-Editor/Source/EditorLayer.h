@@ -12,7 +12,7 @@ namespace Vast {
 
 		void OnAttach() override;
 
-		void OnUpdate() override;
+		void OnUpdate(Timestep ts) override;
 
 		void OnGUIRender() override;
 
@@ -22,15 +22,15 @@ namespace Vast {
 	private:
 		bool OnWindowResize(WindowResizeEvent& event);
 	private:
-		Ref<VertexArray> m_VertexArray;
-		Ref<VertexBuffer> m_VertexBuffer;
-		Ref<IndexBuffer> m_IndexBuffer;
-		Ref<Shader> m_Shader;
 
+		// TEMPORARY
 		Ref<PerspectiveCamera> m_Camera;
-		Vector3 m_CameraPosition{};
+		Vector3 m_CameraPosition = { 0.0f, 0.0f, 5.0f };
 		Vector3 m_CameraRotation{};
-		float m_CameraSpeed = 0.05f;
+		float m_CameraSpeed = 4.0f;
+	
+		float m_FPS = 0.0f;
+		float m_FPSWait = 0.0f;
 	};
 
 }

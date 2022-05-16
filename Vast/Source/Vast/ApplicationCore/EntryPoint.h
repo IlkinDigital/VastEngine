@@ -10,6 +10,8 @@ int main(int argc, char** argv)
 
 	Vast::Application* app = Vast::CreateApplication();
 
+	app->Get().GetWindow().SetVSync(false);
+
 	app->Run();
 
 	delete app;

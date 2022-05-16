@@ -15,27 +15,42 @@ namespace Vast {
 	void EditorLayer::OnGUIRender()
 	{
 		ImGui::Begin("Settings");
+		
+		ImGui::BeginGroup();
+		
+		ImGui::Text("FPS: %.3f", m_FPS);
+
+		ImGui::EndGroup();
+		
 		ImGui::DragFloat("Pos x", &m_CameraPosition.x, 0.1f, -10.0f,  10.0f, "%.f", 1.0f);
 		ImGui::DragFloat("Pos y", &m_CameraPosition.y, 0.1f, -10.0f,  10.0f, "%.f", 1.0f);
 		ImGui::DragFloat("Pos z", &m_CameraPosition.z, 0.1f, -10.0f,  10.0f, "%.f", 1.0f);		
 		ImGui::DragFloat("Rot x", &m_CameraRotation.x, 0.1f,   0.0f, 360.0f, "%.f", 1.0f);
 		ImGui::DragFloat("Rot y", &m_CameraRotation.y, 0.1f,   0.0f, 360.0f, "%.f", 1.0f);
 		ImGui::DragFloat("Rot z", &m_CameraRotation.z, 0.1f,   0.0f, 360.0f, "%.f", 1.0f);
+		
 		ImGui::End();
 	}
 
-	void EditorLayer::OnUpdate()
+	void EditorLayer::OnUpdate(Timestep ts)
 	{
+		m_FPSWait += ts;
+		if (m_FPSWait > 0.1f)
+		{
+			m_FPS = 1.0f / ts;
+			m_FPSWait = 0.0f;
+		}
+
 		Vector3& pos = m_CameraPosition;
 
 		if (Input::IsPressed(Key::W))
-			pos.y += m_CameraSpeed;
+			pos.y += m_CameraSpeed * ts;
 		if (Input::IsPressed(Key::S))
-			pos.y -= m_CameraSpeed;
+			pos.y -= m_CameraSpeed * ts;
 		if (Input::IsPressed(Key::D))
-			pos.x += m_CameraSpeed;
+			pos.x += m_CameraSpeed * ts;
 		if (Input::IsPressed(Key::A))
-			pos.x -= m_CameraSpeed;
+			pos.x -= m_CameraSpeed * ts;
 
 		m_Camera->SetPosition(pos);
 		m_Camera->SetRotation(m_CameraRotation);
@@ -43,19 +58,18 @@ namespace Vast {
 		Renderer2D::BeginScene(*m_Camera, m_Camera->GetView());
 
 		Renderer2D::DrawQuad(Math::Transform(
-			{ -0.5f, -0.5f, 0.0f },
-			{ 0.0f, 0.0f, 0.0f },
-			{ 1.0f, 1.0f, 1.0f }
+			{ -0.5f, -0.5f, 0.0f }, // translation
+			{ 0.0f, 0.0f, 0.0f },   // rotation
+			{ 1.0f, 1.0f, 1.0f }    // sacale
 		), { 0.2f, 0.8f, 0.5f, 1.0f });
 
 		Renderer2D::DrawQuad(Math::Transform(
-			{ 1.0f, 1.0f, 0.0f },
+			{ 1.0f, 1.0f, 2.0f },
 			{ 0.0f, 0.0f, 0.0f },
 			{ 1.0f, 1.0f, 1.0f }
 		), { 0.5f, 0.3f, 0.7f, 1.0f });
 
 		Renderer2D::EndScene();
-
 	}
 
 

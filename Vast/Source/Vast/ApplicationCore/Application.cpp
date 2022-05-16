@@ -8,7 +8,7 @@
 
 #include "Input/Input.h"
 
-#include <glad/glad.h>
+#include "Clock/Clock.h"
 
 namespace Vast {
 
@@ -16,6 +16,7 @@ namespace Vast {
 
 
 	Application::Application(const String& name)
+		: m_LastFrameTime(Clock::EpochSeconds())
 	{
 		VAST_ASSERT(!s_Instance, "Application already exists");
 
@@ -97,10 +98,16 @@ namespace Vast {
 	{
 		while (m_Running)
 		{
+			// ---- Setup timestep ---------------
+			float epoch = Clock::EpochSeconds();
+			float ts = epoch - m_LastFrameTime;
+			m_LastFrameTime = epoch;
+			// -----------------------------------
+
 			RendererCommand::Clear();
 
 			for (Layer* layer : m_LayerStack)
-				layer->OnUpdate();
+				layer->OnUpdate(Timestep(ts));
 
 			// ---- Draw GUI ------------------
 			m_ImGuiLayer->Begin();
