@@ -59,7 +59,7 @@ namespace Vast {
 
 		Renderer2D::DrawQuad(Math::Transform(
 			{ -0.5f, -0.5f, 0.0f }, // translation
-			{ 0.0f, 0.0f, 0.0f },   // rotation
+			{ 0.0f, 0.0f, Math::Radians(45.0f) },   // rotation
 			{ 1.0f, 1.0f, 1.0f }    // sacale
 		), { 0.2f, 0.8f, 0.5f, 1.0f });
 

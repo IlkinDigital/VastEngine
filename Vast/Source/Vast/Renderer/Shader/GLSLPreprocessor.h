@@ -13,7 +13,8 @@ namespace Vast {
 			String FragmentShaderSource;
 		};
 	public:
-		static Shaders Preprocess(const String& GLSLSource);
+		static Shaders PreprocessSource(const String& source);
+		static Shaders PreprocessFile(const String& filepath);
 	};
 
 }

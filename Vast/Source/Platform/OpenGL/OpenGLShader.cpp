@@ -1,7 +1,9 @@
 #include "vastpch.h"
 #include "OpenGLShader.h"
 
+#include "Utils/FileIO/FileIO.h"
 #include "Math/MathUtils.h"
+#include "Renderer/Shader/GLSLPreprocessor.h"
 
 #include <glad/glad.h>
 
@@ -11,6 +13,13 @@ namespace Vast {
 		: m_Name(name), m_Program(0)
 	{
 		Compile(vertexSource, fragSource);
+	}
+
+	OpenGLShader::OpenGLShader(const String& filepath)
+		: m_Name(FileIO::GetFileName(filepath)), m_Program(0)
+	{
+		auto shaders = GLSLPreprocessor::PreprocessFile(filepath);
+		Compile(shaders.VertexShaderSource, shaders.FragmentShaderSource);
 	}
 
 	OpenGLShader::~OpenGLShader()

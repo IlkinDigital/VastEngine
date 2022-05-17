@@ -10,4 +10,9 @@ namespace Vast {
         return CreateRef<OpenGLShader>(name, vertSource, fragSource);
     }
 
+    Ref<Shader> Shader::Create(const String& filepath)
+    {
+        return CreateRef<OpenGLShader>(filepath);
+    }
+
 }

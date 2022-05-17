@@ -8,6 +8,7 @@ namespace Vast {
 	{
 	public:
 		OpenGLShader(const String& name, const String& vertexSource, const String& fragSource);
+		OpenGLShader(const String& filepath);
 		~OpenGLShader() override;
 
 		const String& GetName() const override { return m_Name; }

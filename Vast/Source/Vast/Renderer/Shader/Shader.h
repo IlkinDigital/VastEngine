@@ -19,6 +19,7 @@ namespace Vast {
 		virtual void UploadUniformMat4(const String& name, const Mat4& data) const = 0;
 
 		static Ref<Shader> Create(const String& name, const String& vertSource, const String& fragSource);
+		static Ref<Shader> Create(const String& filepath);
 	};
 
 }
