@@ -16,7 +16,9 @@ namespace Vast {
 		void Bind() const override;
 		void Unbind() const override;
 	
-		void UploadUniformMat4(const String& name, const Mat4& data) const override;
+		void UploadMat4(const String& name, const Mat4& data) const override;
+		void UploadInt(const String& name, int data) const override;
+		void UploadIntArray(const String& name, int* data, uint32 count) const override;
 	private:
 		void Compile(const String& vertexSource, const String& fragSource);
 	private:

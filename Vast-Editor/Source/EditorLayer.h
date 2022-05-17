@@ -28,6 +28,8 @@ namespace Vast {
 		Vector3 m_CameraPosition = { 0.0f, 0.0f, 5.0f };
 		Vector3 m_CameraRotation{};
 		float m_CameraSpeed = 4.0f;
+
+		Ref<Texture2D> m_PatrickTexture;
 	
 		float m_FPS = 0.0f;
 		float m_FPSWait = 0.0f;

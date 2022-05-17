@@ -8,6 +8,8 @@ namespace Vast {
 	class RendererInterface
 	{
 	public:
+		virtual void Init() = 0;
+
 		virtual void SetViewport(float x, float y, float width, float height) = 0;
 
 		virtual void SetClearColor(const Vector4& color) = 0;

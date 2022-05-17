@@ -9,6 +9,8 @@ namespace Vast {
 	public:
 		OpenGLInterface() = default;
 
+		void Init() override;
+
 		void SetViewport(float x, float y, float width, float height) override;
 		
 		void SetClearColor(const Vector4& color) override;
@@ -17,5 +19,4 @@ namespace Vast {
 		void Clear() const override;
 		void DrawIndexed(uint32 indexCount) const override;
 	};
-
 }

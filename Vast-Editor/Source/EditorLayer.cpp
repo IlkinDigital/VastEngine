@@ -10,6 +10,8 @@ namespace Vast {
 	{
 		Window& window = Application::Get().GetWindow();
 		m_Camera = CreateRef<PerspectiveCamera>(1.0f, (float)window.GetWidth() / (float)window.GetHeight(), 0.01f, 1000.0f);
+
+		m_PatrickTexture = Texture2D::Create("Assets/Textures/PatrickAlpha.png");
 	}
 
 	void EditorLayer::OnGUIRender()
@@ -25,9 +27,9 @@ namespace Vast {
 		ImGui::DragFloat("Pos x", &m_CameraPosition.x, 0.1f, -10.0f,  10.0f, "%.f", 1.0f);
 		ImGui::DragFloat("Pos y", &m_CameraPosition.y, 0.1f, -10.0f,  10.0f, "%.f", 1.0f);
 		ImGui::DragFloat("Pos z", &m_CameraPosition.z, 0.1f, -10.0f,  10.0f, "%.f", 1.0f);		
-		ImGui::DragFloat("Rot x", &m_CameraRotation.x, 0.1f,   0.0f, 360.0f, "%.f", 1.0f);
-		ImGui::DragFloat("Rot y", &m_CameraRotation.y, 0.1f,   0.0f, 360.0f, "%.f", 1.0f);
-		ImGui::DragFloat("Rot z", &m_CameraRotation.z, 0.1f,   0.0f, 360.0f, "%.f", 1.0f);
+		ImGui::DragFloat("Rot x", &m_CameraRotation.x, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
+		ImGui::DragFloat("Rot y", &m_CameraRotation.y, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
+		ImGui::DragFloat("Rot z", &m_CameraRotation.z, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
 		
 		ImGui::End();
 	}
@@ -43,14 +45,17 @@ namespace Vast {
 
 		Vector3& pos = m_CameraPosition;
 
-		if (Input::IsPressed(Key::W))
-			pos.y += m_CameraSpeed * ts;
-		if (Input::IsPressed(Key::S))
-			pos.y -= m_CameraSpeed * ts;
-		if (Input::IsPressed(Key::D))
-			pos.x += m_CameraSpeed * ts;
-		if (Input::IsPressed(Key::A))
-			pos.x -= m_CameraSpeed * ts;
+		if (Input::IsPressed(Mouse::Right))
+		{
+			if (Input::IsPressed(Key::W))
+				pos.y += m_CameraSpeed * ts;
+			if (Input::IsPressed(Key::S))
+				pos.y -= m_CameraSpeed * ts;
+			if (Input::IsPressed(Key::D))
+				pos.x += m_CameraSpeed * ts;
+			if (Input::IsPressed(Key::A))
+				pos.x -= m_CameraSpeed * ts;
+		}
 
 		m_Camera->SetPosition(pos);
 		m_Camera->SetRotation(m_CameraRotation);
@@ -66,8 +71,8 @@ namespace Vast {
 		Renderer2D::DrawQuad(Math::Transform(
 			{ 1.0f, 1.0f, 2.0f },
 			{ 0.0f, 0.0f, 0.0f },
-			{ 1.0f, 1.0f, 1.0f }
-		), { 0.5f, 0.3f, 0.7f, 1.0f });
+			{ 1.0f, 1.5f, 1.0f }
+		), m_PatrickTexture);
 
 		Renderer2D::EndScene();
 	}

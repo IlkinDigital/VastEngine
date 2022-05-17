@@ -24,6 +24,7 @@ Include["glfw"] = "Vast/Vendor/glfw/include"
 Include["glad"] = "Vast/Vendor/glad/include"
 Include["imgui"] = "Vast/Vendor/imgui"
 Include["glm"] = "Vast/Vendor/glm"
+Include["stb"] = "Vast/Vendor/stb"
 
 project "Vast"
     location "Vast"
@@ -54,13 +55,14 @@ project "Vast"
     includedirs
     {
         "%{prj.name}/Source",
-        "Vast/Source/Vast",
+        "%{prj.name}/Source/Vast",
         "%{prj.name}/Source/Vast/Core", -- to easily access commonly used headers
         "%{Include.spdlog}",
         "%{Include.glfw}",
         "%{Include.glad}",
         "%{Include.imgui}",
-        "%{Include.glm}"
+        "%{Include.glm}",
+        "%{Include.stb}"
     }
 
     links

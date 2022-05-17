@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Cameras/Camera.h"
+#include "Texture2D.h"
 
 namespace Vast {
 
@@ -13,6 +14,7 @@ namespace Vast {
 		static void EndScene();
 
 		static void DrawQuad(const Mat4& transform, const Vector4& color);
+		static void DrawQuad(const Mat4& transform, const Ref<Texture2D>& texture);
 	};
 
 }
