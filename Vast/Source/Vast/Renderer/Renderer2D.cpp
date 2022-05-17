@@ -4,7 +4,7 @@
 #include "Math/MathOperations.h"
 
 #include "VertexArray.h"
-#include "Shader.h"
+#include "Shader/Shader.h"
 #include "RendererCommand.h"
 
 namespace Vast {

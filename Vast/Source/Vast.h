@@ -25,7 +25,7 @@
 // ---- Graphics ---------------------------
 #include "Renderer/RendererCommand.h"
 #include "Renderer/VertexArray.h"
-#include "Renderer/Shader.h"
+#include "Renderer/Shader/Shader.h"
 // -----------------------------------------
 
 // ---- Other ------------------------------

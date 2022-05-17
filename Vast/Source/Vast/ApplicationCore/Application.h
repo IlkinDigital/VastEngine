@@ -8,11 +8,6 @@
 #include "ApplicationCore/Layer/LayerStack.h"
 #include "GUI/ImGuiLayer.h"
 
-#include "Renderer/VertexArray.h"
-#include "Renderer/Shader.h"
-
-#include "Cameras/OrthographicCamera.h"
-
 namespace Vast {
 
 	class Application
