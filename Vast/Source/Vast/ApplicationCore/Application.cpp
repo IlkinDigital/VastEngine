@@ -104,6 +104,7 @@ namespace Vast {
 			m_LastFrameTime = epoch;
 			// -----------------------------------
 
+			RendererCommand::SetClearColor({ 0.15f, 0.15f, 0.15f, 1.0f });
 			RendererCommand::Clear();
 
 			for (Layer* layer : m_LayerStack)

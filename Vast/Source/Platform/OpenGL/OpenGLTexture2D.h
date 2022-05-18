@@ -20,7 +20,7 @@ namespace Vast {
 		void Bind(uint32 slot = 0) const override;
 	private:
 		// Sets up texture resizing algorithms 
-		void SetupResizing() const; 
+		void SetupFilters() const; 
 	private:
 		RendererID m_RendererID;
 		uint32 m_Width, m_Height;

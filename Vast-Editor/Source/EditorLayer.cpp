@@ -11,6 +11,8 @@ namespace Vast {
 		Window& window = Application::Get().GetWindow();
 		m_Camera = CreateRef<PerspectiveCamera>(1.0f, (float)window.GetWidth() / (float)window.GetHeight(), 0.01f, 1000.0f);
 
+		m_Framebuffer = Framebuffer::Create({ window.GetWidth(), window.GetHeight() });
+
 		m_PatrickTexture = Texture2D::Create("Assets/Textures/PatrickAlpha.png");
 	}
 
@@ -30,6 +32,9 @@ namespace Vast {
 		ImGui::DragFloat("Rot x", &m_CameraRotation.x, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
 		ImGui::DragFloat("Rot y", &m_CameraRotation.y, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
 		ImGui::DragFloat("Rot z", &m_CameraRotation.z, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
+
+		uint32 textureID = m_Framebuffer->GetColorAttachment();
+		ImGui::Image((void*)textureID, ImVec2{ 640.0f, 360.0f });
 		
 		ImGui::End();
 	}
@@ -60,6 +65,9 @@ namespace Vast {
 		m_Camera->SetPosition(pos);
 		m_Camera->SetRotation(m_CameraRotation);
 
+		m_Framebuffer->Bind();
+		RendererCommand::Clear();
+
 		Renderer2D::BeginScene(*m_Camera, m_Camera->GetView());
 
 		Renderer2D::DrawQuad(Math::Transform(
@@ -75,6 +83,7 @@ namespace Vast {
 		), m_PatrickTexture);
 
 		Renderer2D::EndScene();
+		m_Framebuffer->Unbind();
 	}
 
 

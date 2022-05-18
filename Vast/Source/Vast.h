@@ -27,6 +27,7 @@
 #include "Renderer/VertexArray.h"
 #include "Renderer/Shader/Shader.h"
 #include "Renderer/Texture2D.h"
+#include "Renderer/Framebuffer.h"
 // -----------------------------------------
 
 // ---- Other ------------------------------

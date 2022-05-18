@@ -29,6 +29,7 @@ namespace Vast {
 		Vector3 m_CameraRotation{};
 		float m_CameraSpeed = 4.0f;
 
+		Ref<Framebuffer> m_Framebuffer;
 		Ref<Texture2D> m_PatrickTexture;
 	
 		float m_FPS = 0.0f;

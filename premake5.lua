@@ -44,7 +44,9 @@ project "Vast"
         "%{prj.name}/Source/**.h",
         "%{prj.name}/Source/**.cpp",
         "%{prj.name}/Vendor/glm/glm/**.inl",
-        "%{prj.name}/Vendor/glm/glm/**.hpp"
+        "%{prj.name}/Vendor/glm/glm/**.hpp",       
+        "%{prj.name}/Vendor/stb/**.h",
+        "%{prj.name}/Vendor/stb/**.cpp"
     }
 
     defines
