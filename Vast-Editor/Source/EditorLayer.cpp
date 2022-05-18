@@ -4,6 +4,8 @@
 
 #include <imgui.h>
 
+#include "EditorLayout/Layout.h"
+
 namespace Vast {
 
 	void EditorLayer::OnAttach()
@@ -16,28 +18,6 @@ namespace Vast {
 		m_PatrickTexture = Texture2D::Create("Assets/Textures/PatrickAlpha.png");
 	}
 
-	void EditorLayer::OnGUIRender()
-	{
-		ImGui::Begin("Settings");
-		
-		ImGui::BeginGroup();
-		
-		ImGui::Text("FPS: %.3f", m_FPS);
-
-		ImGui::EndGroup();
-		
-		ImGui::DragFloat("Pos x", &m_CameraPosition.x, 0.1f, -10.0f,  10.0f, "%.f", 1.0f);
-		ImGui::DragFloat("Pos y", &m_CameraPosition.y, 0.1f, -10.0f,  10.0f, "%.f", 1.0f);
-		ImGui::DragFloat("Pos z", &m_CameraPosition.z, 0.1f, -10.0f,  10.0f, "%.f", 1.0f);		
-		ImGui::DragFloat("Rot x", &m_CameraRotation.x, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
-		ImGui::DragFloat("Rot y", &m_CameraRotation.y, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
-		ImGui::DragFloat("Rot z", &m_CameraRotation.z, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
-
-		uint32 textureID = m_Framebuffer->GetColorAttachment();
-		ImGui::Image((void*)textureID, ImVec2{ 640.0f, 360.0f });
-		
-		ImGui::End();
-	}
 
 	void EditorLayer::OnUpdate(Timestep ts)
 	{
@@ -86,6 +66,38 @@ namespace Vast {
 		m_Framebuffer->Unbind();
 	}
 
+	void EditorLayer::OnGUIRender()
+	{
+		EditorLayout::BeginDockspace();
+
+		ImGui::Begin("Settings");
+		
+		ImGui::BeginGroup();
+		
+		ImGui::Text("FPS: %.3f", m_FPS);
+
+		ImGui::EndGroup();
+		
+		ImGui::DragFloat("Pos x", &m_CameraPosition.x, 0.1f, -10.0f,  10.0f, "%.f", 1.0f);
+		ImGui::DragFloat("Pos y", &m_CameraPosition.y, 0.1f, -10.0f,  10.0f, "%.f", 1.0f);
+		ImGui::DragFloat("Pos z", &m_CameraPosition.z, 0.1f, -10.0f,  10.0f, "%.f", 1.0f);		
+		ImGui::DragFloat("Rot x", &m_CameraRotation.x, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
+		ImGui::DragFloat("Rot y", &m_CameraRotation.y, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
+		ImGui::DragFloat("Rot z", &m_CameraRotation.z, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
+
+		ImGui::Begin("Viewport");
+
+		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+
+		uint32 textureID = m_Framebuffer->GetColorAttachment();
+		ImGui::Image((void*)textureID, ImVec2{ viewportPanelSize.x, viewportPanelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+		ImGui::End();
+		
+		ImGui::End();
+
+		EditorLayout::EndDockspace();
+	}
 
 	void EditorLayer::OnDetach()
 	{

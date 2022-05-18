@@ -54,8 +54,6 @@ namespace Vast {
 
 	void ImGuiLayer::OnGUIRender()
 	{
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);
 	}
 
 	void ImGuiLayer::OnEvent(Event& event)
