@@ -26,6 +26,7 @@ namespace Vast {
 		void PopOverlay(Layer* overlay);
 
 		Window& GetWindow() { return *m_Window; }
+		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 
 		void Run();
 		void Close();

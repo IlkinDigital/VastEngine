@@ -15,8 +15,9 @@ namespace Vast {
 		virtual ~Framebuffer() = default;
 
 		virtual const FramebufferSpecification& GetSpecification() const = 0;
-
 		virtual RendererID GetColorAttachment() const = 0;
+
+		virtual void Resize(const FramebufferSpecification& spec) = 0;
 
 		virtual void Bind() const = 0;
 		virtual void Unbind() const = 0;

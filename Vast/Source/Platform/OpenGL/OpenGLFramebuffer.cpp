@@ -16,9 +16,16 @@ namespace Vast {
 		glDeleteFramebuffers(1, &m_RendererID);
 	}
 
+	void OpenGLFramebuffer::Resize(const FramebufferSpecification& spec)
+	{
+		m_Specification = spec;
+		Generate();
+	}
+
 	void OpenGLFramebuffer::Bind() const
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
 	}
 
 	void OpenGLFramebuffer::Unbind() const
@@ -28,6 +35,13 @@ namespace Vast {
 
 	void OpenGLFramebuffer::Generate()
 	{
+		if (m_RendererID)
+		{
+			glDeleteFramebuffers(1, &m_RendererID);
+			glDeleteTextures(1, &m_ColorAttachment);
+			glDeleteTextures(1, &m_DepthAttachment);
+		}
+
 		glCreateFramebuffers(1, &m_RendererID);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);

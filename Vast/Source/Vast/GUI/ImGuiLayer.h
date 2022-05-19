@@ -9,7 +9,7 @@ namespace Vast {
 	public:
 		ImGuiLayer()
 			: Layer("ImGuiLayer") {}
-	
+
 		void OnAttach() override;
 		void OnDetach() override;
 		void OnGUIRender() override;
@@ -17,6 +17,8 @@ namespace Vast {
 
 		void Begin();
 		void End();
+
+		bool BlockEvents = false;
 	};
 
 }

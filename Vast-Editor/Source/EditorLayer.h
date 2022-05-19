@@ -2,6 +2,8 @@
 
 #include "Vast.h"
 
+#include "Panels/ViewportPanel.h"
+
 namespace Vast {
 
 	class EditorLayer : public Layer
@@ -22,6 +24,8 @@ namespace Vast {
 	private:
 		bool OnWindowResize(WindowResizeEvent& event);
 	private:
+		// GUI
+		ViewportPanel m_Viewport;
 
 		// TEMPORARY
 		Ref<PerspectiveCamera> m_Camera;

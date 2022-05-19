@@ -11,8 +11,9 @@ namespace Vast {
 		~OpenGLFramebuffer() override;
 
 		const FramebufferSpecification& GetSpecification() const override { return m_Specification; }
-
 		RendererID GetColorAttachment() const override { return m_ColorAttachment; }
+
+		void Resize(const FramebufferSpecification& spec) override;
 
 		void Bind() const override;
 		void Unbind() const override;

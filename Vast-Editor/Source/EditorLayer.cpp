@@ -28,21 +28,33 @@ namespace Vast {
 			m_FPSWait = 0.0f;
 		}
 
-		Vector3& pos = m_CameraPosition;
-
-		if (Input::IsPressed(Mouse::Right))
+		auto spec = m_Framebuffer->GetSpecification();
+		if (m_Viewport.GetWidth() > 0 && m_Viewport.GetHeight() > 0 && (spec.Width != m_Viewport.GetWidth() || spec.Height != m_Viewport.GetHeight()))
 		{
-			if (Input::IsPressed(Key::W))
-				pos.y += m_CameraSpeed * ts;
-			if (Input::IsPressed(Key::S))
-				pos.y -= m_CameraSpeed * ts;
-			if (Input::IsPressed(Key::D))
-				pos.x += m_CameraSpeed * ts;
-			if (Input::IsPressed(Key::A))
-				pos.x -= m_CameraSpeed * ts;
+			m_Framebuffer->Resize({ m_Viewport.GetWidth(), m_Viewport.GetHeight() });
+
+			float aspectViewport = (float)m_Viewport.GetWidth() / (float)m_Viewport.GetHeight();
+			m_Camera->SetProjection(1.0f, aspectViewport, 0.01f, 1000.0f);
 		}
 
-		m_Camera->SetPosition(pos);
+		Vector3& pos = m_CameraPosition;
+
+		if (m_Viewport.IsHovered())
+		{
+			if (Input::IsPressed(Mouse::Right))
+			{
+				if (Input::IsPressed(Key::W))
+					pos.y += m_CameraSpeed * ts;
+				if (Input::IsPressed(Key::S))
+					pos.y -= m_CameraSpeed * ts;
+				if (Input::IsPressed(Key::D))
+					pos.x += m_CameraSpeed * ts;
+				if (Input::IsPressed(Key::A))
+					pos.x -= m_CameraSpeed * ts;
+			}
+		}
+
+			m_Camera->SetPosition(pos);
 		m_Camera->SetRotation(m_CameraRotation);
 
 		m_Framebuffer->Bind();
@@ -84,17 +96,10 @@ namespace Vast {
 		ImGui::DragFloat("Rot x", &m_CameraRotation.x, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
 		ImGui::DragFloat("Rot y", &m_CameraRotation.y, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
 		ImGui::DragFloat("Rot z", &m_CameraRotation.z, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
-
-		ImGui::Begin("Viewport");
-
-		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
-
-		uint32 textureID = m_Framebuffer->GetColorAttachment();
-		ImGui::Image((void*)textureID, ImVec2{ viewportPanelSize.x, viewportPanelSize.y }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
-
-		ImGui::End();
 		
 		ImGui::End();
+
+		m_Viewport.OnGUIRender(m_Framebuffer->GetColorAttachment());
 
 		EditorLayout::EndDockspace();
 	}
@@ -105,16 +110,6 @@ namespace Vast {
 
 	void EditorLayer::OnEvent(Event& event)
 	{
-		EventDispatcher dispatcher(event);
-		dispatcher.Dispatch<WindowResizeEvent>(VAST_BIND_EVENT(OnWindowResize));
-	}
-
-	bool EditorLayer::OnWindowResize(WindowResizeEvent& event)
-	{
-		RendererCommand::SetViewport(0.0f, 0.0f, event.GetWidth(), event.GetHeight());
-		float aspect = (float)event.GetWidth() / (float)event.GetHeight();
-		m_Camera->SetProjection(1.0f, aspect, 0.01f, 1000.0f);
-		return false;
 	}
 
 }

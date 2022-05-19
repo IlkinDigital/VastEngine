@@ -58,6 +58,12 @@ namespace Vast {
 
 	void ImGuiLayer::OnEvent(Event& event)
 	{
+		if (BlockEvents)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			event.Handled |= event.IsInCategory(EventCategory::Mouse) & io.WantCaptureMouse;
+			event.Handled |= event.IsInCategory(EventCategory::Keyboard) & io.WantCaptureKeyboard;
+		}
 	}
 
 	void ImGuiLayer::Begin()
