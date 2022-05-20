@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Cameras/Camera.h"
+#include "Camera/Camera.h"
 #include "Texture2D.h"
 
 namespace Vast {

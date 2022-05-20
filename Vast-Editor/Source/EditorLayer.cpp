@@ -16,6 +16,25 @@ namespace Vast {
 		m_Framebuffer = Framebuffer::Create({ window.GetWidth(), window.GetHeight() });
 
 		m_PatrickTexture = Texture2D::Create("Assets/Textures/PatrickAlpha.png");
+
+		m_ActiveScene = CreateRef<Scene>();
+
+		Entity camera = m_ActiveScene->CreateEntity("Omni camera");
+		Entity box1 = m_ActiveScene->CreateEntity("Red square");
+		Entity box2 = m_ActiveScene->CreateEntity("Blue square");
+
+		auto& cc = camera.AddComponent<CameraComponent>();
+		cc.Camera.SetProjectionType(SceneCamera::ProjectionType::Perspective);
+		auto& tc = camera.GetComponent<TransformComponent>();
+		tc.Translation.z = 5.0f;
+		tc.Translation.x = 2.0f;
+
+		box1.AddComponent<RenderComponent>(m_PatrickTexture);
+		box1.GetComponent<TransformComponent>().Translation = { 0.5f, 2.0f, 1.0f };
+		box1.GetComponent<TransformComponent>().Scale = { 1.0f, 1.7f, 1.0f };
+
+		auto& rc2 = box2.AddComponent<RenderComponent>();
+		rc2.Color = { 0.2f, 0.4f, 0.8f, 1.0f };
 	}
 
 
@@ -35,46 +54,35 @@ namespace Vast {
 
 			float aspectViewport = (float)m_Viewport.GetWidth() / (float)m_Viewport.GetHeight();
 			m_Camera->SetProjection(1.0f, aspectViewport, 0.01f, 1000.0f);
+			m_ActiveScene->OnViewportResize(m_Viewport.GetWidth(), m_Viewport.GetHeight());
 		}
 
-		Vector3& pos = m_CameraPosition;
+		//Vector3& pos = m_CameraPosition;
 
-		if (m_Viewport.IsHovered())
-		{
-			if (Input::IsPressed(Mouse::Right))
-			{
-				if (Input::IsPressed(Key::W))
-					pos.y += m_CameraSpeed * ts;
-				if (Input::IsPressed(Key::S))
-					pos.y -= m_CameraSpeed * ts;
-				if (Input::IsPressed(Key::D))
-					pos.x += m_CameraSpeed * ts;
-				if (Input::IsPressed(Key::A))
-					pos.x -= m_CameraSpeed * ts;
-			}
-		}
+		//if (m_Viewport.IsHovered())
+		//{
+		//	if (Input::IsPressed(Mouse::Right))
+		//	{
+		//		if (Input::IsPressed(Key::W))
+		//			pos.y += m_CameraSpeed * ts;
+		//		if (Input::IsPressed(Key::S))
+		//			pos.y -= m_CameraSpeed * ts;
+		//		if (Input::IsPressed(Key::D))
+		//			pos.x += m_CameraSpeed * ts;
+		//		if (Input::IsPressed(Key::A))
+		//			pos.x -= m_CameraSpeed * ts;
+		//	}
+		//}
 
-			m_Camera->SetPosition(pos);
-		m_Camera->SetRotation(m_CameraRotation);
+		//m_Camera->SetPosition(pos);
+		//m_Camera->SetRotation(m_CameraRotation);
 
 		m_Framebuffer->Bind();
+
 		RendererCommand::Clear();
 
-		Renderer2D::BeginScene(*m_Camera, m_Camera->GetView());
+		m_ActiveScene->OnUpdate(ts);
 
-		Renderer2D::DrawQuad(Math::Transform(
-			{ -0.5f, -0.5f, 0.0f }, // translation
-			{ 0.0f, 0.0f, Math::Radians(45.0f) },   // rotation
-			{ 1.0f, 1.0f, 1.0f }    // sacale
-		), { 0.2f, 0.8f, 0.5f, 1.0f });
-
-		Renderer2D::DrawQuad(Math::Transform(
-			{ 1.0f, 1.0f, 2.0f },
-			{ 0.0f, 0.0f, 0.0f },
-			{ 1.0f, 1.5f, 1.0f }
-		), m_PatrickTexture);
-
-		Renderer2D::EndScene();
 		m_Framebuffer->Unbind();
 	}
 

@@ -25,6 +25,7 @@ Include["glad"] = "Vast/Vendor/glad/include"
 Include["imgui"] = "Vast/Vendor/imgui"
 Include["glm"] = "Vast/Vendor/glm"
 Include["stb"] = "Vast/Vendor/stb"
+Include["entt"] = "Vast/Vendor/entt"
 
 project "Vast"
     location "Vast"
@@ -46,7 +47,8 @@ project "Vast"
         "%{prj.name}/Vendor/glm/glm/**.inl",
         "%{prj.name}/Vendor/glm/glm/**.hpp",       
         "%{prj.name}/Vendor/stb/**.h",
-        "%{prj.name}/Vendor/stb/**.cpp"
+        "%{prj.name}/Vendor/stb/**.cpp",
+        "%{prj.name}/Vendor/entt/**.hpp"
     }
 
     defines
@@ -64,7 +66,8 @@ project "Vast"
         "%{Include.glad}",
         "%{Include.imgui}",
         "%{Include.glm}",
-        "%{Include.stb}"
+        "%{Include.stb}",
+        "%{Include.entt}"
     }
 
     links
@@ -124,7 +127,8 @@ project "Vast-Editor"
         "%{Include.spdlog}",
         "%{Include.glad}",
         "%{Include.imgui}",
-        "%{Include.glm}"
+        "%{Include.glm}",
+        "%{Include.entt}"
     }
 
     links

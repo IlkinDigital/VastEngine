@@ -30,7 +30,13 @@
 #include "Renderer/Framebuffer.h"
 // -----------------------------------------
 
+// ---- Scene ------------------------------
+#include "Scene/SceneCore.h"
+#include "Scene/Scene.h"
+#include "Scene/Entity.h"
+// -----------------------------------------
+
 // ---- Other ------------------------------
-#include "Cameras/OrthographicCamera.h"
-#include "Cameras/PerspectiveCamera.h"
+#include "Camera/OrthographicCamera.h"
+#include "Camera/PerspectiveCamera.h"
 // -----------------------------------------

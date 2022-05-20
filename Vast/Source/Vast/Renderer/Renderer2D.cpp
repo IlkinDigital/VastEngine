@@ -83,7 +83,7 @@ namespace Vast {
 	void Renderer2D::BeginScene(const Camera& camera, const Mat4& transform)
 	{
 		s_Data.QuadShader->Bind();
-		Mat4 viewProj = camera.GetProjection() * transform;
+		Mat4 viewProj = camera.GetProjection() * Math::Inverse(transform);
 
 		s_Data.QuadShader->UploadMat4("u_ViewProjection", viewProj);
 	}

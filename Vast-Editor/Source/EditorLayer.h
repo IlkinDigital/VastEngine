@@ -27,6 +27,9 @@ namespace Vast {
 		// GUI
 		ViewportPanel m_Viewport;
 
+		// Scene
+		Ref<Scene> m_ActiveScene;
+
 		// TEMPORARY
 		Ref<PerspectiveCamera> m_Camera;
 		Vector3 m_CameraPosition = { 0.0f, 0.0f, 5.0f };
