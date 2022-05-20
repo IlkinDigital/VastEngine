@@ -57,7 +57,7 @@ namespace Vast {
 				}
 			}
 		private:
-			float m_Speed = 2.0f;
+			float m_Speed = 5.0f;
 		};
 
 		camera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
