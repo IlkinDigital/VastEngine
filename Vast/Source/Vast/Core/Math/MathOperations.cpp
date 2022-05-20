@@ -11,6 +11,21 @@ namespace Vast::Math {
 		return glm::radians(degrees);
 	}
 
+	Vector3 Radians(const Vector3& degrees)
+	{
+		return glm::radians(degrees);
+	}
+
+	float Degrees(float radians)
+	{
+		return glm::degrees(radians);
+	}
+
+	Vector3 Degrees(const Vector3& radians)
+	{
+		return glm::degrees(radians);
+	}
+
 	Mat4 Translate(const Mat4& transform, const Vector3& position)
 	{
 		return glm::translate(transform, position);

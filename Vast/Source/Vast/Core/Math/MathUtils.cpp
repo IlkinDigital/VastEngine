@@ -15,4 +15,9 @@ namespace Vast::Math {
 		return glm::value_ptr(data);
 	}
 
+	const float* ValuePointer(const Vector4& data)
+	{
+		return glm::value_ptr(data);
+	}
+
 }

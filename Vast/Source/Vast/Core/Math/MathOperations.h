@@ -5,6 +5,10 @@
 namespace Vast::Math {
 
 	float Radians(float degrees);
+	Vector3 Radians(const Vector3& degrees);
+	
+	float Degrees(float radians);
+	Vector3 Degrees(const Vector3& radians);
 
 	Mat4 Translate(const Mat4& transform, const Vector3& position);
 	Mat4 Rotate(const Mat4& transform, float angle, const Vector3& axis);

@@ -11,7 +11,6 @@ namespace Vast {
 	void EditorLayer::OnAttach()
 	{
 		Window& window = Application::Get().GetWindow();
-		m_Camera = CreateRef<PerspectiveCamera>(1.0f, (float)window.GetWidth() / (float)window.GetHeight(), 0.01f, 1000.0f);
 
 		m_Framebuffer = Framebuffer::Create({ window.GetWidth(), window.GetHeight() });
 
@@ -19,8 +18,10 @@ namespace Vast {
 
 		m_ActiveScene = CreateRef<Scene>();
 
+		m_Lineup.SetContext(m_ActiveScene);
+
 		Entity camera = m_ActiveScene->CreateEntity("Omni camera");
-		Entity box1 = m_ActiveScene->CreateEntity("Red square");
+		Entity box1 = m_ActiveScene->CreateEntity("Patrick Star");
 		Entity box2 = m_ActiveScene->CreateEntity("Blue square");
 
 		auto& cc = camera.AddComponent<CameraComponent>();
@@ -53,29 +54,8 @@ namespace Vast {
 			m_Framebuffer->Resize({ m_Viewport.GetWidth(), m_Viewport.GetHeight() });
 
 			float aspectViewport = (float)m_Viewport.GetWidth() / (float)m_Viewport.GetHeight();
-			m_Camera->SetProjection(1.0f, aspectViewport, 0.01f, 1000.0f);
 			m_ActiveScene->OnViewportResize(m_Viewport.GetWidth(), m_Viewport.GetHeight());
 		}
-
-		//Vector3& pos = m_CameraPosition;
-
-		//if (m_Viewport.IsHovered())
-		//{
-		//	if (Input::IsPressed(Mouse::Right))
-		//	{
-		//		if (Input::IsPressed(Key::W))
-		//			pos.y += m_CameraSpeed * ts;
-		//		if (Input::IsPressed(Key::S))
-		//			pos.y -= m_CameraSpeed * ts;
-		//		if (Input::IsPressed(Key::D))
-		//			pos.x += m_CameraSpeed * ts;
-		//		if (Input::IsPressed(Key::A))
-		//			pos.x -= m_CameraSpeed * ts;
-		//	}
-		//}
-
-		//m_Camera->SetPosition(pos);
-		//m_Camera->SetRotation(m_CameraRotation);
 
 		m_Framebuffer->Bind();
 
@@ -92,22 +72,14 @@ namespace Vast {
 
 		ImGui::Begin("Settings");
 		
-		ImGui::BeginGroup();
-		
 		ImGui::Text("FPS: %.3f", m_FPS);
-
-		ImGui::EndGroup();
-		
-		ImGui::DragFloat("Pos x", &m_CameraPosition.x, 0.1f, -10.0f,  10.0f, "%.f", 1.0f);
-		ImGui::DragFloat("Pos y", &m_CameraPosition.y, 0.1f, -10.0f,  10.0f, "%.f", 1.0f);
-		ImGui::DragFloat("Pos z", &m_CameraPosition.z, 0.1f, -10.0f,  10.0f, "%.f", 1.0f);		
-		ImGui::DragFloat("Rot x", &m_CameraRotation.x, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
-		ImGui::DragFloat("Rot y", &m_CameraRotation.y, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
-		ImGui::DragFloat("Rot z", &m_CameraRotation.z, 0.1f, -360.0f, 360.0f, "%.f", 1.0f);
 		
 		ImGui::End();
 
 		m_Viewport.OnGUIRender(m_Framebuffer->GetColorAttachment());
+
+		m_Lineup.OnGUIRender();
+		m_Properties.OnGUIRender(m_Lineup.GetSelected());
 
 		EditorLayout::EndDockspace();
 	}

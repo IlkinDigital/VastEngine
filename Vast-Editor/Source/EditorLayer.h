@@ -3,6 +3,8 @@
 #include "Vast.h"
 
 #include "Panels/ViewportPanel.h"
+#include "Panels/LineupPanel.h"
+#include "Panels/PropertiesPanel.h"
 
 namespace Vast {
 
@@ -26,15 +28,11 @@ namespace Vast {
 	private:
 		// GUI
 		ViewportPanel m_Viewport;
+		LineupPanel m_Lineup;
+		PropertiesPanel m_Properties;
 
 		// Scene
 		Ref<Scene> m_ActiveScene;
-
-		// TEMPORARY
-		Ref<PerspectiveCamera> m_Camera;
-		Vector3 m_CameraPosition = { 0.0f, 0.0f, 5.0f };
-		Vector3 m_CameraRotation{};
-		float m_CameraSpeed = 4.0f;
 
 		Ref<Framebuffer> m_Framebuffer;
 		Ref<Texture2D> m_PatrickTexture;

@@ -3,11 +3,13 @@
 #include "Clock/Timestep.h"
 #include "SceneCore.h"
 
+
 namespace Vast {
+	
+	class Entity;
 
 	class Scene
 	{
-		friend class Entity;
 	public:
 		Scene() = default;
 
@@ -16,6 +18,8 @@ namespace Vast {
 
 		void OnUpdate(Timestep ts);
 		void OnViewportResize(uint32 width, uint32 height);
+
+		EntityRegistry& GetRegistry() { return m_Registry; }
 	private:
 		EntityRegistry m_Registry;
 	};

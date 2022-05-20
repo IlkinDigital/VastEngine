@@ -121,6 +121,7 @@ project "Vast-Editor"
 
     includedirs
     {
+        "%{prj.name}/Source",
         "Vast/Source",
         "Vast/Source/Vast",
         "Vast/Source/Vast/Core",
