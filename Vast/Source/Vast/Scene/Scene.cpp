@@ -4,6 +4,8 @@
 #include "Entity.h"
 #include "Camera/Camera.h"
 
+#include "Components.h"
+
 #include "Renderer/Renderer2D.h"
 
 namespace Vast {
@@ -24,6 +26,22 @@ namespace Vast {
 
 	void Scene::OnUpdate(Timestep ts)
 	{
+		/**
+		* Call scripts
+		*/
+
+		m_Registry.view<NativeScriptComponent>().each([=](auto entityID, NativeScriptComponent& nsc)
+			{
+				if (!nsc.Instance)
+				{
+					nsc.Instance = nsc.InstantiateScript();
+					nsc.Instance->m_Entity = Entity(entityID, this);
+					nsc.Instance->OnCreate();
+				}
+
+				nsc.Instance->OnUpdate(ts);
+			});
+
 		/**
 		* Render RenderComponents
 		*/

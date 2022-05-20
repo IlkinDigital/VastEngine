@@ -14,6 +14,9 @@ namespace Vast {
 		Ty& AddComponent(Args&&... args);
 
 		template<typename Ty>
+		void RemoveComponent();
+
+		template<typename Ty>
 		Ty& GetComponent();
 
 		template<typename Ty>
@@ -32,6 +35,12 @@ namespace Vast {
 		VAST_CORE_ASSERT(!HasComponent<Ty>(), "Entity already has this component");
 		Ty& component = m_Scene->GetRegistry().emplace<Ty>(m_EntityHandle, std::forward<Args>(args)...);
 		return component;
+	}
+
+	template<typename Ty>
+	inline void Entity::RemoveComponent()
+	{
+		m_Scene->GetRegistry().remove<Ty>(m_EntityHandle);
 	}
 
 	template<typename Ty>

@@ -20,7 +20,7 @@ namespace Vast {
 		{
 			auto& tag = entity.GetComponent<TagComponent>().Tag;
 
-			char buffer[256];
+			char buffer[64];
 			memset(buffer, 0, sizeof(buffer));
 			strcpy(buffer, tag.c_str());
 			if (ImGui::InputText("##Tag", buffer, sizeof(buffer)))
@@ -71,6 +71,64 @@ namespace Vast {
 				};
 				if (ImGui::ColorEdit4("Color", buffer))
 					color = { buffer[0], buffer[1], buffer[2], buffer[3] };
+			});
+
+		EditorControl::DrawComponent<CameraComponent>("Camera", entity, [](CameraComponent& component)
+			{
+				auto& camera = component.Camera;
+
+				ImGui::Checkbox("Primary", &component.Primary);
+
+				const char* projectionTypeLabels[] = { "Perspective", "Orthographic" };
+				uint16 currProjectionIndex = (uint16)camera.GetProjectionType();
+
+				if (ImGui::BeginCombo("Projection", projectionTypeLabels[currProjectionIndex]))
+				{
+					for (uint16 i = 0; i < 2; i++)
+					{
+						bool isSelected = currProjectionIndex == i;
+
+						if (ImGui::Selectable(projectionTypeLabels[i], isSelected))
+						{
+							currProjectionIndex = i;
+							camera.SetProjectionType((SceneCamera::ProjectionType)i);
+						}
+
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
+					}
+
+					ImGui::EndCombo();
+				}
+
+				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
+				{
+					float orthoSize = camera.GetOrthographicSize();
+					if (ImGui::DragFloat("Size", &orthoSize))
+						camera.SetOrthographicSize(orthoSize);
+
+					float nearClip = camera.GetOrthographicNearClip();
+					if (ImGui::DragFloat("Near Clip", &nearClip))
+						camera.SetOrthographicNearClip(nearClip);
+
+					float farClip = camera.GetOrthographicFarClip();
+					if (ImGui::DragFloat("Far Clip", &farClip))
+						camera.SetOrthographicFarClip(farClip);
+				}
+				if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
+				{
+					float fov = Math::Degrees(camera.GetPerspectiveFOV());
+					if (ImGui::DragFloat("FOV", &fov))
+						camera.SetPerspectiveFOV(Math::Radians(fov));
+
+					float nearClip = camera.GetPerspectiveNearClip();
+					if (ImGui::DragFloat("Near Clip", &nearClip))
+						camera.SetPerspectiveNearClip(nearClip);
+
+					float farClip = camera.GetPerspectiveFarClip();
+					if (ImGui::DragFloat("Far Clip", &farClip))
+						camera.SetPerspectiveFarClip(farClip);
+				}
 			});
 	}
 

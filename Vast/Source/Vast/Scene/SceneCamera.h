@@ -9,7 +9,7 @@ namespace Vast {
 	class SceneCamera : public Camera
 	{
 	public:
-		enum class ProjectionType { Perspective, Orthographic };
+		enum class ProjectionType { Perspective = 0, Orthographic };
 	public:
 		SceneCamera();
 		~SceneCamera() override = default;

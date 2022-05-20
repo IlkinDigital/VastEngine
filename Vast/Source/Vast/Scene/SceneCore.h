@@ -1,9 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include <entt.hpp>
-#include "Components.h"
 
 namespace Vast {
 

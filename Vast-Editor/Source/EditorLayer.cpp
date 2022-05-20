@@ -36,6 +36,31 @@ namespace Vast {
 
 		auto& rc2 = box2.AddComponent<RenderComponent>();
 		rc2.Color = { 0.2f, 0.4f, 0.8f, 1.0f };
+
+		class CameraController : public ScriptableEntity
+		{
+		public:
+			void OnUpdate(Timestep ts) override
+			{
+				auto& pos = GetComponent<TransformComponent>().Translation;
+
+				if (Input::IsPressed(Mouse::Right))
+				{
+					if (Input::IsPressed(Key::W))
+						pos.y += m_Speed * ts;
+					if (Input::IsPressed(Key::S))
+						pos.y -= m_Speed * ts;
+					if (Input::IsPressed(Key::D))
+						pos.x += m_Speed * ts;
+					if (Input::IsPressed(Key::A))
+						pos.x -= m_Speed * ts;
+				}
+			}
+		private:
+			float m_Speed = 2.0f;
+		};
+
+		camera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
 	}
 
 

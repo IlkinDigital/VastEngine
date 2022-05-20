@@ -60,8 +60,8 @@ namespace Vast {
 				ImGui::TreePop();
 			}
 
-			//if (removeComponent)
-				// TODO: Remove component
+			if (removeComponent)
+				entity.RemoveComponent<Ty>();
 		}
 	}
 
