@@ -35,6 +35,8 @@ namespace Vast {
 		// Scene
 		Ref<Scene> m_ActiveScene;
 
+		EditorCamera m_EditorCamera;
+
 		Ref<Framebuffer> m_Framebuffer;
 		Ref<Texture2D> m_PatrickTexture;
 	

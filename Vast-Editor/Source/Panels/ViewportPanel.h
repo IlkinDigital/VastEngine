@@ -17,7 +17,7 @@ namespace Vast {
 
 		void SetGizmoType(int type) { m_GizmoType = type; }
 		
-		void OnGUIRender(RendererID colorAttachment, Entity selectedEntity, Entity camera);
+		void OnGUIRender(RendererID colorAttachment, Entity selectedEntity, const Mat4& cameraView, const Mat4& cameraProjection);
 
 	private:
 		uint32 m_Width = 0;

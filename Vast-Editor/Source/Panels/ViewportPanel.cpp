@@ -5,7 +5,7 @@
 
 namespace Vast {
 
-	void ViewportPanel::OnGUIRender(RendererID colorAttachment, Entity selectedEntity, Entity camera)
+	void ViewportPanel::OnGUIRender(RendererID colorAttachment, Entity selectedEntity, const Mat4& cameraView, const Mat4& cameraProjection)
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
 		ImGui::Begin("Viewport");
@@ -32,11 +32,6 @@ namespace Vast {
 			ImGuizmo::SetOrthographic(false);
 			ImGuizmo::SetDrawlist();
 			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, ImGui::GetWindowWidth(), ImGui::GetWindowHeight());
-
-			// Camera
-			const auto& cc = camera.GetComponent<CameraComponent>();
-			const Mat4& cameraProjection = cc.Camera.GetProjection();
-			Mat4 cameraView = Math::Inverse(camera.GetComponent<TransformComponent>().Transform());
 		
 			auto& tc = selectedEntity.GetComponent<TransformComponent>();
 			Mat4 transform = tc.Transform();

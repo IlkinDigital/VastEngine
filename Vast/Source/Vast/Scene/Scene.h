@@ -3,6 +3,7 @@
 #include "Clock/Timestep.h"
 #include "SceneCore.h"
 
+#include "Camera/EditorCamera.h"
 
 namespace Vast {
 	
@@ -16,7 +17,8 @@ namespace Vast {
 		Entity CreateEntity(const String& label);
 		void DestroyEntity(const Entity& entity);
 
-		void OnUpdate(Timestep ts);
+		void OnScenePlay(Timestep ts);
+		void OnUpdate(Timestep ts, const EditorCamera& camera);
 		void OnViewportResize(uint32 width, uint32 height);
 
 		Entity GetPrimaryCamera();

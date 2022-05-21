@@ -5,6 +5,7 @@
 #include <imgui.h>
 
 #include "EditorLayout/Layout.h"
+#include "EditorCore/EditorControl.h"
 
 namespace Vast {
 
@@ -40,24 +41,31 @@ namespace Vast {
 		class CameraController : public ScriptableEntity
 		{
 		public:
+			void OnCreate() override
+			{
+			}
+
 			void OnUpdate(Timestep ts) override
 			{
+				auto& transform = GetComponent<TransformComponent>();
 				auto& pos = GetComponent<TransformComponent>().Translation;
+
+				Vector2 mouse = Input::GetMousePosition();
+				Vector2 delta = (mouse - m_InitialPos) * 0.3f;
+				m_InitialPos = mouse;
 
 				if (Input::IsPressed(Mouse::Right))
 				{
-					if (Input::IsPressed(Key::W))
-						pos.y += m_Speed * ts;
-					if (Input::IsPressed(Key::S))
-						pos.y -= m_Speed * ts;
-					if (Input::IsPressed(Key::D))
-						pos.x += m_Speed * ts;
-					if (Input::IsPressed(Key::A))
-						pos.x -= m_Speed * ts;
+					float yaw = transform.Rotation.y;
+					float pitch = transform.Rotation.x;
+					yaw -= m_RotSpeed * delta.x * ts;
+					pitch -= m_RotSpeed * delta.y * ts;
+					transform.Rotation = { pitch, yaw, 0.0f };
 				}
 			}
 		private:
-			float m_Speed = 5.0f;
+			Vector2 m_InitialPos;
+			float m_RotSpeed = 5.0f;
 		};
 
 		camera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
@@ -80,13 +88,16 @@ namespace Vast {
 
 			float aspectViewport = (float)m_Viewport.GetWidth() / (float)m_Viewport.GetHeight();
 			m_ActiveScene->OnViewportResize(m_Viewport.GetWidth(), m_Viewport.GetHeight());
+			m_EditorCamera.SetViewportSize(m_Viewport.GetWidth(), m_Viewport.GetHeight());
 		}
 
 		m_Framebuffer->Bind();
 
 		RendererCommand::Clear();
 
-		m_ActiveScene->OnUpdate(ts);
+		m_EditorCamera.OnUpdate(ts);
+
+		m_ActiveScene->OnUpdate(ts, m_EditorCamera);
 
 		m_Framebuffer->Unbind();
 	}
@@ -95,13 +106,28 @@ namespace Vast {
 	{
 		EditorLayout::BeginDockspace();
 
+
+		// Editor Camera
+		ImGui::Begin("Editor Camera");
+
+		Vector3 forward = m_EditorCamera.GetForwardDirection();
+		Vector3 right = m_EditorCamera.GetRightDirection();
+
+		EditorControl::DrawVector3("Translation", m_EditorCamera.GetPosition());
+		EditorControl::DrawVector3("Forward", forward);
+		EditorControl::DrawVector3("Right", right);
+
+		ImGui::End();
+
+
 		ImGui::Begin("Settings");
 		
 		ImGui::Text("FPS: %.3f", m_FPS);
 		
 		ImGui::End();
 
-		m_Viewport.OnGUIRender(m_Framebuffer->GetColorAttachment(), m_Lineup.GetSelected(), m_ActiveScene->GetPrimaryCamera());
+		m_Viewport.OnGUIRender(m_Framebuffer->GetColorAttachment(), m_Lineup.GetSelected(),
+			m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetProjection());
 
 		m_Lineup.OnGUIRender();
 		m_Properties.OnGUIRender(m_Lineup.GetSelected());

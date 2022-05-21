@@ -88,6 +88,13 @@ namespace Vast {
 		s_Data.QuadShader->UploadMat4("u_ViewProjection", viewProj);
 	}
 
+	void Renderer2D::BeginScene(const EditorCamera& camera)
+	{
+		s_Data.QuadShader->Bind();
+
+		s_Data.QuadShader->UploadMat4("u_ViewProjection", camera.GetViewProjection());
+	}
+
 	void Renderer2D::EndScene()
 	{
 	}

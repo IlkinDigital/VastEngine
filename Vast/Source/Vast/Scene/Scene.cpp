@@ -24,7 +24,7 @@ namespace Vast {
 		m_Registry.destroy(entity.GetID());
 	}
 
-	void Scene::OnUpdate(Timestep ts)
+	void Scene::OnScenePlay(Timestep ts)
 	{
 		/**
 		* Call scripts
@@ -53,7 +53,7 @@ namespace Vast {
 		for (auto entity : group)
 		{
 			auto [transform, camera] = group.get<TransformComponent, CameraComponent>(entity);
-			
+
 			if (camera.Primary)
 			{
 				mainCamera = &camera.Camera;
@@ -61,6 +61,7 @@ namespace Vast {
 				break;
 			}
 		}
+
 
 		if (mainCamera)
 		{
@@ -79,6 +80,24 @@ namespace Vast {
 
 			Renderer2D::EndScene();
 		}
+	}
+
+	void Scene::OnUpdate(Timestep ts, const EditorCamera& camera)
+	{
+		Renderer2D::BeginScene(camera);
+
+		auto group = m_Registry.view<TransformComponent, RenderComponent>();
+		for (auto entity : group)
+		{
+			auto [transform, renderable] = group.get<TransformComponent, RenderComponent>(entity);
+
+			if (renderable.Category == RenderCategory::Color)
+				Renderer2D::DrawQuad(transform.Transform(), renderable.Color);
+			else
+				Renderer2D::DrawQuad(transform.Transform(), renderable.Texture);
+		}
+
+		Renderer2D::EndScene();
 	}
 
 	void Scene::OnViewportResize(uint32 width, uint32 height)
