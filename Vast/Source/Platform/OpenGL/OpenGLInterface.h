@@ -11,10 +11,10 @@ namespace Vast {
 
 		void Init() override;
 
-		void SetViewport(float x, float y, float width, float height) override;
+		void SetViewport(int32 x, int32 y, uint32 width, uint32 height) override;
 		
 		void SetClearColor(const Vector4& color) override;
-		const Vector4& GetClearColor() const override;
+		Vector4 GetClearColor() const override;
 		
 		void Clear() const override;
 		void DrawIndexed(uint32 indexCount) const override;

@@ -26,6 +26,7 @@ Include["imgui"] = "Vast/Vendor/imgui"
 Include["glm"] = "Vast/Vendor/glm"
 Include["stb"] = "Vast/Vendor/stb"
 Include["entt"] = "Vast/Vendor/entt"
+Include["ImGuizmo"] = "Vast/Vendor/ImGuizmo"
 
 project "Vast"
     location "Vast"
@@ -48,7 +49,9 @@ project "Vast"
         "%{prj.name}/Vendor/glm/glm/**.hpp",       
         "%{prj.name}/Vendor/stb/**.h",
         "%{prj.name}/Vendor/stb/**.cpp",
-        "%{prj.name}/Vendor/entt/**.hpp"
+        "%{prj.name}/Vendor/entt/**.hpp",
+        "%{prj.name}/Vendor/ImGuizmo/ImGuizmo.h",
+        "%{prj.name}/Vendor/ImGuizmo/ImGuizmo.cpp"
     }
 
     defines
@@ -67,7 +70,8 @@ project "Vast"
         "%{Include.imgui}",
         "%{Include.glm}",
         "%{Include.stb}",
-        "%{Include.entt}"
+        "%{Include.entt}",
+        "%{Include.ImGuizmo}"
     }
 
     links
@@ -78,6 +82,9 @@ project "Vast"
         "ImGui",
         "opengl32.lib"
     }
+
+    filter "files:Vast/Vendor/ImGuizmo/**.cpp"
+    flags { "NoPCH" }
 
     filter "system:windows"
         systemversion "latest"
@@ -129,7 +136,8 @@ project "Vast-Editor"
         "%{Include.glad}",
         "%{Include.imgui}",
         "%{Include.glm}",
-        "%{Include.entt}"
+        "%{Include.entt}",
+        "%{Include.ImGuizmo}"
     }
 
     links

@@ -91,7 +91,7 @@ namespace Vast {
 
 	bool Application::OnWindowResize(WindowResizeEvent& event)
 	{
-		RendererCommand::SetViewport(0.0f, 0.0f, event.GetWidth(), event.GetHeight());
+		RendererCommand::SetViewport(0, 0, event.GetWidth(), event.GetHeight());
 		return false;
 	}
 

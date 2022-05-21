@@ -20,4 +20,6 @@ namespace Vast::Math {
 
 	Mat4 OrthographicMatrix(float left, float right, float bottom, float top, float zNear, float zFar);
 	Mat4 Perspective(float fov, float aspectRatio, float zNear, float zFar);
+
+	bool DecomposeTransform(const Mat4& transform, Vector3& outTranslation, Vector3& outRotation, Vector3& outScale);
 }

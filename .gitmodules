@@ -10,3 +10,6 @@
 [submodule "Vast/Vendor/glm"]
 	path = Vast/Vendor/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "Vast/Vendor/ImGuizmo"]
+	path = Vast/Vendor/ImGuizmo
+	url = https://github.com/LesterDigital/ImGuizmo.git

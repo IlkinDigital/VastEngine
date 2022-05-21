@@ -101,7 +101,7 @@ namespace Vast {
 		
 		ImGui::End();
 
-		m_Viewport.OnGUIRender(m_Framebuffer->GetColorAttachment());
+		m_Viewport.OnGUIRender(m_Framebuffer->GetColorAttachment(), m_Lineup.GetSelected(), m_ActiveScene->GetPrimaryCamera());
 
 		m_Lineup.OnGUIRender();
 		m_Properties.OnGUIRender(m_Lineup.GetSelected());
@@ -115,6 +115,29 @@ namespace Vast {
 
 	void EditorLayer::OnEvent(Event& event)
 	{
+		EventDispatcher dispatcher(event);
+		dispatcher.Dispatch<KeyPressedEvent>(VAST_BIND_EVENT(OnKeyPressed));
+	}
+
+	bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
+	{
+		switch (event.GetKeyCode())
+		{
+		case Key::Q:
+			m_Viewport.SetGizmoType(-1);
+			break;
+		case Key::W:
+			m_Viewport.SetGizmoType(0);
+			break;
+		case Key::E:
+			m_Viewport.SetGizmoType(2);
+			break;
+		case Key::R:
+			m_Viewport.SetGizmoType(1);
+			break;
+		}
+
+		return false;
 	}
 
 }

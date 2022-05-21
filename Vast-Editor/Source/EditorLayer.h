@@ -25,6 +25,7 @@ namespace Vast {
 		void OnEvent(Event& event) override;
 	private:
 		bool OnWindowResize(WindowResizeEvent& event);
+		bool OnKeyPressed(KeyPressedEvent& event);
 	private:
 		// GUI
 		ViewportPanel m_Viewport;

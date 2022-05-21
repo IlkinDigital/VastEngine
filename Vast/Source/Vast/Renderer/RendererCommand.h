@@ -12,7 +12,7 @@ namespace Vast {
 			s_Interface->Init();
 		}
 
-		static void SetViewport(float x, float y, float width, float height)
+		static void SetViewport(int32 x, int32 y, uint32 width, uint32 height)
 		{
 			s_Interface->SetViewport(x, y, width, height);
 		}

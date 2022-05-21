@@ -19,6 +19,8 @@ namespace Vast {
 		void OnUpdate(Timestep ts);
 		void OnViewportResize(uint32 width, uint32 height);
 
+		Entity GetPrimaryCamera();
+
 		EntityRegistry& GetRegistry() { return m_Registry; }
 	private:
 		EntityRegistry m_Registry;

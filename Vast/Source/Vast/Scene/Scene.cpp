@@ -91,4 +91,17 @@ namespace Vast {
 		}
 	}
 
+	Entity Scene::GetPrimaryCamera()
+	{
+		auto group = m_Registry.view<CameraComponent>();
+		for (auto entity : group)
+		{
+			const auto& camera = group.get<CameraComponent>(entity);
+			if (camera.Primary)
+				return Entity(entity, this);
+		}
+		
+		return {};
+	}
+
 }

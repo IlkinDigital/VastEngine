@@ -19,9 +19,9 @@ namespace Vast {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
-	void OpenGLInterface::SetViewport(float x, float y, float width, float height)
+	void OpenGLInterface::SetViewport(int32 x, int32 y, uint32 width, uint32 height)
 	{
-		glViewport(x, y, width, height);
+		glViewport((GLint)x, (GLint)y, (GLsizei)width, (GLsizei)height);
 	}
 
 	void OpenGLInterface::SetClearColor(const Vector4& color)
@@ -29,7 +29,7 @@ namespace Vast {
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
 
-	const Vector4& OpenGLInterface::GetClearColor() const
+	Vector4 OpenGLInterface::GetClearColor() const
 	{
 		GLfloat color[4]{};
 		glGetFloatv(GL_COLOR_CLEAR_VALUE, color);

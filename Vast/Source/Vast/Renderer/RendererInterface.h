@@ -10,10 +10,10 @@ namespace Vast {
 	public:
 		virtual void Init() = 0;
 
-		virtual void SetViewport(float x, float y, float width, float height) = 0;
+		virtual void SetViewport(int32 x, int32 y, uint32 width, uint32 height) = 0;
 
 		virtual void SetClearColor(const Vector4& color) = 0;
-		virtual const Vector4& GetClearColor() const = 0;
+		virtual Vector4 GetClearColor() const = 0;
 
 		virtual void Clear() const = 0;
 		virtual void DrawIndexed(uint32 indexCount) const = 0;
