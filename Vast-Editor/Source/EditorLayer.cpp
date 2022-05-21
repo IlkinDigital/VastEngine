@@ -126,8 +126,9 @@ namespace Vast {
 		
 		ImGui::End();
 
-		m_Viewport.OnGUIRender(m_Framebuffer->GetColorAttachment(), m_Lineup.GetSelected(),
-			m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetProjection());
+		m_Gizmo.UpdateData(m_Lineup.GetSelected(), m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetProjection());
+
+		m_Viewport.OnGUIRender(m_Framebuffer->GetColorAttachment(), m_Gizmo);
 
 		m_Lineup.OnGUIRender();
 		m_Properties.OnGUIRender(m_Lineup.GetSelected());
@@ -147,22 +148,24 @@ namespace Vast {
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
 	{
-		switch (event.GetKeyCode())
+		if (!Input::IsPressed(Mouse::Right))
 		{
-		case Key::Q:
-			m_Viewport.SetGizmoType(-1);
-			break;
-		case Key::W:
-			m_Viewport.SetGizmoType(0);
-			break;
-		case Key::E:
-			m_Viewport.SetGizmoType(2);
-			break;
-		case Key::R:
-			m_Viewport.SetGizmoType(1);
-			break;
+			switch (event.GetKeyCode())
+			{
+			case Key::Q:
+				m_Gizmo.SetGizmoType(Gizmo3D::GizmoType::None);
+				break;
+			case Key::W:
+				m_Gizmo.SetGizmoType(Gizmo3D::GizmoType::Translation);
+				break;
+			case Key::E:
+				m_Gizmo.SetGizmoType(Gizmo3D::GizmoType::Rotation);
+				break;
+			case Key::R:
+				m_Gizmo.SetGizmoType(Gizmo3D::GizmoType::Scale);
+				break;
+			}
 		}
-
 		return false;
 	}
 

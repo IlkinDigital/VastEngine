@@ -2,6 +2,8 @@
 
 #include "Vast.h"
 
+#include "Gizmo/Gizmo3D.h"
+
 namespace Vast {
 	
 	class ViewportPanel
@@ -14,10 +16,8 @@ namespace Vast {
 
 		bool IsFocused() const { return m_Focused; }
 		bool IsHovered() const { return m_Hovered; }
-
-		void SetGizmoType(int type) { m_GizmoType = type; }
 		
-		void OnGUIRender(RendererID colorAttachment, Entity selectedEntity, const Mat4& cameraView, const Mat4& cameraProjection);
+		void OnGUIRender(RendererID colorAttachment, Gizmo3D& gizmo);
 
 	private:
 		uint32 m_Width = 0;
@@ -25,8 +25,6 @@ namespace Vast {
 
 		bool m_Focused = false;
 		bool m_Hovered = false;
-
-		int m_GizmoType = -1;
 	};
 
 }

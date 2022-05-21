@@ -31,6 +31,7 @@ namespace Vast {
 		ViewportPanel m_Viewport;
 		LineupPanel m_Lineup;
 		PropertiesPanel m_Properties;
+		Gizmo3D m_Gizmo;
 
 		// Scene
 		Ref<Scene> m_ActiveScene;

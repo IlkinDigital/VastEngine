@@ -10,7 +10,7 @@ namespace Vast {
 	struct RenderComponent
 	{
 		RenderCategory Category;
-		Vector4 Color;
+		Vector4 Color { 0.0f, 0.0f, 0.0f, 1.0f };
 		Ref<Texture2D> Texture;
 
 		RenderComponent() = default;
