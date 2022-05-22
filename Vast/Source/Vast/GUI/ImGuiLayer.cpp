@@ -3,6 +3,8 @@
 
 #include "Vast/ApplicationCore/Application.h"
 
+#include "FontManager.h"
+
 #include <imgui.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <backends/imgui_impl_glfw.h>
@@ -26,6 +28,12 @@ namespace Vast {
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;         // Enable Multi-Viewport / Platform Windows
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
+
+		FontManager::UploadFont("Assets/Fonts/Rubik/Rubik-Regular.ttf", FontManager::WeightType::Regular);
+		FontManager::UploadFont("Assets/Fonts/Rubik/Rubik-Bold.ttf", FontManager::WeightType::Bold);
+		FontManager::UploadFont("Assets/Fonts/Rubik/Rubik-Light.ttf", FontManager::WeightType::Light);
+
+		FontManager::SetDefault(FontManager::WeightType::Regular);
 
 		// Setup Dear ImGui style
 		ImGui::StyleColorsDark();

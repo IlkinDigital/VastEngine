@@ -31,11 +31,9 @@ namespace Vast {
 			auto& tc = m_SelectedEntity.GetComponent<TransformComponent>();
 			Mat4 transform = tc.Transform();
 
-			Vector3 snapValues = { 0.01f, 0.01f, 0.01f };
-
 			ImGuizmo::Manipulate(Math::ValuePointer(*m_CameraView), Math::ValuePointer(*m_CameraProjection),
 				(ImGuizmo::OPERATION)ConvertGizmoType(m_Type), ImGuizmo::LOCAL, Math::MValuePointer(transform),
-				nullptr, Math::MValuePointer(snapValues));
+				nullptr, Math::MValuePointer(m_SnapValues));
 
 			if (ImGuizmo::IsUsing())
 			{

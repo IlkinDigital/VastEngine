@@ -117,6 +117,14 @@ namespace Vast {
 		EditorControl::DrawVector3("Forward", forward);
 		EditorControl::DrawVector3("Right", right);
 
+		float snapRot = m_Gizmo.GetSnapValues().y;
+		if (ImGui::DragFloat("Rotation Snap", &snapRot))
+			m_Gizmo.SetRotationSnap(snapRot);
+
+		float snapTS = m_Gizmo.GetSnapValues().x;
+		if (ImGui::DragFloat("Translation/Scale Snap", &snapTS))
+			m_Gizmo.SetTrScSnap(snapTS);
+
 		ImGui::End();
 
 

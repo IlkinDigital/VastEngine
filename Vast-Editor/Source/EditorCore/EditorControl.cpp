@@ -9,6 +9,8 @@ namespace Vast {
 	{
 		ImGui::PushID(label.c_str());
 
+		auto bold = FontManager::GetFont(FontManager::WeightType::Bold);
+
 		ImGui::Columns(2);
 		ImGui::SetColumnWidth(0, columnWidth);
 		ImGui::Text(label.c_str());
@@ -26,8 +28,10 @@ namespace Vast {
 
 		ImGui::BeginGroup();
 
+		ImGui::PushFont(bold);
 		if (ImGui::Button("X", buttonSize))
 			values.x = defaultValue;
+		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 
 		ImGui::SameLine();
@@ -39,8 +43,10 @@ namespace Vast {
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.3f, 0.8f, 0.35f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.2f, 0.7f, 0.25f, 1.0f });
 
+		ImGui::PushFont(bold);
 		if (ImGui::Button("Y", buttonSize))
 			values.y = defaultValue;
+		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 
 		ImGui::SameLine();
@@ -52,8 +58,10 @@ namespace Vast {
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0.2f, 0.35f, 0.9f, 1.0f });
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0.1f, 0.25f, 0.8f, 1.0f });
 
+		ImGui::PushFont(bold);
 		if (ImGui::Button("Z", buttonSize))
 			values.z = defaultValue;
+		ImGui::PopFont();
 		ImGui::PopStyleColor(3);
 
 		ImGui::SameLine();

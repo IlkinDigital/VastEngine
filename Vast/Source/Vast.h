@@ -29,6 +29,10 @@
 #include "Renderer/Texture2D.h"
 #include "Renderer/Framebuffer.h"
 // -----------------------------------------
+// 
+// ---- GUI --------------------------------
+#include "GUI/FontManager.h"
+// -----------------------------------------
 
 // ---- Scene ------------------------------
 #include "Scene/SceneCore.h"
