@@ -36,7 +36,9 @@ namespace Vast {
 		FontManager::SetDefault(FontManager::WeightType::Regular);
 
 		// Setup Dear ImGui style
-		ImGui::StyleColorsDark();
+		//ImGui::StyleColorsDark();
+
+		SetVastThemeColors();
 
 		// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -100,6 +102,39 @@ namespace Vast {
 			ImGui::RenderPlatformWindowsDefault();
 			glfwMakeContextCurrent(backup_current_context);
 		}
+	}
+
+	void ImGuiLayer::SetVastThemeColors()
+	{
+		auto& colors = ImGui::GetStyle().Colors;
+		colors[ImGuiCol_WindowBg] = ImVec4{ 40.0f / 255.0f, 40.0f / 255.0f, 42.0f / 255.0f, 1.0f };
+
+		// Headers
+		colors[ImGuiCol_Header] = ImVec4{ 68.0f / 255.0f, 82.0f / 255.0f, 86.0f / 255.0f, 1.0f };
+		colors[ImGuiCol_HeaderHovered] = ImVec4{ 81.0f / 255.0f, 152.0f / 255.0f, 135.0f / 255.0f, 1.0f };
+		colors[ImGuiCol_HeaderActive] = ImVec4{ 38.0f / 255.0f, 38.0f / 255.0f, 39.0f / 255.0f, 1.0f };
+
+		// Buttons
+		colors[ImGuiCol_Button] = ImVec4{ 10.0f / 255.0f, 117.0f / 255.0f, 94.0f / 255.0f, 1.0f };
+		colors[ImGuiCol_ButtonHovered] = ImVec4{ 71.0f / 255.0f, 170.0f / 255.0f, 148.0f / 255.0f, 1.0f };
+		colors[ImGuiCol_ButtonActive] = ImVec4{ 38.0f / 255.0f, 38.0f / 255.0f, 39.0f / 255.0f, 1.0f };
+
+		// Frame BG
+		colors[ImGuiCol_FrameBg] = ImVec4{ 51.0f / 255.0f, 52.0f / 255.0f, 54.0f / 255.0f, 1.0f };
+		colors[ImGuiCol_FrameBgHovered] = ImVec4{ 81.0f / 255.0f, 152.0f / 255.0f, 135.0f / 255.0f, 1.0f };
+		colors[ImGuiCol_FrameBgActive] = ImVec4{ 112.0f / 255.0f, 184.0f / 255.0f, 182.0f / 255.0f, 1.0f };
+
+		// Tabs
+		colors[ImGuiCol_Tab] = ImVec4{ 31.0f / 255.0f, 31.0f / 255.0f, 31.0f / 255.0f, 1.0f };
+		colors[ImGuiCol_TabHovered] = ImVec4{ 80.0f / 255.0f, 159.0f / 255.0f, 123.0f / 255.0f, 1.0f };
+		colors[ImGuiCol_TabActive] = ImVec4{ 15.0f / 255.0f, 101.0f / 255.0f, 86.0f / 255.0f, 1.0f };
+		colors[ImGuiCol_TabUnfocused] = ImVec4{ 64.0f / 255.0f, 76.0f / 255.0f, 72.0f / 255.0f, 1.0f };
+		colors[ImGuiCol_TabUnfocusedActive] = ImVec4{ 80.0f / 255.0f, 87.0f / 255.0f, 86.0f / 255.0f, 1.0f };
+
+		// Title
+		colors[ImGuiCol_TitleBg] = ImVec4{ 40.0f / 255.0f, 40.0f / 255.0f, 42.0f / 255.0f, 1.0f };
+		colors[ImGuiCol_TitleBgActive] = ImVec4{ 40.0f / 255.0f, 40.0f / 255.0f, 42.0f / 255.0f, 1.0f };
+		colors[ImGuiCol_TitleBgCollapsed] = ImVec4{ 80.0f / 255.0f, 135.0f / 255.0f, 124.0f / 255.0f, 1.0f };
 	}
 
 }

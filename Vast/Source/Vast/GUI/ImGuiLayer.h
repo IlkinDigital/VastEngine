@@ -18,6 +18,8 @@ namespace Vast {
 		void Begin();
 		void End();
 
+		void SetVastThemeColors();
+
 		bool BlockEvents = false;
 	};
 

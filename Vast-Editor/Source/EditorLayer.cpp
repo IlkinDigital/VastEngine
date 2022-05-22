@@ -16,6 +16,7 @@ namespace Vast {
 		m_Framebuffer = Framebuffer::Create({ window.GetWidth(), window.GetHeight() });
 
 		m_PatrickTexture = Texture2D::Create("Assets/Textures/PatrickAlpha.png");
+		m_BGTexture = Texture2D::Create("Assets/Textures/magic-cliffs-preview-detail.png");
 
 		m_ActiveScene = CreateRef<Scene>();
 
@@ -24,6 +25,7 @@ namespace Vast {
 		Entity camera = m_ActiveScene->CreateEntity("Omni camera");
 		Entity box1 = m_ActiveScene->CreateEntity("Patrick Star");
 		Entity box2 = m_ActiveScene->CreateEntity("Blue square");
+		Entity bg = m_ActiveScene->CreateEntity("Background");
 
 		auto& cc = camera.AddComponent<CameraComponent>();
 		cc.Camera.SetProjectionType(SceneCamera::ProjectionType::Perspective);
@@ -32,8 +34,12 @@ namespace Vast {
 		tc.Translation.x = 2.0f;
 
 		box1.AddComponent<RenderComponent>(m_PatrickTexture);
-		box1.GetComponent<TransformComponent>().Translation = { 0.5f, 2.0f, 1.0f };
+		box1.GetComponent<TransformComponent>().Translation = { 0.5f, 1.0f, 1.0f };
 		box1.GetComponent<TransformComponent>().Scale = { 1.0f, 1.7f, 1.0f };
+
+		bg.AddComponent<RenderComponent>(m_BGTexture);
+		bg.GetComponent<TransformComponent>().Translation = { 0.0f, 0.0f, 0.6f };
+		bg.GetComponent<TransformComponent>().Scale = { 16.0f, 6.0f, 6.0f };
 
 		auto& rc2 = box2.AddComponent<RenderComponent>();
 		rc2.Color = { 0.2f, 0.4f, 0.8f, 1.0f };
@@ -102,10 +108,55 @@ namespace Vast {
 		m_Framebuffer->Unbind();
 	}
 
+	// For debug color palette purpose only
+	static void DrawColor(const char* label, ImVec4& color)
+	{
+		float colorPtr[4]{};
+
+		colorPtr[0] = color.x;
+		colorPtr[1] = color.y;
+		colorPtr[2] = color.z;
+		colorPtr[3] = color.w;
+
+		if (ImGui::ColorEdit4(label, colorPtr))
+		{
+			color = { colorPtr[0], colorPtr[1], colorPtr[2], colorPtr[3] };
+		}
+	}
+
 	void EditorLayer::OnGUIRender()
 	{
 		EditorLayout::BeginDockspace();
+		
+		// Color palette explorer
+		/*ImGui::Begin("Color palette");
 
+		DrawColor("TitleBg", m_Colors[ImGuiCol_TitleBg]);
+		DrawColor("TitleBgActive", m_Colors[ImGuiCol_TitleBgActive]);
+		DrawColor("TitleBgCollapsed", m_Colors[ImGuiCol_TitleBgCollapsed]);
+
+		DrawColor("WindowBg", m_Colors[ImGuiCol_WindowBg]);
+
+		// Headers
+		DrawColor("Header", m_Colors[ImGuiCol_Header]);
+		DrawColor("HeaderHovered", m_Colors[ImGuiCol_HeaderHovered]);
+		DrawColor("HeaderActive", m_Colors[ImGuiCol_HeaderActive]);
+		// Buttons
+		DrawColor("Button", m_Colors[ImGuiCol_Button]);
+		DrawColor("ButtonHovered", m_Colors[ImGuiCol_ButtonHovered]);
+		DrawColor("HeaderActive", m_Colors[ImGuiCol_ButtonActive]);
+		// Frame BG
+		DrawColor("FrameBg", m_Colors[ImGuiCol_FrameBg]);
+		DrawColor("FrameBgHovered", m_Colors[ImGuiCol_FrameBgHovered]);
+		DrawColor("FrameBgActive", m_Colors[ImGuiCol_FrameBgActive]);
+		// Tabs
+		DrawColor("Tab", m_Colors[ImGuiCol_Tab]);
+		DrawColor("TabHovered", m_Colors[ImGuiCol_TabHovered]);
+		DrawColor("TabActive", m_Colors[ImGuiCol_TabActive]);
+		DrawColor("TabUnfocused", m_Colors[ImGuiCol_TabUnfocused]);
+		DrawColor("TabUnfocusedActive", m_Colors[ImGuiCol_TabUnfocusedActive]);
+
+		ImGui::End();*/
 
 		// Editor Camera
 		ImGui::Begin("Editor Camera");

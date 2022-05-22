@@ -38,8 +38,11 @@ namespace Vast {
 
 		EditorCamera m_EditorCamera;
 
+		ImVec4* m_Colors = ImGui::GetStyle().Colors;
+
 		Ref<Framebuffer> m_Framebuffer;
 		Ref<Texture2D> m_PatrickTexture;
+		Ref<Texture2D> m_BGTexture;
 	
 		float m_FPS = 0.0f;
 		float m_FPSWait = 0.0f;
