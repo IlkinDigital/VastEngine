@@ -16,7 +16,7 @@ namespace Vast {
 		void SetClearColor(const Vector4& color) override;
 		Vector4 GetClearColor() const override;
 		
-		void Clear() const override;
+		void Clear() override;
 		void DrawIndexed(uint32 indexCount) const override;
 	};
 }

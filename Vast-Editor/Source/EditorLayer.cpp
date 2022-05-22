@@ -23,8 +23,8 @@ namespace Vast {
 		m_Lineup.SetContext(m_ActiveScene);
 
 		Entity camera = m_ActiveScene->CreateEntity("Omni camera");
-		Entity box1 = m_ActiveScene->CreateEntity("Patrick Star");
 		Entity box2 = m_ActiveScene->CreateEntity("Blue square");
+		Entity box1 = m_ActiveScene->CreateEntity("Patrick Star");
 		Entity bg = m_ActiveScene->CreateEntity("Background");
 
 		auto& cc = camera.AddComponent<CameraComponent>();
@@ -37,12 +37,14 @@ namespace Vast {
 		box1.GetComponent<TransformComponent>().Translation = { 0.5f, 1.0f, 1.0f };
 		box1.GetComponent<TransformComponent>().Scale = { 1.0f, 1.7f, 1.0f };
 
+
 		bg.AddComponent<RenderComponent>(m_BGTexture);
 		bg.GetComponent<TransformComponent>().Translation = { 0.0f, 0.0f, 0.6f };
 		bg.GetComponent<TransformComponent>().Scale = { 16.0f, 6.0f, 6.0f };
 
 		auto& rc2 = box2.AddComponent<RenderComponent>();
-		rc2.Color = { 0.2f, 0.4f, 0.8f, 1.0f };
+		rc2.Color = { 0.2f, 0.4f, 0.8f, 0.5f };
+		box2.GetComponent<TransformComponent>().Translation = { 0.0f, 0.0f, 2.0f };
 
 		class CameraController : public ScriptableEntity
 		{
@@ -87,6 +89,7 @@ namespace Vast {
 			m_FPSWait = 0.0f;
 		}
 
+
 		auto spec = m_Framebuffer->GetSpecification();
 		if (m_Viewport.GetWidth() > 0 && m_Viewport.GetHeight() > 0 && (spec.Width != m_Viewport.GetWidth() || spec.Height != m_Viewport.GetHeight()))
 		{
@@ -99,6 +102,7 @@ namespace Vast {
 
 		m_Framebuffer->Bind();
 
+		RendererCommand::SetClearColor({ 0.15f, 0.15f, 0.15f, 1.0f });
 		RendererCommand::Clear();
 
 		m_EditorCamera.OnUpdate(ts);
@@ -109,7 +113,7 @@ namespace Vast {
 	}
 
 	// For debug color palette purpose only
-	static void DrawColor(const char* label, ImVec4& color)
+	/*static void DrawColor(const char* label, ImVec4& color)
 	{
 		float colorPtr[4]{};
 
@@ -122,7 +126,7 @@ namespace Vast {
 		{
 			color = { colorPtr[0], colorPtr[1], colorPtr[2], colorPtr[3] };
 		}
-	}
+	}*/
 
 	void EditorLayer::OnGUIRender()
 	{
@@ -178,7 +182,6 @@ namespace Vast {
 
 		ImGui::End();
 
-
 		ImGui::Begin("Settings");
 		
 		ImGui::Text("FPS: %.3f", m_FPS);
@@ -191,6 +194,10 @@ namespace Vast {
 
 		m_Lineup.OnGUIRender();
 		m_Properties.OnGUIRender(m_Lineup.GetSelected());
+
+		m_ContentBrowser.OnGUIRender();
+
+		ImGui::ShowDemoWindow((bool*)1);
 
 		EditorLayout::EndDockspace();
 	}

@@ -31,8 +31,6 @@ namespace Vast {
 		// Init renderer
 		RendererCommand::Init();
 		Renderer2D::Init();
-		
-		RendererCommand::SetClearColor({ 0.15f, 0.15f, 0.15f, 1.0f });
 	}
 
 	Application::~Application()

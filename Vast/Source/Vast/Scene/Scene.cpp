@@ -72,10 +72,10 @@ namespace Vast {
 			{
 				auto [transform, renderable] = group.get<TransformComponent, RenderComponent>(entity);
 
-				if (renderable.Category == RenderCategory::Color)
-					Renderer2D::DrawQuad(transform.Transform(), renderable.Color);
-				else
+				if (renderable.Texture)
 					Renderer2D::DrawQuad(transform.Transform(), renderable.Texture);
+				else
+					Renderer2D::DrawQuad(transform.Transform(), renderable.Color);
 			}
 
 			Renderer2D::EndScene();
@@ -91,10 +91,10 @@ namespace Vast {
 		{
 			auto [transform, renderable] = group.get<TransformComponent, RenderComponent>(entity);
 
-			if (renderable.Category == RenderCategory::Color)
-				Renderer2D::DrawQuad(transform.Transform(), renderable.Color);
-			else
+			if (renderable.Texture)
 				Renderer2D::DrawQuad(transform.Transform(), renderable.Texture);
+			else
+				Renderer2D::DrawQuad(transform.Transform(), renderable.Color);
 		}
 
 		Renderer2D::EndScene();

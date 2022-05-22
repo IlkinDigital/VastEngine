@@ -5,6 +5,7 @@
 #include "Panels/ViewportPanel.h"
 #include "Panels/LineupPanel.h"
 #include "Panels/PropertiesPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 
 namespace Vast {
 
@@ -27,10 +28,12 @@ namespace Vast {
 		bool OnWindowResize(WindowResizeEvent& event);
 		bool OnKeyPressed(KeyPressedEvent& event);
 	private:
-		// GUI
+		// Panels
 		ViewportPanel m_Viewport;
 		LineupPanel m_Lineup;
 		PropertiesPanel m_Properties;
+		ContentBrowserPanel m_ContentBrowser;
+
 		Gizmo3D m_Gizmo;
 
 		// Scene

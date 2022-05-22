@@ -5,20 +5,17 @@
 
 namespace Vast {
 
-	enum class RenderCategory { Color, Texture };
-
 	struct RenderComponent
 	{
-		RenderCategory Category;
 		Vector4 Color { 0.0f, 0.0f, 0.0f, 1.0f };
 		Ref<Texture2D> Texture;
 
 		RenderComponent() = default;
 		RenderComponent(const RenderComponent&) = default;
 		RenderComponent(const Vector4& color)
-			: Color(color), Category(RenderCategory::Color) {}
+			: Color(color) {}
 		RenderComponent(const Ref<Texture2D>& texture)
-			: Texture(texture), Category(RenderCategory::Texture) {}
+			: Texture(texture) {}
 	};
 
 }

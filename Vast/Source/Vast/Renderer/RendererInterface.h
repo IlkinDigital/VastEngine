@@ -15,7 +15,7 @@ namespace Vast {
 		virtual void SetClearColor(const Vector4& color) = 0;
 		virtual Vector4 GetClearColor() const = 0;
 
-		virtual void Clear() const = 0;
+		virtual void Clear() = 0;
 		virtual void DrawIndexed(uint32 indexCount) const = 0;
 
 		static RendererAPI GetRendererAPI();

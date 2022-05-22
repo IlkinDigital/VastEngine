@@ -16,6 +16,8 @@ namespace Vast {
 		uint32 GetWidth() const override { return m_Width; }
 		uint32 GetHeight() const override { return m_Height; }
 
+		RendererID GetRendererID() const override { return m_RendererID; }
+
 		void SetData(void* data, uint32 size) override;
 		void Bind(uint32 slot = 0) const override;
 	private:

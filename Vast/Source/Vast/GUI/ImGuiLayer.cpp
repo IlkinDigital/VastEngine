@@ -66,6 +66,7 @@ namespace Vast {
 
 	void ImGuiLayer::OnGUIRender()
 	{
+
 	}
 
 	void ImGuiLayer::OnEvent(Event& event)

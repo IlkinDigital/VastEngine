@@ -63,6 +63,10 @@ namespace Vast {
 
 		EditorControl::DrawComponent<RenderComponent>("Render Component", entity, [](RenderComponent& component)
 			{
+				/**
+				* Color Picker
+				*/
+
 				auto& color = component.Color;
 
 				float buffer[4]
@@ -71,6 +75,31 @@ namespace Vast {
 				};
 				if (ImGui::ColorEdit4("Color", buffer))
 					color = { buffer[0], buffer[1], buffer[2], buffer[3] };
+
+				/**
+				* Texture
+				*/
+
+				if (component.Texture)
+				{
+					float height = component.Texture->GetHeight();
+					float width = component.Texture->GetWidth();
+					float tot = height + width;
+					float thumbnailSize = 256.0f;
+					ImGui::ImageButton((ImTextureID)component.Texture->GetRendererID(),
+						{ (width / tot) * thumbnailSize, (height / tot) * thumbnailSize }, { 0, 1 }, { 1, 0 });
+				}
+				else
+					ImGui::Button("Texture");
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_TEXTURE"))
+					{
+						String path = (const char*)payload->Data;
+						component.Texture = Texture2D::Create(path);
+					}
+					ImGui::EndDragDropTarget();
+				}
 			});
 
 		EditorControl::DrawComponent<CameraComponent>("Camera", entity, [](CameraComponent& component)
