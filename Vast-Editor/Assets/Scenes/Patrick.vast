@@ -1,0 +1,12 @@
+Scene: Untitled
+Entities:
+  - Entity: 687348678967896
+    TagComponent:
+      Tag: Hell
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RenderComponent:
+      Color: [0.568627477, 0.505882382, 1, 1]
+      Texture: Assets\Textures\PatrickAlpha.png

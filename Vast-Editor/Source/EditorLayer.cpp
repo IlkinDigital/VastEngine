@@ -134,8 +134,26 @@ namespace Vast {
 	void EditorLayer::OnGUIRender()
 	{
 		EditorLayout::BeginDockspace();
+
+		// Menu Bar
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("New", "Ctrl + N"))
+					NewScene();
+				if (ImGui::MenuItem("Open", "Ctrl + O"))
+					OpenScene();
+				if (ImGui::MenuItem("Save As", "Ctrl + Alt + S"))
+					SaveScene();
+
+				ImGui::EndMenu();
+			}
+
+			ImGui::EndMenuBar();
+		}
 		
-		// Color palette explorer
+		// Editor theme explorer
 		/*ImGui::Begin("Color palette");
 
 		DrawColor("TitleBg", m_Colors[ImGuiCol_TitleBg]);
@@ -167,23 +185,25 @@ namespace Vast {
 
 		// Editor Camera
 		ImGui::Begin("Editor Camera");
+		{ 
 
-		Vector3 forward = m_EditorCamera.GetForwardDirection();
-		Vector3 right = m_EditorCamera.GetRightDirection();
+			Vector3 forward = m_EditorCamera.GetForwardDirection();
+			Vector3 right = m_EditorCamera.GetRightDirection();
 
-		EditorControl::DrawVector3("Translation", m_EditorCamera.GetPosition());
-		EditorControl::DrawVector3("Forward", forward);
-		EditorControl::DrawVector3("Right", right);
+			EditorControl::DrawVector3("Translation", m_EditorCamera.GetPosition());
+			EditorControl::DrawVector3("Forward", forward);
+			EditorControl::DrawVector3("Right", right);
 
-		float snapRot = m_Gizmo.GetSnapValues().y;
-		if (ImGui::DragFloat("Rotation Snap", &snapRot))
-			m_Gizmo.SetRotationSnap(snapRot);
+			float snapRot = m_Gizmo.GetSnapValues().y;
+			if (ImGui::DragFloat("Rotation Snap", &snapRot))
+				m_Gizmo.SetRotationSnap(snapRot);
 
-		float snapTS = m_Gizmo.GetSnapValues().x;
-		if (ImGui::DragFloat("Translation/Scale Snap", &snapTS))
-			m_Gizmo.SetTrScSnap(snapTS);
+			float snapTS = m_Gizmo.GetSnapValues().x;
+			if (ImGui::DragFloat("Translation/Scale Snap", &snapTS))
+				m_Gizmo.SetTrScSnap(snapTS);
 
-		ImGui::End();
+			ImGui::End();
+		}
 
 		ImGui::Begin("Settings");
 		
@@ -207,8 +227,7 @@ namespace Vast {
 
 	void EditorLayer::OnDetach()
 	{
-		SceneSerializer serializer(m_ActiveScene);
-		serializer.Serialize("Assets/Scenes/TestScene.vast");
+
 	}
 
 	void EditorLayer::OnEvent(Event& event)
@@ -217,26 +236,77 @@ namespace Vast {
 		dispatcher.Dispatch<KeyPressedEvent>(VAST_BIND_EVENT(OnKeyPressed));
 	}
 
+	void EditorLayer::NewScene()
+	{
+		m_ActiveScene = CreateRef<Scene>();
+		m_ActiveScene->OnViewportResize(m_Viewport.GetWidth(), m_Viewport.GetHeight());
+		m_Lineup.SetContext(m_ActiveScene);
+	}
+
+	void EditorLayer::OpenScene()
+	{
+		String filepath = FileIO::Dialogs::OpenFile("Vast Scene (*.vast)\0*.vast\0");
+
+		if (!filepath.empty())
+		{
+			m_ActiveScene = CreateRef<Scene>();
+			m_ActiveScene->OnViewportResize(m_Viewport.GetWidth(), m_Viewport.GetHeight());
+			m_Lineup.SetContext(m_ActiveScene);
+
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Deserialize(filepath);
+		}
+	}
+
+	void EditorLayer::SaveScene()
+	{
+		String filepath = FileIO::Dialogs::SaveFile("Vast Scene (*.vast)\0*.vast\0");
+
+		if (!filepath.empty())
+		{
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Serialize(filepath);
+		}
+	}
+
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
 	{
 		if (!Input::IsPressed(Mouse::Right))
 		{
 			switch (event.GetKeyCode())
 			{
-			case Key::Q:
-				m_Gizmo.SetGizmoType(Gizmo3D::GizmoType::None);
-				break;
-			case Key::W:
-				m_Gizmo.SetGizmoType(Gizmo3D::GizmoType::Translation);
-				break;
-			case Key::E:
-				m_Gizmo.SetGizmoType(Gizmo3D::GizmoType::Rotation);
-				break;
-			case Key::R:
-				m_Gizmo.SetGizmoType(Gizmo3D::GizmoType::Scale);
-				break;
+				case Key::Q:
+					m_Gizmo.SetGizmoType(Gizmo3D::GizmoType::None);
+					break;
+				case Key::W:
+					m_Gizmo.SetGizmoType(Gizmo3D::GizmoType::Translation);
+					break;
+				case Key::E:
+					m_Gizmo.SetGizmoType(Gizmo3D::GizmoType::Rotation);
+					break;
+				case Key::R:
+					m_Gizmo.SetGizmoType(Gizmo3D::GizmoType::Scale);
+					break;
 			}
 		}
+
+		switch (event.GetKeyCode())
+		{
+		case Key::N:
+			if (Input::IsPressed(Key::LeftControl))
+				NewScene();
+			break;
+		case Key::O:
+			if (Input::IsPressed(Key::LeftControl))
+				OpenScene();
+			break;
+		case Key::S:
+			if (Input::IsPressed(Key::LeftControl) && Input::IsPressed(Key::LeftAlt))
+				SaveScene();
+			break;
+		}
+
+
 		return false;
 	}
 

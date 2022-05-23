@@ -41,6 +41,10 @@
 #include "Scene/Components.h"
 // -----------------------------------------
 
+// ---- Utils ------------------------------
+#include "Utils/FileIO/FileDialogs.h"
+// -----------------------------------------
+
 // ---- Other ------------------------------
 #include "Camera/OrthographicCamera.h"
 #include "Camera/PerspectiveCamera.h"

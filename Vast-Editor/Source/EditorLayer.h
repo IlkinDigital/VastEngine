@@ -25,6 +25,10 @@ namespace Vast {
 
 		void OnEvent(Event& event) override;
 	private:
+		void NewScene();
+		void OpenScene();
+		void SaveScene();
+
 		bool OnWindowResize(WindowResizeEvent& event);
 		bool OnKeyPressed(KeyPressedEvent& event);
 	private:
