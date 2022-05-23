@@ -56,7 +56,7 @@ namespace Vast {
 		struct Orthograpic
 		{
 			float Size = 10.0f;
-			float NearClip = -1.0f,FarClip = 1.0f;
+			float NearClip = -1.0f, FarClip = 1.0f;
 		};
 	private:
 		ProjectionType m_ProjectionType = ProjectionType::Perspective;

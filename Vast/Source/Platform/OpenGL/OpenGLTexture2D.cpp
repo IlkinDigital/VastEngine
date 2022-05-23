@@ -52,6 +52,8 @@ namespace Vast {
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, bitmap);
 
 		stbi_image_free(bitmap);
+
+		m_Filepath = filepath;
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D()

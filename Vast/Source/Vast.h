@@ -45,4 +45,5 @@
 #include "Camera/OrthographicCamera.h"
 #include "Camera/PerspectiveCamera.h"
 #include "Camera/EditorCamera.h"
+#include "Serialization/SceneSerializer.h"
 // -----------------------------------------

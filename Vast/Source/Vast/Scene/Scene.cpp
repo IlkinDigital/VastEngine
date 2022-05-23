@@ -62,7 +62,6 @@ namespace Vast {
 			}
 		}
 
-
 		if (mainCamera)
 		{
 			Renderer2D::BeginScene(*mainCamera, cameraTransform);

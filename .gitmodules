@@ -13,3 +13,6 @@
 [submodule "Vast/Vendor/ImGuizmo"]
 	path = Vast/Vendor/ImGuizmo
 	url = https://github.com/LesterDigital/ImGuizmo.git
+[submodule "Vast/Vendor/yaml-cpp"]
+	path = Vast/Vendor/yaml-cpp
+	url = https://github.com/LesterDigital/yaml-cpp.git

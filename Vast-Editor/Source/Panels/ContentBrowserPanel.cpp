@@ -47,6 +47,7 @@ namespace Vast {
 			}
 			else
 			{
+				ImGui::PushID(path.c_str());
 				ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 				if (ImGui::BeginDragDropSource())
 				{
@@ -54,6 +55,7 @@ namespace Vast {
 					ImGui::SetDragDropPayload("ASSET_TEXTURE", itemPath, (path.size() + 1) * sizeof(char));
 					ImGui::EndDragDropSource();
 				}
+				ImGui::PopID();
 			}
 			ImGui::PopStyleColor(2);
 

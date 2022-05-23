@@ -22,6 +22,9 @@ namespace Vast {
 
 		m_Lineup.SetContext(m_ActiveScene);
 
+		SceneSerializer serializer(m_ActiveScene);
+		serializer.Deserialize("Assets/Scenes/TestScene.vast");
+#if 0
 		Entity camera = m_ActiveScene->CreateEntity("Omni camera");
 		Entity box2 = m_ActiveScene->CreateEntity("Blue square");
 		Entity box1 = m_ActiveScene->CreateEntity("Patrick Star");
@@ -36,7 +39,6 @@ namespace Vast {
 		box1.AddComponent<RenderComponent>(m_PatrickTexture);
 		box1.GetComponent<TransformComponent>().Translation = { 0.5f, 1.0f, 1.0f };
 		box1.GetComponent<TransformComponent>().Scale = { 1.0f, 1.7f, 1.0f };
-
 
 		bg.AddComponent<RenderComponent>(m_BGTexture);
 		bg.GetComponent<TransformComponent>().Translation = { 0.0f, 0.0f, 0.6f };
@@ -77,6 +79,7 @@ namespace Vast {
 		};
 
 		camera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+#endif
 	}
 
 
@@ -204,6 +207,8 @@ namespace Vast {
 
 	void EditorLayer::OnDetach()
 	{
+		SceneSerializer serializer(m_ActiveScene);
+		serializer.Serialize("Assets/Scenes/TestScene.vast");
 	}
 
 	void EditorLayer::OnEvent(Event& event)

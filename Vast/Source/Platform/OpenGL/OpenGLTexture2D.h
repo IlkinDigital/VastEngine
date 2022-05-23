@@ -17,6 +17,7 @@ namespace Vast {
 		uint32 GetHeight() const override { return m_Height; }
 
 		RendererID GetRendererID() const override { return m_RendererID; }
+		const String& GetFilepath() const override { return m_Filepath; };
 
 		void SetData(void* data, uint32 size) override;
 		void Bind(uint32 slot = 0) const override;
@@ -27,6 +28,8 @@ namespace Vast {
 		RendererID m_RendererID;
 		uint32 m_Width, m_Height;
 		GLenum m_DataFormat;
+
+		String m_Filepath;
 	};
 
 }

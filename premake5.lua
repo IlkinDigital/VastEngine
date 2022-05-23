@@ -16,6 +16,7 @@ group "Dependencies"
     include "Vast/Vendor/glfw"
     include "Vast/Vendor/glad"
     include "Vast/Vendor/imgui"
+    include "Vast/Vendor/yaml-cpp"
 group ""
 
 Include = {}
@@ -27,6 +28,7 @@ Include["glm"] = "Vast/Vendor/glm"
 Include["stb"] = "Vast/Vendor/stb"
 Include["entt"] = "Vast/Vendor/entt"
 Include["ImGuizmo"] = "Vast/Vendor/ImGuizmo"
+Include["yaml_cpp"] = "Vast/Vendor/yaml-cpp/include"
 
 project "Vast"
     location "Vast"
@@ -71,7 +73,8 @@ project "Vast"
         "%{Include.glm}",
         "%{Include.stb}",
         "%{Include.entt}",
-        "%{Include.ImGuizmo}"
+        "%{Include.ImGuizmo}",
+        "%{Include.yaml_cpp}"
     }
 
     links
@@ -80,6 +83,7 @@ project "Vast"
         "GLFW",
         "Glad",
         "ImGui",
+        "yaml-cpp",
         "opengl32.lib"
     }
 
