@@ -54,7 +54,7 @@ namespace Vast {
 		{
 			for (auto entity : entities)
 			{
-				uint64 uuid = entity["Entity"].as<uint64>();
+				UUID uuid(entity["Entity"].as<uint64>());
 
 				/**
 				* Tag Component
@@ -67,7 +67,7 @@ namespace Vast {
 
 				VAST_CORE_TRACE("Deserializing entity with UUID = {0}, Tag = {1}", uuid, tag);
 
-				Entity deserializedEntity = m_Scene->CreateEntity(tag);
+				Entity deserializedEntity = m_Scene->CreateEntity(uuid, tag);
 
 				/**
 				* Transform Component
@@ -127,7 +127,7 @@ namespace Vast {
 	{
 		out << YAML::BeginMap;
 		out << YAML::Key << "Entity";
-		out << YAML::Value << "687348678967896"; // UUID goes here
+		out << YAML::Value << entity.GetComponent<IDComponent>().ID; // UUID goes here
 
 		SerializeComponent<TagComponent>(out, "TagComponent", entity, [&](TagComponent& tc)
 			{

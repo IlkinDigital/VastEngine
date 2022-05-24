@@ -52,7 +52,7 @@ namespace Vast {
 				if (ImGui::BeginDragDropSource())
 				{
 					const char* itemPath = path.c_str();
-					ImGui::SetDragDropPayload("ASSET_TEXTURE", itemPath, (path.size() + 1) * sizeof(char));
+					ImGui::SetDragDropPayload("CONTENT_BROWSER_ASSET", itemPath, (path.size() + 1) * sizeof(char));
 					ImGui::EndDragDropSource();
 				}
 				ImGui::PopID();

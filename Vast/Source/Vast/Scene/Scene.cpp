@@ -13,6 +13,17 @@ namespace Vast {
 	Entity Scene::CreateEntity(const String& label)
 	{
 		Entity entity(m_Registry.create(), this);
+		entity.AddComponent<IDComponent>();
+		entity.AddComponent<TransformComponent>();
+		auto& tag = entity.AddComponent<TagComponent>();
+		tag.Tag = label.empty() ? "Nameless Entity" : label;
+		return entity;
+	}
+
+	Entity Scene::CreateEntity(UUID uuid, const String& label)
+	{
+		Entity entity(m_Registry.create(), this);
+		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag.Tag = label.empty() ? "Nameless Entity" : label;
@@ -21,10 +32,10 @@ namespace Vast {
 
 	void Scene::DestroyEntity(const Entity& entity)
 	{
-		m_Registry.destroy(entity.GetID());
+		m_Registry.destroy(entity.GetHandle());
 	}
 
-	void Scene::OnScenePlay(Timestep ts)
+	void Scene::OnRuntimeUpdate(Timestep ts)
 	{
 		/**
 		* Call scripts

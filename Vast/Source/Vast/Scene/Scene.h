@@ -2,6 +2,7 @@
 
 #include "Clock/Timestep.h"
 #include "SceneCore.h"
+#include "Core/UUID.h"
 
 #include "Camera/EditorCamera.h"
 
@@ -15,9 +16,10 @@ namespace Vast {
 		Scene() = default;
 
 		Entity CreateEntity(const String& label);
+		Entity CreateEntity(UUID uuid, const String& label);
 		void DestroyEntity(const Entity& entity);
 
-		void OnScenePlay(Timestep ts);
+		void OnRuntimeUpdate(Timestep ts);
 		void OnUpdate(Timestep ts, const EditorCamera& camera);
 		void OnViewportResize(uint32 width, uint32 height);
 

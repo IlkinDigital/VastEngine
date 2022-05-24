@@ -11,6 +11,9 @@ namespace Vast {
 	public:
 		ViewportPanel() = default;
 
+		template<typename Fn>
+		void SetDragDropFn(Fn function) { m_DragDropFn = function; }
+
 		uint32 GetWidth() const { return m_Width; }
 		uint32 GetHeight() const { return m_Height; }
 
@@ -20,6 +23,8 @@ namespace Vast {
 		void OnGUIRender(RendererID colorAttachment, Gizmo3D& gizmo);
 
 	private:
+		std::function<void(const String&)> m_DragDropFn = {};
+
 		uint32 m_Width = 0;
 		uint32 m_Height = 0;
 

@@ -22,6 +22,11 @@ namespace Vast {
 
 		m_Lineup.SetContext(m_ActiveScene);
 
+		m_Viewport.SetDragDropFn([&](const String& filepath)
+			{
+				OpenScene(filepath);
+			});
+
 		SceneSerializer serializer(m_ActiveScene);
 		serializer.Deserialize("Assets/Scenes/TestScene.vast");
 #if 0
@@ -100,7 +105,7 @@ namespace Vast {
 
 			float aspectViewport = (float)m_Viewport.GetWidth() / (float)m_Viewport.GetHeight();
 			m_ActiveScene->OnViewportResize(m_Viewport.GetWidth(), m_Viewport.GetHeight());
-			m_EditorCamera.SetViewportSize(m_Viewport.GetWidth(), m_Viewport.GetHeight());
+			m_EditorCamera.SetViewportSize((float)m_Viewport.GetWidth(), (float)m_Viewport.GetHeight());
 		}
 
 		m_Framebuffer->Bind();
@@ -143,9 +148,9 @@ namespace Vast {
 				if (ImGui::MenuItem("New", "Ctrl + N"))
 					NewScene();
 				if (ImGui::MenuItem("Open", "Ctrl + O"))
-					OpenScene();
+					OpenScene(FileIO::Dialogs::OpenFile("Vast Scene (*.vast)\0*.vast\0"));
 				if (ImGui::MenuItem("Save As", "Ctrl + Alt + S"))
-					SaveScene();
+					SaveScene(FileIO::Dialogs::SaveFile("Vast Scene (*.vast)\0*.vast\0"));
 
 				ImGui::EndMenu();
 			}
@@ -243,10 +248,8 @@ namespace Vast {
 		m_Lineup.SetContext(m_ActiveScene);
 	}
 
-	void EditorLayer::OpenScene()
+	void EditorLayer::OpenScene(const String& filepath)
 	{
-		String filepath = FileIO::Dialogs::OpenFile("Vast Scene (*.vast)\0*.vast\0");
-
 		if (!filepath.empty())
 		{
 			m_ActiveScene = CreateRef<Scene>();
@@ -258,10 +261,8 @@ namespace Vast {
 		}
 	}
 
-	void EditorLayer::SaveScene()
+	void EditorLayer::SaveScene(const String& filepath)
 	{
-		String filepath = FileIO::Dialogs::SaveFile("Vast Scene (*.vast)\0*.vast\0");
-
 		if (!filepath.empty())
 		{
 			SceneSerializer serializer(m_ActiveScene);
@@ -298,11 +299,11 @@ namespace Vast {
 			break;
 		case Key::O:
 			if (Input::IsPressed(Key::LeftControl))
-				OpenScene();
+				OpenScene(FileIO::Dialogs::OpenFile("Vast Scene (*.vast)\0*.vast\0"));
 			break;
 		case Key::S:
 			if (Input::IsPressed(Key::LeftControl) && Input::IsPressed(Key::LeftAlt))
-				SaveScene();
+				SaveScene(FileIO::Dialogs::SaveFile("Vast Scene (*.vast)\0*.vast\0"));
 			break;
 		}
 

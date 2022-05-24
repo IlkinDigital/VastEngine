@@ -8,7 +8,7 @@ namespace Vast {
 	void ViewportPanel::OnGUIRender(RendererID colorAttachment, Gizmo3D& gizmo)
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
-		ImGui::Begin("Viewport");
+		ImGui::Begin("Viewport", (bool*)0, ImGuiWindowFlags_NoTitleBar);
 
 		m_Focused = ImGui::IsWindowFocused();
 		m_Hovered = ImGui::IsWindowHovered();
@@ -25,6 +25,17 @@ namespace Vast {
 		}
 
 		ImGui::Image((void*)colorAttachment, ImVec2{ (float)m_Width, (float)m_Height }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ASSET"))
+			{
+				String path = (const char*)payload->Data;
+				if (m_DragDropFn)
+					m_DragDropFn(path);
+			}
+			ImGui::EndDragDropTarget();
+		}
 
 		// Gizmos
 		gizmo.OnGUIRender();

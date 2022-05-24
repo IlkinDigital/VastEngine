@@ -23,7 +23,9 @@ namespace Vast {
 		bool HasComponent();
 
 		bool IsValid() const { return m_EntityHandle != entt::null; }
-		EntityID GetID() const { return m_EntityHandle; }
+		EntityID GetHandle() const { return m_EntityHandle; }
+
+		bool operator == (const Entity& other) { return m_EntityHandle == other.m_EntityHandle; }
 	private:
 		EntityID m_EntityHandle = entt::null;
 		Scene* m_Scene = nullptr;

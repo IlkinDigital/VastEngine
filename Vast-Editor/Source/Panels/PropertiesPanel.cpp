@@ -88,12 +88,14 @@ namespace Vast {
 					float thumbnailSize = 256.0f;
 					ImGui::ImageButton((ImTextureID)component.Texture->GetRendererID(),
 						{ (width / tot) * thumbnailSize, (height / tot) * thumbnailSize }, { 0, 1 }, { 1, 0 });
+					ImGui::Text("%s", component.Texture->GetFilepath().c_str());
 				}
 				else
 					ImGui::Button("Texture");
+
 				if (ImGui::BeginDragDropTarget())
 				{
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("ASSET_TEXTURE"))
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ASSET"))
 					{
 						String path = (const char*)payload->Data;
 						component.Texture = Texture2D::Create(path);

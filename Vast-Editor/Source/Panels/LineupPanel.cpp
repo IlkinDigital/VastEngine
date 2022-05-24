@@ -34,9 +34,9 @@ namespace Vast {
 	{
 		String& label = entity.GetComponent<TagComponent>().Tag;
 
-		ImGuiTreeNodeFlags flags = ((m_SelectedNode.GetID() == entity.GetID()) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+		ImGuiTreeNodeFlags flags = ((m_SelectedNode == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
-		bool opened = ImGui::TreeNodeEx((void*)(uint64)entity.GetID(), flags, label.c_str());
+		bool opened = ImGui::TreeNodeEx((void*)(uint64)entity.GetHandle(), flags, label.c_str());
 
 		if (ImGui::IsItemClicked())
 			m_SelectedNode = entity;
@@ -58,7 +58,7 @@ namespace Vast {
 		if (deleted)
 		{
 			m_Context->DestroyEntity(entity);
-			if (m_SelectedNode.GetID() == entity.GetID())
+			if (m_SelectedNode == entity)
 				m_SelectedNode = {};
 		}
 	}

@@ -1,8 +1,18 @@
 Scene: Untitled
 Entities:
-  - Entity: 687348678967896
+  - Entity: 3725597170267271330
     TagComponent:
-      Tag: Background
+      Tag: Patrick2
+    TransformComponent:
+      Translation: [0.5, 0.5, 0.5]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1.70000005, 1]
+    RenderComponent:
+      Color: [0, 0, 0, 1]
+      Texture: Assets\Textures\PatrickAlpha.png
+  - Entity: 16932998530695569438
+    TagComponent:
+      Tag: Terrain
     TransformComponent:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
@@ -10,27 +20,7 @@ Entities:
     RenderComponent:
       Color: [0, 0, 0, 1]
       Texture: Assets\Textures\magic-cliffs-preview-detail.png
-  - Entity: 687348678967896
-    TagComponent:
-      Tag: Patrick Star
-    TransformComponent:
-      Translation: [0.5, 0.5, 0.5]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1.70000064, 0.999907613]
-    RenderComponent:
-      Color: [0, 0, 0, 1]
-      Texture: Assets/Textures/PatrickAlpha.png
-  - Entity: 687348678967896
-    TagComponent:
-      Tag: Blue square
-    TransformComponent:
-      Translation: [0.00999999046, -0.0399999619, 1.13999999]
-      Rotation: [0, -0, 0]
-      Scale: [1, 1, 1]
-    RenderComponent:
-      Color: [0.200000003, 0.400000006, 0.800000012, 0.552941203]
-      Texture: ""
-  - Entity: 687348678967896
+  - Entity: 3639848868177076897
     TagComponent:
       Tag: Omni camera
     TransformComponent:
@@ -47,9 +37,29 @@ Entities:
         OrthographicNear: -1
         OrthographicFar: 1
       Primary: true
-  - Entity: 687348678967896
+  - Entity: 9208178286222725963
     TagComponent:
-      Tag: Terrain
+      Tag: Blue square
+    TransformComponent:
+      Translation: [0.00999999046, -0.0399999619, 1.13999999]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    RenderComponent:
+      Color: [0.200000003, 0.400000006, 0.800000012, 0.552941203]
+      Texture: ""
+  - Entity: 7099183590854371840
+    TagComponent:
+      Tag: Patrick Star
+    TransformComponent:
+      Translation: [0.5, 0.5, 0.5]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1.70000064, 0.999907613]
+    RenderComponent:
+      Color: [0, 0, 0, 1]
+      Texture: Assets/Textures/PatrickAlpha.png
+  - Entity: 8391721827389163564
+    TagComponent:
+      Tag: Background
     TransformComponent:
       Translation: [0, 0, 0]
       Rotation: [0, 0, 0]
@@ -57,13 +67,3 @@ Entities:
     RenderComponent:
       Color: [0, 0, 0, 1]
       Texture: Assets\Textures\magic-cliffs-preview-detail.png
-  - Entity: 687348678967896
-    TagComponent:
-      Tag: Patrick2
-    TransformComponent:
-      Translation: [0.5, 0.5, 0.5]
-      Rotation: [0, 0, 0]
-      Scale: [1, 1.70000005, 1]
-    RenderComponent:
-      Color: [0, 0, 0, 1]
-      Texture: Assets\Textures\PatrickAlpha.png
