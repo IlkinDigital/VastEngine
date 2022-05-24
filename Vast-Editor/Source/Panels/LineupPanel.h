@@ -10,7 +10,7 @@ namespace Vast {
 		LineupPanel() = default;
 		LineupPanel(const Ref<Scene>& context);
 
-		void SetContext(const Ref<Scene>& context) { m_Context = context; }
+		void SetContext(const Ref<Scene>& context) { m_Context = context; m_SelectedNode = {}; }
 
 		Entity GetSelected() const { return m_SelectedNode; }
 

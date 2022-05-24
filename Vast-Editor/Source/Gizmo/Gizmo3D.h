@@ -22,9 +22,9 @@ namespace Vast {
 
 		void OnGUIRender();
 	private:
-		Entity m_SelectedEntity;
-		const Mat4* m_CameraView;
-		const Mat4* m_CameraProjection;
+		Entity m_SelectedEntity = {};
+		const Mat4* m_CameraView = nullptr;
+		const Mat4* m_CameraProjection = nullptr;
 
 		// Snapping value of rotation, translation, scale
 		Vector3 m_SnapValues = { 0.01f, 0.01f, 0.01f }; 

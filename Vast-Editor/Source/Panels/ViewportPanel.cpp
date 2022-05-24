@@ -8,7 +8,7 @@ namespace Vast {
 	void ViewportPanel::OnGUIRender(RendererID colorAttachment, Gizmo3D& gizmo)
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
-		ImGui::Begin("Viewport", (bool*)0, ImGuiWindowFlags_NoTitleBar);
+		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoTitleBar);
 
 		m_Focused = ImGui::IsWindowFocused();
 		m_Hovered = ImGui::IsWindowHovered();

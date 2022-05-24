@@ -36,7 +36,7 @@ namespace Vast {
         // Is file opened check
         if (!fs.is_open())
         {
-            VAST_CORE_ASSERT(fs.is_open(), "File couldn't be opened");
+            VAST_CORE_ASSERT(false, "File couldn't be opened");
             return Shaders();
         }
 

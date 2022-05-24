@@ -15,21 +15,18 @@ namespace Vast {
 
 		m_Framebuffer = Framebuffer::Create({ window.GetWidth(), window.GetHeight() });
 
-		m_PatrickTexture = Texture2D::Create("Assets/Textures/PatrickAlpha.png");
-		m_BGTexture = Texture2D::Create("Assets/Textures/magic-cliffs-preview-detail.png");
-
-		m_ActiveScene = CreateRef<Scene>();
-
-		m_Lineup.SetContext(m_ActiveScene);
 
 		m_Viewport.SetDragDropFn([&](const String& filepath)
 			{
 				OpenScene(filepath);
 			});
 
-		SceneSerializer serializer(m_ActiveScene);
-		serializer.Deserialize("Assets/Scenes/TestScene.vast");
+		OpenScene("Assets/Scenes/TestScene2.vast");
+
 #if 0
+		m_PatrickTexture = Texture2D::Create("Assets/Textures/PatrickAlpha.png");
+		m_BGTexture = Texture2D::Create("Assets/Textures/magic-cliffs-preview-detail.png");
+
 		Entity camera = m_ActiveScene->CreateEntity("Omni camera");
 		Entity box2 = m_ActiveScene->CreateEntity("Blue square");
 		Entity box1 = m_ActiveScene->CreateEntity("Patrick Star");
@@ -83,8 +80,14 @@ namespace Vast {
 			float m_RotSpeed = 5.0f;
 		};
 
-		camera.AddComponent<NativeScriptComponent>().Bind<CameraController>();
+		auto group = m_ActiveScene->GetRegistry().view<CameraComponent>();
+
+		for (auto entity : group)
+		{
+			m_ActiveScene->GetRegistry().emplace<NativeScriptComponent>(entity).Bind<CameraController>();
+		}
 #endif
+
 	}
 
 
@@ -113,9 +116,16 @@ namespace Vast {
 		RendererCommand::SetClearColor({ 0.15f, 0.15f, 0.15f, 1.0f });
 		RendererCommand::Clear();
 
-		m_EditorCamera.OnUpdate(ts);
-
-		m_ActiveScene->OnUpdate(ts, m_EditorCamera);
+		switch (m_SceneState)
+		{
+		case SceneState::Edit:
+			m_EditorCamera.OnUpdate(ts);
+			m_ActiveScene->OnUpdate(ts, m_EditorCamera);
+			break;
+		case SceneState::Play:
+			m_ActiveScene->OnRuntimeUpdate(ts);
+			break;
+		}
 
 		m_Framebuffer->Unbind();
 	}
@@ -210,6 +220,21 @@ namespace Vast {
 			ImGui::End();
 		}
 
+		// Toolbar
+		ImGui::Begin("##Toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar 
+			| ImGuiWindowFlags_NoScrollWithMouse);
+		{
+			if (ImGui::Button("Play"))
+			{
+				if (m_SceneState == SceneState::Edit)
+					OnScenePlay();
+				else
+					OnSceneStop();
+			}
+
+			ImGui::End();
+		}
+
 		ImGui::Begin("Settings");
 		
 		ImGui::Text("FPS: %.3f", m_FPS);
@@ -219,7 +244,6 @@ namespace Vast {
 		m_Gizmo.UpdateData(m_Lineup.GetSelected(), m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetProjection());
 
 		m_Viewport.OnGUIRender(m_Framebuffer->GetColorAttachment(), m_Gizmo);
-
 		m_Lineup.OnGUIRender();
 		m_Properties.OnGUIRender(m_Lineup.GetSelected());
 
@@ -244,7 +268,6 @@ namespace Vast {
 	void EditorLayer::NewScene()
 	{
 		m_ActiveScene = CreateRef<Scene>();
-		m_ActiveScene->OnViewportResize(m_Viewport.GetWidth(), m_Viewport.GetHeight());
 		m_Lineup.SetContext(m_ActiveScene);
 	}
 
@@ -252,12 +275,16 @@ namespace Vast {
 	{
 		if (!filepath.empty())
 		{
+			if (m_SceneState == SceneState::Play)
+				OnSceneStop();
+			
 			m_ActiveScene = CreateRef<Scene>();
-			m_ActiveScene->OnViewportResize(m_Viewport.GetWidth(), m_Viewport.GetHeight());
-			m_Lineup.SetContext(m_ActiveScene);
-
 			SceneSerializer serializer(m_ActiveScene);
 			serializer.Deserialize(filepath);
+
+			m_Lineup.SetContext(m_ActiveScene);
+			m_Gizmo.UpdateData({}, m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetViewProjection());
+			m_SceneFilepath = filepath;
 		}
 	}
 
@@ -268,6 +295,16 @@ namespace Vast {
 			SceneSerializer serializer(m_ActiveScene);
 			serializer.Serialize(filepath);
 		}
+	}
+
+	void EditorLayer::OnScenePlay()
+	{
+		m_SceneState = SceneState::Play;
+	}
+
+	void EditorLayer::OnSceneStop()
+	{
+		m_SceneState = SceneState::Edit;
 	}
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
@@ -302,8 +339,18 @@ namespace Vast {
 				OpenScene(FileIO::Dialogs::OpenFile("Vast Scene (*.vast)\0*.vast\0"));
 			break;
 		case Key::S:
-			if (Input::IsPressed(Key::LeftControl) && Input::IsPressed(Key::LeftAlt))
-				SaveScene(FileIO::Dialogs::SaveFile("Vast Scene (*.vast)\0*.vast\0"));
+			if (Input::IsPressed(Key::LeftControl))
+			{
+				if (Input::IsPressed(Key::LeftAlt))
+					SaveScene(FileIO::Dialogs::SaveFile("Vast Scene (*.vast)\0*.vast\0"));
+				else
+				{
+					if (!m_SceneFilepath.empty())
+						SaveScene(m_SceneFilepath);
+					else
+						SaveScene(FileIO::Dialogs::SaveFile("Vast Scene (*.vast)\0*.vast\0"));
+				}
+			}
 			break;
 		}
 

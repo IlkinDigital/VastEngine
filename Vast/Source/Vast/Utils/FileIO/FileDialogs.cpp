@@ -22,7 +22,7 @@ namespace Vast {
 		ofn.lpstrFilter = filter;
 		ofn.nFilterIndex = 1;
 		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
-		if (GetOpenFileNameA(&ofn) == TRUE)
+		if (GetOpenFileNameA(&ofn))
 		{
 			return ofn.lpstrFile;
 		}
@@ -42,7 +42,7 @@ namespace Vast {
 		ofn.lpstrFilter = filter;
 		ofn.nFilterIndex = 1;
 		ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
-		if (GetSaveFileNameA(&ofn) == TRUE)
+		if (GetSaveFileNameA(&ofn))
 		{
 			return ofn.lpstrFile;
 		}

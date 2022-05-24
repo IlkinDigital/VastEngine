@@ -69,7 +69,6 @@ namespace Vast {
 			{
 				mainCamera = &camera.Camera;
 				cameraTransform = transform.Transform();
-				break;
 			}
 		}
 

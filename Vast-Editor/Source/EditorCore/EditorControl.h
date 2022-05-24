@@ -28,7 +28,6 @@ namespace Vast {
 				| ImGuiTreeNodeFlags_AllowItemOverlap
 				| ImGuiTreeNodeFlags_Framed
 				| ImGuiTreeNodeFlags_SpanAvailWidth
-				| ImGuiTreeNodeFlags_AllowItemOverlap
 				| ImGuiTreeNodeFlags_FramePadding;
 
 			auto& component = entity.GetComponent<Ty>();

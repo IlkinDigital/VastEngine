@@ -29,6 +29,9 @@ namespace Vast {
 		void OpenScene(const String& filepath);
 		void SaveScene(const String& filepath);
 
+		void OnScenePlay();
+		void OnSceneStop();
+
 		bool OnWindowResize(WindowResizeEvent& event);
 		bool OnKeyPressed(KeyPressedEvent& event);
 	private:
@@ -42,8 +45,8 @@ namespace Vast {
 
 		// Scene
 		Ref<Scene> m_ActiveScene;
-
 		EditorCamera m_EditorCamera;
+		String m_SceneFilepath;
 
 		ImVec4* m_Colors = ImGui::GetStyle().Colors;
 
@@ -53,6 +56,13 @@ namespace Vast {
 	
 		float m_FPS = 0.0f;
 		float m_FPSWait = 0.0f;
+
+		enum class SceneState
+		{
+			Edit = 0, Play
+		};
+
+		SceneState m_SceneState = SceneState::Edit;
 	};
 
 }
