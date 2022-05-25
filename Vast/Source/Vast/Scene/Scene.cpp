@@ -12,12 +12,7 @@ namespace Vast {
 
 	Entity Scene::CreateEntity(const String& label)
 	{
-		Entity entity(m_Registry.create(), this);
-		entity.AddComponent<IDComponent>();
-		entity.AddComponent<TransformComponent>();
-		auto& tag = entity.AddComponent<TagComponent>();
-		tag.Tag = label.empty() ? "Nameless Entity" : label;
-		return entity;
+		return CreateEntity(UUID(), label);
 	}
 
 	Entity Scene::CreateEntity(UUID uuid, const String& label)
@@ -132,4 +127,61 @@ namespace Vast {
 		return {};
 	}
 
+	template<typename Component>
+	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<uint64, entt::entity>& enttMap)
+	{
+		auto view = src.view<Component>();
+		for (auto entity : view)
+		{
+			UUID uuid = src.get<IDComponent>(entity).ID;
+			VAST_CORE_ASSERT((enttMap.find(uuid) != enttMap.end()), "Entity doesn't exist in enttMap");
+			entt::entity dstEntityID = enttMap.at(uuid);
+
+			auto& component = src.get<Component>(entity);
+			dst.emplace_or_replace<Component>(dstEntityID, component);
+		}
+	}
+
+	template<typename Component>
+	static void CopyComponentIfExists(Entity dst, Entity src)
+	{
+		if (src.HasComponent<Component>())
+			dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>()); 
+	}
+
+	void Scene::DuplicateEntity(Entity entity)
+	{
+		Entity newEntity = CreateEntity(entity.GetName());
+
+		CopyComponentIfExists<TransformComponent>(newEntity, entity);
+		CopyComponentIfExists<CameraComponent>(newEntity, entity);
+		CopyComponentIfExists<RenderComponent>(newEntity, entity);
+		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
+	}
+
+	Ref<Scene> Scene::Clone(const Ref<Scene>& srcScene)
+	{
+		Ref<Scene> newScene = CreateRef<Scene>();
+
+		auto& srcRegistry = srcScene->m_Registry;
+		auto& dstRegistry = newScene->m_Registry;
+
+		std::unordered_map<uint64, entt::entity> enttMap;
+
+		auto idView = srcRegistry.view<IDComponent>();
+		for (auto entityID : idView)
+		{
+			UUID uuid = srcRegistry.get<IDComponent>(entityID).ID;
+			const String& name = srcRegistry.get<TagComponent>(entityID).Tag;
+			Entity newEntity = newScene->CreateEntity(uuid, name);
+			enttMap[uuid] = newEntity.GetHandle();
+		}
+
+		CopyComponent<TransformComponent>(dstRegistry, srcRegistry, enttMap);
+		CopyComponent<CameraComponent>(dstRegistry, srcRegistry, enttMap);
+		CopyComponent<RenderComponent>(dstRegistry, srcRegistry, enttMap);
+		CopyComponent<NativeScriptComponent>(dstRegistry, srcRegistry, enttMap);
+
+		return newScene;
+	}
 }

@@ -24,8 +24,11 @@ namespace Vast {
 		void OnViewportResize(uint32 width, uint32 height);
 
 		Entity GetPrimaryCamera();
-
 		EntityRegistry& GetRegistry() { return m_Registry; }
+		
+		void DuplicateEntity(Entity entity);
+
+		static Ref<Scene> Clone(const Ref<Scene>& srcScene);	
 	private:
 		EntityRegistry m_Registry;
 	};

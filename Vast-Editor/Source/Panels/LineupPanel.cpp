@@ -19,6 +19,9 @@ namespace Vast {
 				DrawNode(entity);
 			});
 
+		if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsWindowHovered())
+			m_SelectedNode = {};
+
 		if (ImGui::BeginPopupContextWindow(0, 1, false))
 		{
 			if (ImGui::MenuItem("Create Empty Entity"))
@@ -42,10 +45,13 @@ namespace Vast {
 			m_SelectedNode = entity;
 
 		bool deleted = false;
+		bool duplicate = false;
 		if (ImGui::BeginPopupContextItem())
 		{
-			if (ImGui::MenuItem("Delete Entity"))
+			if (ImGui::MenuItem("Delete"))
 				deleted = true;
+			if (ImGui::MenuItem("Duplicate"))
+				duplicate = true;
 
 			ImGui::EndPopup();
 		}
@@ -60,6 +66,10 @@ namespace Vast {
 			m_Context->DestroyEntity(entity);
 			if (m_SelectedNode == entity)
 				m_SelectedNode = {};
+		}
+		else if (duplicate)
+		{
+			m_Context->DuplicateEntity(entity);
 		}
 	}
 

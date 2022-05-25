@@ -46,15 +46,16 @@ namespace Vast {
 		Gizmo3D m_Gizmo;
 
 		// Scene
-		Ref<Scene> m_ActiveScene;
+		Ref<Scene> m_ActiveScene; // Pointer to current scene - editor/runtime
+		Ref<Scene> m_EditorScene, m_RuntimeScene;
 		EditorCamera m_EditorCamera;
 		String m_SceneFilepath;
 
 		ImVec4* m_Colors = ImGui::GetStyle().Colors;
 
 		Ref<Framebuffer> m_Framebuffer;
-		Ref<Texture2D> m_PatrickTexture;
-		Ref<Texture2D> m_BGTexture;
+		Ref<Texture2D> m_PlayIcon;
+		Ref<Texture2D> m_StopIcon;
 	
 		float m_FPS = 0.0f;
 		float m_FPSWait = 0.0f;

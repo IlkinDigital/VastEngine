@@ -14,6 +14,8 @@ namespace Vast {
 		Window& window = Application::Get().GetWindow();
 		m_Framebuffer = Framebuffer::Create({ window.GetWidth(), window.GetHeight() });
 
+		m_PlayIcon = Texture2D::Create("Resources/Icons/PlayIcon.png");
+		m_StopIcon = Texture2D::Create("Resources/Icons/StopIcon.png");
 
 		m_Viewport.SetDragDropFn([&](const String& filepath)
 			{
@@ -219,13 +221,22 @@ namespace Vast {
 		ImGui::Begin("##Toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar 
 			| ImGuiWindowFlags_NoScrollWithMouse);
 		{
-			if (ImGui::Button("Play"))
+			ImGui::PushStyleColor(ImGuiCol_Button, { 1.0f, 1.0f, 1.0f, 0.0f });
+			float size = ImGui::GetWindowHeight() - 4.0f;
+			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+			if (m_SceneState == SceneState::Edit)
 			{
-				if (m_SceneState == SceneState::Edit)
+				if (ImGui::ImageButton((ImTextureID)m_PlayIcon->GetRendererID(), { 32, 32 }, 
+					{ 0, 1 }, {1, 0}, -1, { 1, 1, 1, 1 }))
 					OnScenePlay();
-				else
+			}
+			else if (m_SceneState == SceneState::Play)
+			{
+				if (ImGui::ImageButton((ImTextureID)m_StopIcon->GetRendererID(), { 32, 32 },
+					{ 0, 1 }, { 1, 0 }, -1, { 1, 1, 1, 1 }))
 					OnSceneStop();
 			}
+			ImGui::PopStyleColor();
 
 			ImGui::End();
 		}
@@ -274,7 +285,11 @@ namespace Vast {
 
 	void EditorLayer::NewScene()
 	{
+		if (m_SceneState == SceneState::Play)
+			OnSceneStop();
+
 		m_ActiveScene = CreateRef<Scene>();
+		m_EditorScene = m_ActiveScene;
 		m_Lineup.SetContext(m_ActiveScene);
 	}
 
@@ -285,10 +300,12 @@ namespace Vast {
 			if (m_SceneState == SceneState::Play)
 				OnSceneStop();
 			
-			m_ActiveScene = CreateRef<Scene>();
-			SceneSerializer serializer(m_ActiveScene);
+			m_EditorScene = CreateRef<Scene>();
+			SceneSerializer serializer(m_EditorScene);
 			serializer.Deserialize(filepath);
 			m_SceneFilepath = filepath;
+
+			m_ActiveScene = m_EditorScene;
 
 			m_Lineup.SetContext(m_ActiveScene);
 			m_Gizmo.UpdateData({}, m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetViewProjection());
@@ -300,7 +317,7 @@ namespace Vast {
 	{
 		if (!filepath.empty())
 		{
-			SceneSerializer serializer(m_ActiveScene);
+			SceneSerializer serializer(m_EditorScene);
 			serializer.Serialize(filepath);
 		}
 	}
@@ -308,11 +325,23 @@ namespace Vast {
 	void EditorLayer::OnScenePlay()
 	{
 		m_SceneState = SceneState::Play;
+
+		m_RuntimeScene = Scene::Clone(m_EditorScene);
+		
+		m_ActiveScene = m_RuntimeScene;
+		m_Lineup.SetContext(m_ActiveScene);
+
+		ResizeViewport();
 	}
 
 	void EditorLayer::OnSceneStop()
 	{
 		m_SceneState = SceneState::Edit;
+		
+		m_RuntimeScene = nullptr;
+
+		m_ActiveScene = m_EditorScene;
+		m_Lineup.SetContext(m_ActiveScene);
 	}
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
@@ -358,6 +387,14 @@ namespace Vast {
 					else
 						SaveScene(FileIO::Dialogs::SaveFile("Vast Scene (*.vast)\0*.vast\0"));
 				}
+			}
+			break;
+		case Key::D:
+			if (Input::IsPressed(Key::LeftControl))
+			{
+				Entity selected = m_Lineup.GetSelected();
+				if (selected.IsValid())
+					m_ActiveScene->DuplicateEntity(selected);
 			}
 			break;
 		}
