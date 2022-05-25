@@ -25,6 +25,8 @@ namespace Vast {
 
 		void OnEvent(Event& event) override;
 	private:
+		void ResizeViewport();
+
 		void NewScene();
 		void OpenScene(const String& filepath);
 		void SaveScene(const String& filepath);

@@ -12,7 +12,6 @@ namespace Vast {
 	void EditorLayer::OnAttach()
 	{
 		Window& window = Application::Get().GetWindow();
-
 		m_Framebuffer = Framebuffer::Create({ window.GetWidth(), window.GetHeight() });
 
 
@@ -102,13 +101,9 @@ namespace Vast {
 
 
 		auto spec = m_Framebuffer->GetSpecification();
-		if (m_Viewport.GetWidth() > 0 && m_Viewport.GetHeight() > 0 && (spec.Width != m_Viewport.GetWidth() || spec.Height != m_Viewport.GetHeight()))
+		if (spec.Width != m_Viewport.GetWidth() || spec.Height != m_Viewport.GetHeight())
 		{
-			m_Framebuffer->Resize({ m_Viewport.GetWidth(), m_Viewport.GetHeight() });
-
-			float aspectViewport = (float)m_Viewport.GetWidth() / (float)m_Viewport.GetHeight();
-			m_ActiveScene->OnViewportResize(m_Viewport.GetWidth(), m_Viewport.GetHeight());
-			m_EditorCamera.SetViewportSize((float)m_Viewport.GetWidth(), (float)m_Viewport.GetHeight());
+			ResizeViewport();
 		}
 
 		m_Framebuffer->Bind();
@@ -265,6 +260,18 @@ namespace Vast {
 		dispatcher.Dispatch<KeyPressedEvent>(VAST_BIND_EVENT(OnKeyPressed));
 	}
 
+	void EditorLayer::ResizeViewport()
+	{
+		if (m_Viewport.GetWidth() > 0 && m_Viewport.GetHeight() > 0)
+		{
+			m_Framebuffer->Resize({ m_Viewport.GetWidth(), m_Viewport.GetHeight() });
+			
+			float aspectViewport = (float)m_Viewport.GetWidth() / (float)m_Viewport.GetHeight();
+			m_ActiveScene->OnViewportResize(m_Viewport.GetWidth(), m_Viewport.GetHeight());
+			m_EditorCamera.SetViewportSize((float)m_Viewport.GetWidth(), (float)m_Viewport.GetHeight());
+		}
+	}
+
 	void EditorLayer::NewScene()
 	{
 		m_ActiveScene = CreateRef<Scene>();
@@ -281,10 +288,11 @@ namespace Vast {
 			m_ActiveScene = CreateRef<Scene>();
 			SceneSerializer serializer(m_ActiveScene);
 			serializer.Deserialize(filepath);
+			m_SceneFilepath = filepath;
 
 			m_Lineup.SetContext(m_ActiveScene);
 			m_Gizmo.UpdateData({}, m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetViewProjection());
-			m_SceneFilepath = filepath;
+			ResizeViewport();
 		}
 	}
 
