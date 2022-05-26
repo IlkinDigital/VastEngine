@@ -17,6 +17,9 @@ namespace Vast {
 
 		void SetViewportSize(float width, float height) { m_ViewportWidth = width; m_ViewportHeight = height; CalculateProjection(); }
 
+		float GetGazeSpeed() const { return m_GazeSpeed; }
+		void SetGazeSpeed(float speed) { m_GazeSpeed = speed; }
+
 		const Mat4& GetViewMatrix() const { return m_ViewMatrix; }
 		Mat4 GetViewProjection() const { return m_Projection * m_ViewMatrix; }
 
@@ -35,6 +38,8 @@ namespace Vast {
 
 		void MouseGaze(Timestep ts, const Vector2& delta);
 	private:
+		float m_GazeSpeed = 5.0f;
+
 		float m_FOV = 45.0f, m_AspectRatio = 1.778f, m_NearClip = 0.1f, m_FarClip = 1000.0f;
 
 		Mat4 m_ViewMatrix;

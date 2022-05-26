@@ -36,7 +36,7 @@ namespace Vast {
 		Vector2 delta = (mouse - m_InitialMousePosition) * 0.3f;
 		m_InitialMousePosition = mouse;
 
-		if (Input::IsPressed(Mouse::Right))
+		if (Input::IsPressed(Mouse::Right) || Input::IsPressed(Key::LeftAlt))
 		{
 			MouseGaze(ts, delta);
 
@@ -61,8 +61,8 @@ namespace Vast {
 
 	void EditorCamera::MouseGaze(Timestep ts, const Vector2& delta)
 	{
-		m_Yaw -= 5.0f * delta.x * ts;
-		m_Pitch -= 5.0f * delta.y * ts;
+		m_Yaw -= m_GazeSpeed * delta.x * ts;
+		m_Pitch -= m_GazeSpeed * delta.y * ts;
 	}
 
 

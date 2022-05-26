@@ -198,13 +198,9 @@ namespace Vast {
 		// Editor Camera
 		ImGui::Begin("Editor Camera");
 		{ 
-
-			Vector3 forward = m_EditorCamera.GetForwardDirection();
-			Vector3 right = m_EditorCamera.GetRightDirection();
-
-			EditorControl::DrawVector3("Translation", m_EditorCamera.GetPosition());
-			EditorControl::DrawVector3("Forward", forward);
-			EditorControl::DrawVector3("Right", right);
+			float gazeSpeed = m_EditorCamera.GetGazeSpeed();
+			if (ImGui::DragFloat("Camera Gazing Speed", &gazeSpeed, 0.25f, 1.0f, 10.0f))
+				m_EditorCamera.SetGazeSpeed(gazeSpeed);
 
 			float snapRot = m_Gizmo.GetSnapValues().y;
 			if (ImGui::DragFloat("Rotation Snap", &snapRot))
