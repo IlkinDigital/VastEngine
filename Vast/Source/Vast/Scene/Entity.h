@@ -36,6 +36,8 @@ namespace Vast {
 	private:
 		EntityID m_EntityHandle = entt::null;
 		Scene* m_Scene = nullptr;
+
+		friend class ScriptableEntity;
 	};
 
 	template<typename Ty, typename ...Args>

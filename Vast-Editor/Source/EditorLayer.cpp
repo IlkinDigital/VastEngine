@@ -24,6 +24,62 @@ namespace Vast {
 
 		OpenScene("Assets/Scenes/TestScene2.vast");
 
+		class CharacterController : public ScriptableEntity
+		{
+		public:
+			void OnUpdate(Timestep ts) override
+			{
+				auto& transform = GetComponent<TransformComponent>();
+				
+				if (Input::IsPressed(Key::W))
+					transform.Translation.y += m_Speed * ts;
+				if (Input::IsPressed(Key::S))
+					transform.Translation.y -= m_Speed * ts;
+				if (Input::IsPressed(Key::D))
+					transform.Translation.x += m_Speed * ts;
+				if (Input::IsPressed(Key::A))
+					transform.Translation.x -= m_Speed * ts;
+			}
+		private:
+			float m_Speed = 3.0f;
+		};
+
+		class FollowCamera : public ScriptableEntity
+		{
+		public:
+			void OnCreate() override
+			{
+				UUID id = 7326193114781319049;
+				m_TargetEntity = GetEntity(id);
+			}
+
+			void OnUpdate(Timestep ts)
+			{
+				auto& cameraPos = GetComponent<TransformComponent>().Translation;
+				auto& targetPos = m_TargetEntity.GetComponent<TransformComponent>().Translation;
+
+				cameraPos.x = targetPos.x;
+				cameraPos.y = targetPos.y;
+			}
+
+		private:
+			Entity m_TargetEntity;
+		};
+
+		auto characterView = m_ActiveScene->GetRegistry().view<RenderComponent>();
+		auto cameraView = m_ActiveScene->GetRegistry().view<CameraComponent>();
+
+		for (auto entity : characterView)
+		{
+			if (m_ActiveScene->GetRegistry().get<TagComponent>(entity).Tag == "Patrick Star")
+			{
+				m_ActiveScene->GetRegistry().emplace<NativeScriptComponent>(entity).Bind<CharacterController>();
+				for (auto camera : cameraView)
+					m_ActiveScene->GetRegistry().emplace<NativeScriptComponent>(camera).Bind<FollowCamera>();
+				break;
+			}
+		}
+
 #if 0
 		m_PatrickTexture = Texture2D::Create("Assets/Textures/PatrickAlpha.png");
 		m_BGTexture = Texture2D::Create("Assets/Textures/magic-cliffs-preview-detail.png");

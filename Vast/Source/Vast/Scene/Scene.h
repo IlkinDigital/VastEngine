@@ -15,9 +15,14 @@ namespace Vast {
 	public:
 		Scene() = default;
 
+		static Ref<Scene> Clone(const Ref<Scene>& srcScene);
+
 		Entity CreateEntity(const String& label);
 		Entity CreateEntity(UUID uuid, const String& label);
 		void DestroyEntity(const Entity& entity);
+		void DuplicateEntity(Entity entity);
+
+		Entity GetEntity(UUID id);
 
 		void OnRuntimeUpdate(Timestep ts);
 		void OnUpdate(Timestep ts, const EditorCamera& camera);
@@ -25,10 +30,6 @@ namespace Vast {
 
 		Entity GetPrimaryCamera();
 		EntityRegistry& GetRegistry() { return m_Registry; }
-		
-		void DuplicateEntity(Entity entity);
-
-		static Ref<Scene> Clone(const Ref<Scene>& srcScene);	
 	private:
 		EntityRegistry m_Registry;
 	};

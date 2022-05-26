@@ -30,6 +30,20 @@ namespace Vast {
 		m_Registry.destroy(entity.GetHandle());
 	}
 
+	Entity Scene::GetEntity(UUID id)
+	{
+		auto view = m_Registry.view<IDComponent>();
+
+		for (auto entityID : view)
+		{
+			if (id == view.get<IDComponent>(entityID).ID)
+				return Entity(entityID, this);
+		}
+
+		VAST_CORE_ASSERT(false, "Entity with specified UUID doesn't exist");
+		return Entity();
+	}
+
 	void Scene::OnRuntimeUpdate(Timestep ts)
 	{
 		/**
