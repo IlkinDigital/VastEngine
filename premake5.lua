@@ -171,3 +171,68 @@ project "Vast-Editor"
         defines "VAST_CONFIG_DISTRIBUTION"
         runtime "Release"
         optimize "on"
+
+project "GameTest"
+    location "GameTest"
+    kind "SharedLib"
+    language "C++"
+    cppdialect "C++20"
+    staticruntime "off"
+
+    targetdir ("Binaries/" .. outputdir .. "/%{prj.name}")
+    objdir ("Binaries-Int/" .. outputdir .. "/%{prj.name}")
+
+    files
+    {
+        "%{prj.name}/Source/**.h",
+        "%{prj.name}/Source/**.cpp"
+    }
+
+    includedirs
+    {
+        "Vast/Source",
+        "Vast/Source/Vast",
+        "Vast/Source/Vast/Core",
+        "%{Include.spdlog}",
+        "%{Include.glad}",
+        "%{Include.imgui}",
+        "%{Include.glm}",
+        "%{Include.entt}",
+        "%{Include.ImGuizmo}"
+    }
+
+    defines
+    {
+        "_CRT_SECURE_NO_WARNINGS",
+        "VAST_SCRIPT_DLL"
+    }
+
+    links
+    {
+        "Vast"
+    }
+
+    -- symbolspath "$(OutDir)$(TargetName)-$([System.DateTime]::Now.ToString(\"HH_mm_ss_fff\")).pdb"
+
+    filter "system:windows"
+        systemversion "latest"
+
+        defines
+        {
+            "VAST_PLATFORM_WINDOWS"
+        }
+
+    filter "configurations:Debug"
+        defines "VAST_CONFIG_DEBUG"
+        runtime "Debug"
+        symbols "on"
+
+    filter "configurations:Release"
+        defines "VAST_CONFIG_RELEASE"
+        runtime "Release"
+        optimize "on"
+
+    filter "configurations:Distribution"
+        defines "VAST_CONFIG_DISTRIBUTION"
+        runtime "Release"
+        optimize "on"

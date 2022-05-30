@@ -7,6 +7,8 @@
 #include "EditorLayout/Layout.h"
 #include "EditorCore/EditorControl.h"
 
+#include <Windows.h>
+
 namespace Vast {
 
 	void EditorLayer::OnAttach()
@@ -24,6 +26,34 @@ namespace Vast {
 
 		OpenScene("Assets/Scenes/TestScene2.vast");
 
+		HINSTANCE hInst = LoadLibrary(L"D:\\Lester_Files\\dev\\Projects\\VastEngine\\Binaries\\Release-windows-x86_64\\GameTest\\GameTest.dll");
+
+		if (!hInst)
+			VAST_ERROR("Couldn't load GameTest.dll");
+
+		typedef void(*ImpFunc)(Entity);
+
+		auto dllFunc = GetProcAddress(hInst, "AddNativeScript");
+		ImpFunc func = (ImpFunc)dllFunc;
+
+		if (!func)
+			VAST_ERROR("Couldn't locate the function");
+
+		auto characterView = m_ActiveScene->GetRegistry().view<RenderComponent>();
+
+		for (auto entityID : characterView)
+		{
+			if (m_ActiveScene->GetRegistry().get<TagComponent>(entityID).Tag == "Patrick Star")
+			{
+				Entity entity(entityID, m_ActiveScene.get());
+				func(entity);
+				break;
+			}
+		}
+
+		FreeLibrary(hInst);
+
+#if 0
 		class CharacterController : public ScriptableEntity
 		{
 		public:
@@ -79,6 +109,7 @@ namespace Vast {
 				break;
 			}
 		}
+#endif
 
 #if 0
 		m_PatrickTexture = Texture2D::Create("Assets/Textures/PatrickAlpha.png");
