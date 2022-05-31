@@ -1,11 +1,11 @@
 #include "vastpch.h"
 #include "WindowsWindow.h"
 
-#include <GLFW/glfw3.h>
-
 #include "Vast/Events/ApplicationEvent.h"
 #include "Vast/Events/KeyboardEvent.h"
 #include "Vast/Events/MouseEvent.h"
+
+#include <GLFW/glfw3.h>
 
 namespace Vast {
 
@@ -26,6 +26,13 @@ namespace Vast {
 	WindowsWindow::~WindowsWindow()
 	{
 		Shutdown();
+	}
+
+	bool WindowsWindow::Init()
+	{
+		if (!s_GLFWInitialized)
+			s_GLFWInitialized = glfwInit();
+		return s_GLFWInitialized;
 	}
 
 	void WindowsWindow::Init(const WindowProps& props)

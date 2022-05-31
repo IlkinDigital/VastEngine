@@ -51,6 +51,8 @@ namespace Vast {
 		EditorCamera m_EditorCamera;
 		String m_SceneFilepath;
 
+		Ref<RuntimeModule> m_ScriptModule;
+
 		ImVec4* m_Colors = ImGui::GetStyle().Colors;
 
 		Ref<Framebuffer> m_Framebuffer;

@@ -26,18 +26,15 @@ namespace Vast {
 
 		OpenScene("Assets/Scenes/TestScene2.vast");
 
-		HINSTANCE hInst = LoadLibrary(L"D:\\Lester_Files\\dev\\Projects\\VastEngine\\Binaries\\Release-windows-x86_64\\GameTest\\GameTest.dll");
+		typedef void(*ScrptFunc)(Entity);
+		typedef void(*InitFunc)(Application*);
 
-		if (!hInst)
-			VAST_ERROR("Couldn't load GameTest.dll");
+		m_ScriptModule = RuntimeModule::Create("D:\\Lester_Files\\dev\\Projects\\VastEngine\\Binaries\\Debug-windows-x86_64\\GameTest\\GameTest.dll");
 
-		typedef void(*ImpFunc)(Entity);
+		auto initFn = m_ScriptModule->LoadFunction<InitFunc>("Init");
+		auto addScrptFn = m_ScriptModule->LoadFunction<ScrptFunc>("AddNativeScript");
 
-		auto dllFunc = GetProcAddress(hInst, "AddNativeScript");
-		ImpFunc func = (ImpFunc)dllFunc;
-
-		if (!func)
-			VAST_ERROR("Couldn't locate the function");
+		initFn(Application::GetPointer());
 
 		auto characterView = m_ActiveScene->GetRegistry().view<RenderComponent>();
 
@@ -46,12 +43,10 @@ namespace Vast {
 			if (m_ActiveScene->GetRegistry().get<TagComponent>(entityID).Tag == "Patrick Star")
 			{
 				Entity entity(entityID, m_ActiveScene.get());
-				func(entity);
+				addScrptFn(entity);
 				break;
 			}
 		}
-
-		FreeLibrary(hInst);
 
 #if 0
 		class CharacterController : public ScriptableEntity
@@ -210,6 +205,8 @@ namespace Vast {
 			m_ActiveScene->OnRuntimeUpdate(ts);
 			break;
 		}
+
+		//VAST_TRACE("{0}", Input::IsPressed(Key::W));
 
 		m_Framebuffer->Unbind();
 	}

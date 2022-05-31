@@ -17,6 +17,8 @@ namespace Vast {
 		virtual ~Application();
 
 		static Application& Get() { return *s_Instance; }
+		static Application* GetPointer() { return s_Instance; }
+		static void Set(Application* appPtr) { s_Instance = appPtr; }
 
 		void OnEvent(Event& event);
 

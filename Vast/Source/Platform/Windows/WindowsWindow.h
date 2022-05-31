@@ -13,6 +13,8 @@ namespace Vast {
 		WindowsWindow(const WindowProps& props);
 		~WindowsWindow() override;
 
+		bool Init() override;
+
 		void OnUpdate() override;
 
 		uint32 GetWidth() const override { return m_Data.Width; }

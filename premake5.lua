@@ -68,6 +68,7 @@ project "Vast"
         "%{prj.name}/Source/Vast/Core", -- to easily access commonly used headers
         "%{Include.spdlog}",
         "%{Include.glfw}",
+        "Vast/Vendor/",
         "%{Include.glad}",
         "%{Include.imgui}",
         "%{Include.glm}",
@@ -86,6 +87,12 @@ project "Vast"
         "yaml-cpp",
         "opengl32.lib"
     }
+
+    filter { "system:windows", "configurations:Debug" }
+        buildoptions "/MDd"        
+
+    filter { "system:windows", "configurations:Release" }
+        buildoptions "/MD"
 
     filter "files:Vast/Vendor/ImGuizmo/**.cpp"
     flags { "NoPCH" }
@@ -148,6 +155,12 @@ project "Vast-Editor"
     {
         "Vast"
     }
+
+    filter { "system:windows", "configurations:Debug" }
+        buildoptions "/MDd"        
+
+    filter { "system:windows", "configurations:Release" }
+        buildoptions "/MD"
 
     filter "system:windows"
         systemversion "latest"
@@ -212,6 +225,12 @@ project "GameTest"
         "Vast"
     }
 
+    filter { "system:windows", "configurations:Debug" }
+        buildoptions "/MDd"        
+
+    filter { "system:windows", "configurations:Release" }
+        buildoptions "/MD"
+        
     -- symbolspath "$(OutDir)$(TargetName)-$([System.DateTime]::Now.ToString(\"HH_mm_ss_fff\")).pdb"
 
     filter "system:windows"
