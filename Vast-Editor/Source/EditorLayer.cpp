@@ -11,6 +11,12 @@
 
 namespace Vast {
 
+	typedef void(*ScrptFunc)(Entity);
+	typedef void(*InitFunc)(Application*);
+
+	InitFunc InitScriptFunc;
+	ScrptFunc AddScriptFunc;
+
 	void EditorLayer::OnAttach()
 	{
 		Window& window = Application::Get().GetWindow();
@@ -26,27 +32,24 @@ namespace Vast {
 
 		OpenScene("Assets/Scenes/TestScene2.vast");
 
-		typedef void(*ScrptFunc)(Entity);
-		typedef void(*InitFunc)(Application*);
+		//m_ScriptModule = RuntimeModule::Create("D:\\Lester_Files\\dev\\Projects\\VastEngine\\Binaries\\Debug-windows-x86_64\\GameTest\\GameTest.dll");
 
-		m_ScriptModule = RuntimeModule::Create("D:\\Lester_Files\\dev\\Projects\\VastEngine\\Binaries\\Debug-windows-x86_64\\GameTest\\GameTest.dll");
+		//InitScriptFunc = m_ScriptModule->LoadFunction<InitFunc>("Init");
+		//AddScriptFunc = m_ScriptModule->LoadFunction<ScrptFunc>("AddNativeScript");
 
-		auto initFn = m_ScriptModule->LoadFunction<InitFunc>("Init");
-		auto addScrptFn = m_ScriptModule->LoadFunction<ScrptFunc>("AddNativeScript");
+		//InitScriptFunc(Application::GetPointer());
 
-		initFn(Application::GetPointer());
+		//auto characterView = m_ActiveScene->GetRegistry().view<RenderComponent>();
 
-		auto characterView = m_ActiveScene->GetRegistry().view<RenderComponent>();
-
-		for (auto entityID : characterView)
-		{
-			if (m_ActiveScene->GetRegistry().get<TagComponent>(entityID).Tag == "Patrick Star")
-			{
-				Entity entity(entityID, m_ActiveScene.get());
-				addScrptFn(entity);
-				break;
-			}
-		}
+		//for (auto entityID : characterView)
+		//{
+		//	if (m_ActiveScene->GetRegistry().get<TagComponent>(entityID).Tag == "Patrick Star")
+		//	{
+		//		Entity entity(entityID, m_ActiveScene.get());
+		//		AddScriptFunc(entity);
+		//		break;
+		//	}
+		//}
 
 #if 0
 		class CharacterController : public ScriptableEntity
@@ -206,8 +209,6 @@ namespace Vast {
 			break;
 		}
 
-		//VAST_TRACE("{0}", Input::IsPressed(Key::W));
-
 		m_Framebuffer->Unbind();
 	}
 
@@ -363,6 +364,28 @@ namespace Vast {
 		}
 	}
 
+	void EditorLayer::UpdateScriptModule()
+	{
+		m_ScriptModule = RuntimeModule::Create("D:\\Lester_Files\\dev\\Projects\\VastEngine\\Binaries\\Debug-windows-x86_64\\GameTest\\GameTest.dll");
+
+		InitScriptFunc = m_ScriptModule->LoadFunction<InitFunc>("Init");
+		AddScriptFunc = m_ScriptModule->LoadFunction<ScrptFunc>("AddNativeScript");
+
+		InitScriptFunc(Application::GetPointer());
+
+		auto characterView = m_ActiveScene->GetRegistry().view<RenderComponent>();
+
+		for (auto entityID : characterView)
+		{
+			if (m_ActiveScene->GetRegistry().get<TagComponent>(entityID).Tag == "Patrick Star")
+			{
+				Entity entity(entityID, m_ActiveScene.get());
+				AddScriptFunc(entity);
+				break;
+			}
+		}
+	}
+
 	void EditorLayer::NewScene()
 	{
 		if (m_SceneState == SceneState::Play)
@@ -412,6 +435,7 @@ namespace Vast {
 		m_Lineup.SetContext(m_ActiveScene);
 
 		ResizeViewport();
+		UpdateScriptModule();
 	}
 
 	void EditorLayer::OnSceneStop()
@@ -422,6 +446,8 @@ namespace Vast {
 
 		m_ActiveScene = m_EditorScene;
 		m_Lineup.SetContext(m_ActiveScene);
+
+		m_ScriptModule->Clean();
 	}
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)

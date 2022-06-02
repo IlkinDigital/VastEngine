@@ -9,6 +9,8 @@ namespace Vast {
 	public:
 		virtual ~RuntimeModule() = default; 
 
+		virtual void Clean() = 0;
+
 		template<typename ReturnTy>
 		ReturnTy LoadFunction(const String& name);
 

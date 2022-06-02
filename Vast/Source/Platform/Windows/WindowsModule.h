@@ -10,6 +10,7 @@ namespace Vast {
 		WindowsModule(const String& filepath);
 		virtual ~WindowsModule() override;
 
+		virtual void Clean() override;
 	protected:
 		virtual FnPtr OpenFunction(const String& name) override;
 	private:

@@ -14,7 +14,7 @@ namespace Vast {
 		void OnGUIRender();
 	private:
 		String m_RootDirectory = "Assets";
-		std::filesystem::path m_CurrentPath = m_RootDirectory;
+		Filepath m_CurrentPath = m_RootDirectory;
 
 		Ref<Texture2D> m_FolderIcon;
 		Ref<Texture2D> m_FileIcon;

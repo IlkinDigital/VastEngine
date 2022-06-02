@@ -18,8 +18,13 @@ namespace Vast {
 
 	WindowsModule::~WindowsModule()
 	{
-		//if (m_ModuleHandle)
-			//FreeLibrary(m_ModuleHandle);
+		//Clean();
+	}
+
+	void WindowsModule::Clean()
+	{
+		if (m_ModuleHandle)
+			FreeLibrary(m_ModuleHandle);
 	}
 
 	RuntimeModule::FnPtr WindowsModule::OpenFunction(const String& name)

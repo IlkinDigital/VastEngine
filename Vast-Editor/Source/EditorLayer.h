@@ -27,6 +27,8 @@ namespace Vast {
 	private:
 		void ResizeViewport();
 
+		void UpdateScriptModule();
+
 		void NewScene();
 		void OpenScene(const String& filepath);
 		void SaveScene(const String& filepath);
