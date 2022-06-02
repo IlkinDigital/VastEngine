@@ -7,6 +7,8 @@
 #include "Panels/PropertiesPanel.h"
 #include "Panels/ContentBrowserPanel.h"
 
+#include "Project/Project.h"
+
 namespace Vast {
 
 	class EditorLayer : public Layer
@@ -52,6 +54,8 @@ namespace Vast {
 		Ref<Scene> m_EditorScene, m_RuntimeScene;
 		EditorCamera m_EditorCamera;
 		String m_SceneFilepath;
+
+		Project m_Project;
 
 		Ref<RuntimeModule> m_ScriptModule;
 
