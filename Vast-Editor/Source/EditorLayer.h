@@ -15,7 +15,7 @@ namespace Vast {
 	{
 	public:
 		EditorLayer(const String& name)
-			: Layer(name) {}
+			: Layer(name), m_Project("GameTest", "D:/Lester_Files/dev/VastProjects/GameTest") {}
 
 		void OnAttach() override;
 

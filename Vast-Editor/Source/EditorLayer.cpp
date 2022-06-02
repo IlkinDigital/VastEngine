@@ -7,8 +7,6 @@
 #include "EditorLayout/Layout.h"
 #include "EditorCore/EditorControl.h"
 
-#include <Windows.h>
-
 namespace Vast {
 
 	typedef void(*ScrptFunc)(Entity);
@@ -31,25 +29,6 @@ namespace Vast {
 			});
 
 		OpenScene("Assets/Scenes/TestScene2.vast");
-
-		//m_ScriptModule = RuntimeModule::Create("D:\\Lester_Files\\dev\\Projects\\VastEngine\\Binaries\\Debug-windows-x86_64\\GameTest\\GameTest.dll");
-
-		//InitScriptFunc = m_ScriptModule->LoadFunction<InitFunc>("Init");
-		//AddScriptFunc = m_ScriptModule->LoadFunction<ScrptFunc>("AddNativeScript");
-
-		//InitScriptFunc(Application::GetPointer());
-
-		//auto characterView = m_ActiveScene->GetRegistry().view<RenderComponent>();
-
-		//for (auto entityID : characterView)
-		//{
-		//	if (m_ActiveScene->GetRegistry().get<TagComponent>(entityID).Tag == "Patrick Star")
-		//	{
-		//		Entity entity(entityID, m_ActiveScene.get());
-		//		AddScriptFunc(entity);
-		//		break;
-		//	}
-		//}
 
 #if 0
 		class CharacterController : public ScriptableEntity
@@ -366,7 +345,7 @@ namespace Vast {
 
 	void EditorLayer::UpdateScriptModule()
 	{
-		m_ScriptModule = RuntimeModule::Create("D:\\Lester_Files\\dev\\Projects\\VastEngine\\Binaries\\Debug-windows-x86_64\\GameTest\\GameTest.dll");
+		m_ScriptModule = RuntimeModule::Create(m_Project.GetScriptModulePath());
 
 		InitScriptFunc = m_ScriptModule->LoadFunction<InitFunc>("Init");
 		AddScriptFunc = m_ScriptModule->LoadFunction<ScrptFunc>("AddNativeScript");

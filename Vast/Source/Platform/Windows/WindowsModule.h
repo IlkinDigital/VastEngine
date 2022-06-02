@@ -7,7 +7,7 @@ namespace Vast {
 	class WindowsModule : public RuntimeModule
 	{
 	public:
-		WindowsModule(const String& filepath);
+		WindowsModule(const Filepath& filepath);
 		virtual ~WindowsModule() override;
 
 		virtual void Clean() override;
