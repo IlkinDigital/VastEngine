@@ -5,9 +5,10 @@ namespace Vast {
 	Project::Project(const String& name, const Filepath& projectPath)
 		: m_Name(name), m_ProjectPath(projectPath)
 	{
+		InvalidateScriptPath();
 	}
 
-	const Filepath& Project::GetScriptModulePath()
+	void Project::InvalidateScriptPath()
 	{
 #ifdef VAST_PLATFORM_WINDOWS
 		const char* platform = "windows-x86_64";
@@ -27,8 +28,6 @@ namespace Vast {
 		m_ScriptPath /= config + '-' + platform;
 		m_ScriptPath /= m_Name;
 		m_ScriptPath /= m_Name + ".dll";
-
-		return m_ScriptPath;
 	}
 
 }

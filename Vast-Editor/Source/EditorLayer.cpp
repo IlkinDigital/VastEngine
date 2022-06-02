@@ -7,6 +7,8 @@
 #include "EditorLayout/Layout.h"
 #include "EditorCore/EditorControl.h"
 
+#include "NativeScripting/CodeGenerator.h"
+
 namespace Vast {
 
 	typedef void(*ScrptFunc)(Entity);
@@ -29,6 +31,9 @@ namespace Vast {
 			});
 
 		OpenScene("Assets/Scenes/TestScene2.vast");
+
+		CodeGenerator gen(m_Project);
+		gen.GenerateProjectFile();
 
 #if 0
 		class CharacterController : public ScriptableEntity

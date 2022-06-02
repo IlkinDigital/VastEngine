@@ -9,8 +9,13 @@ namespace Vast {
 	public:
 		Project(const String& name, const Filepath& projectPath);
 
-		const Filepath& GetPath() const { return m_ProjectPath; }
-		const Filepath& GetScriptModulePath();
+		const String& GetName() const { return m_Name; }
+		const Filepath& GetProjectPath() const { return m_ProjectPath; }
+		const Filepath& GetScriptModulePath() const { return m_ScriptPath; }
+
+		void SetProjectPath(const Filepath& path) { m_ProjectPath = path; InvalidateScriptPath(); }
+	private:
+		void InvalidateScriptPath();
 	private:
 		String m_Name;
 		Filepath m_ScriptPath;
