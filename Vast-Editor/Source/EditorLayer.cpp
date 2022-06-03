@@ -11,11 +11,15 @@
 
 namespace Vast {
 
-	typedef void(*ScrptFunc)(Entity);
-	typedef void(*InitFunc)(Application*);
+	using ScriptBuffer = Vast::DArray<Vast::NativeScriptComponent>;
 
-	InitFunc InitScriptFunc;
-	ScrptFunc AddScriptFunc;
+	typedef void(*InitScriptsFunc)();
+	typedef void(*InitModuleFunc)(Application*);
+	typedef const ScriptBuffer&(*GetScriptsFunc)();
+
+	static InitModuleFunc InitModuleFn;
+	static InitScriptsFunc InitScriptsFn;
+	static GetScriptsFunc GetScriptsFn;
 
 	void EditorLayer::OnAttach()
 	{
@@ -33,7 +37,7 @@ namespace Vast {
 		OpenScene("Assets/Scenes/TestScene2.vast");
 
 		CodeGenerator gen(m_Project);
-		gen.GenerateProjectFile();
+		gen.GenerateExportFile();
 
 #if 0
 		class CharacterController : public ScriptableEntity
@@ -352,10 +356,12 @@ namespace Vast {
 	{
 		m_ScriptModule = RuntimeModule::Create(m_Project.GetScriptModulePath());
 
-		InitScriptFunc = m_ScriptModule->LoadFunction<InitFunc>("Init");
-		AddScriptFunc = m_ScriptModule->LoadFunction<ScrptFunc>("AddNativeScript");
+		InitModuleFn = m_ScriptModule->LoadFunction<InitModuleFunc>("InitModule");
+		InitScriptsFn = m_ScriptModule->LoadFunction<InitScriptsFunc>("InitScripts");
+		GetScriptsFn = m_ScriptModule->LoadFunction<GetScriptsFunc>("GetScripts");
 
-		InitScriptFunc(Application::GetPointer());
+		InitModuleFn(Application::GetPointer());
+		InitScriptsFn();
 
 		auto characterView = m_ActiveScene->GetRegistry().view<RenderComponent>();
 
@@ -364,7 +370,7 @@ namespace Vast {
 			if (m_ActiveScene->GetRegistry().get<TagComponent>(entityID).Tag == "Patrick Star")
 			{
 				Entity entity(entityID, m_ActiveScene.get());
-				AddScriptFunc(entity);
+				entity.AddOrReplaceComponent<NativeScriptComponent>(GetScriptsFn()[0]);
 				break;
 			}
 		}
