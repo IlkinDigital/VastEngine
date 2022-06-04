@@ -32,6 +32,8 @@ namespace Vast {
 				OpenScene(filepath);
 			});
 
+		UpdateScriptModule();
+
 		OpenScene("Assets/Scenes/TestScene2.vast");
 
 #if 0
@@ -352,27 +354,18 @@ namespace Vast {
 
 	void EditorLayer::UpdateScriptModule()
 	{
-		m_ScriptModule = RuntimeModule::Create(m_Project.GetScriptModulePath());
+		if (std::filesystem::exists(m_Project.GetScriptModulePath()))
+		{
+			m_ScriptModule = RuntimeModule::Create(m_Project.GetScriptModulePath());
 
-		InitModule = m_ScriptModule->LoadFunction<InitModuleFn>("InitModule");
-		InitScripts = m_ScriptModule->LoadFunction<InitScriptsFn>("InitScripts");
-		GetScripts = m_ScriptModule->LoadFunction<GetScriptsFn>("GetScripts");
+			InitModule = m_ScriptModule->LoadFunction<InitModuleFn>("InitModule");
+			InitScripts = m_ScriptModule->LoadFunction<InitScriptsFn>("InitScripts");
+			GetScripts = m_ScriptModule->LoadFunction<GetScriptsFn>("GetScripts");
 
-		InitModule(Application::GetPointer());
-		InitScripts();
-		m_ScriptBuffer.Set(GetScripts());
-
-		//auto characterView = m_ActiveScene->GetRegistry().view<RenderComponent>();
-
-		//for (auto entityID : characterView)
-		//{
-		//	if (m_ActiveScene->GetRegistry().get<TagComponent>(entityID).Tag == "Patrick Star")
-		//	{
-		//		Entity entity(entityID, m_ActiveScene.get());
-		//		entity.AddOrReplaceComponent<NativeScriptComponent>(m_ScriptBuffer.GetByName("Vast::CharacterController"));
-		//		break;
-		//	}
-		//}
+			InitModule(Application::GetPointer());
+			InitScripts();
+			m_ScriptBuffer.Set(GetScripts());
+		}
 	}
 
 	void EditorLayer::NewScene()
