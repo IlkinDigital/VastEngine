@@ -197,11 +197,12 @@ extern "C"
 
         // Binding and adding scripts to buffer
         int id = 0;
-        for (auto& c : userClasses)
+        for (auto& className : userClasses)
         {
             genCpp
                 << "\t\tVast::NativeScriptComponent var" << id << ";\n"
-                << "\t\tvar" << id << ".Bind<" << c << ">();\n"
+                << "\t\tvar" << id << ".Bind<" << className << ">();\n"
+                << "\t\tvar" << id << ".Name = \"" << className << "\";\n"
                 << "\t\ts_Scripts.emplace_back(var" << id << ");\n";
             id++;
         }

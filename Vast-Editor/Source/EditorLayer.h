@@ -8,6 +8,7 @@
 #include "Panels/ContentBrowserPanel.h"
 
 #include "Project/Project.h"
+#include "NativeScripting/ScriptBuffer.h"
 
 namespace Vast {
 
@@ -35,6 +36,8 @@ namespace Vast {
 		void OpenScene(const String& filepath);
 		void SaveScene(const String& filepath);
 
+		void BuildScripts();
+
 		void OnScenePlay();
 		void OnSceneStop();
 
@@ -56,8 +59,8 @@ namespace Vast {
 		String m_SceneFilepath;
 
 		Project m_Project;
-
 		Ref<RuntimeModule> m_ScriptModule;
+		ScriptBuffer m_ScriptBuffer;
 
 		ImVec4* m_Colors = ImGui::GetStyle().Colors;
 

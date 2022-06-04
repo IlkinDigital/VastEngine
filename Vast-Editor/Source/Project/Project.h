@@ -14,6 +14,9 @@ namespace Vast {
 		const Filepath& GetScriptModulePath() const { return m_ScriptPath; }
 
 		void SetProjectPath(const Filepath& path) { m_ProjectPath = path; InvalidateScriptPath(); }
+
+		// Compiles project
+		void Build();
 	private:
 		void InvalidateScriptPath();
 	private:

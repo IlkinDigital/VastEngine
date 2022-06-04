@@ -8,6 +8,17 @@ namespace Vast {
 		InvalidateScriptPath();
 	}
 
+	// TODO: Multi compiler support (only supports MSVC compiler)
+	void Project::Build()
+	{
+		StringStream ss;
+		ss << R"("C:/Program Files/Microsoft Visual Studio/2022/Community/Msbuild/Current/Bin/amd64/MSBuild.exe" )"
+			<< (m_ProjectPath / (m_Name + ".vcxproj")).string()
+			<< " -property:Configuration=Debug -property:Platform=x64";
+
+		std::system(ss.str().c_str());
+	}
+
 	void Project::InvalidateScriptPath()
 	{
 #ifdef VAST_PLATFORM_WINDOWS

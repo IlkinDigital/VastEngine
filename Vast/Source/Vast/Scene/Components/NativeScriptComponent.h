@@ -17,7 +17,6 @@ namespace Vast {
 		template<typename Ty>
 		void Bind()
 		{
-			Name = typeid(Ty).name();
 			InstantiateScript = []() { return static_cast<ScriptableEntity*>(new Ty()); };
 			DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
 		}

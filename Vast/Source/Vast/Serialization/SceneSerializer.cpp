@@ -54,6 +54,10 @@ namespace Vast {
 		{
 			for (auto entity : entities)
 			{
+				/**
+				* UUID Component
+				*/
+
 				UUID uuid(entity["Entity"].as<uint64>());
 
 				/**

@@ -11,15 +11,13 @@
 
 namespace Vast {
 
-	using ScriptBuffer = Vast::DArray<Vast::NativeScriptComponent>;
+	typedef void(*InitScriptsFn)();
+	typedef void(*InitModuleFn)(Application*);
+	typedef const DArray<NativeScriptComponent>&(*GetScriptsFn)();
 
-	typedef void(*InitScriptsFunc)();
-	typedef void(*InitModuleFunc)(Application*);
-	typedef const ScriptBuffer&(*GetScriptsFunc)();
-
-	static InitModuleFunc InitModuleFn;
-	static InitScriptsFunc InitScriptsFn;
-	static GetScriptsFunc GetScriptsFn;
+	static InitModuleFn InitModule;
+	static InitScriptsFn InitScripts;
+	static GetScriptsFn GetScripts;
 
 	void EditorLayer::OnAttach()
 	{
@@ -35,9 +33,6 @@ namespace Vast {
 			});
 
 		OpenScene("Assets/Scenes/TestScene2.vast");
-
-		CodeGenerator gen(m_Project);
-		gen.GenerateExportFile();
 
 #if 0
 		class CharacterController : public ScriptableEntity
@@ -307,6 +302,9 @@ namespace Vast {
 			}
 			ImGui::PopStyleColor();
 
+			if (ImGui::Button("Build"))
+				BuildScripts();
+
 			ImGui::End();
 		}
 
@@ -320,7 +318,7 @@ namespace Vast {
 
 		m_Viewport.OnGUIRender(m_Framebuffer->GetColorAttachment(), m_Gizmo);
 		m_Lineup.OnGUIRender();
-		m_Properties.OnGUIRender(m_Lineup.GetSelected());
+		m_Properties.OnGUIRender(m_Lineup.GetSelected(), m_ScriptBuffer);
 
 		m_ContentBrowser.OnGUIRender();
 
@@ -356,24 +354,25 @@ namespace Vast {
 	{
 		m_ScriptModule = RuntimeModule::Create(m_Project.GetScriptModulePath());
 
-		InitModuleFn = m_ScriptModule->LoadFunction<InitModuleFunc>("InitModule");
-		InitScriptsFn = m_ScriptModule->LoadFunction<InitScriptsFunc>("InitScripts");
-		GetScriptsFn = m_ScriptModule->LoadFunction<GetScriptsFunc>("GetScripts");
+		InitModule = m_ScriptModule->LoadFunction<InitModuleFn>("InitModule");
+		InitScripts = m_ScriptModule->LoadFunction<InitScriptsFn>("InitScripts");
+		GetScripts = m_ScriptModule->LoadFunction<GetScriptsFn>("GetScripts");
 
-		InitModuleFn(Application::GetPointer());
-		InitScriptsFn();
+		InitModule(Application::GetPointer());
+		InitScripts();
+		m_ScriptBuffer.Set(GetScripts());
 
-		auto characterView = m_ActiveScene->GetRegistry().view<RenderComponent>();
+		//auto characterView = m_ActiveScene->GetRegistry().view<RenderComponent>();
 
-		for (auto entityID : characterView)
-		{
-			if (m_ActiveScene->GetRegistry().get<TagComponent>(entityID).Tag == "Patrick Star")
-			{
-				Entity entity(entityID, m_ActiveScene.get());
-				entity.AddOrReplaceComponent<NativeScriptComponent>(GetScriptsFn()[0]);
-				break;
-			}
-		}
+		//for (auto entityID : characterView)
+		//{
+		//	if (m_ActiveScene->GetRegistry().get<TagComponent>(entityID).Tag == "Patrick Star")
+		//	{
+		//		Entity entity(entityID, m_ActiveScene.get());
+		//		entity.AddOrReplaceComponent<NativeScriptComponent>(m_ScriptBuffer.GetByName("Vast::CharacterController"));
+		//		break;
+		//	}
+		//}
 	}
 
 	void EditorLayer::NewScene()
@@ -415,6 +414,22 @@ namespace Vast {
 		}
 	}
 
+	void EditorLayer::BuildScripts()
+	{
+		if (m_SceneState == SceneState::Play)
+			OnSceneStop();
+
+		CodeGenerator gen(m_Project);
+		gen.GenerateExportFile();
+		
+		if (m_ScriptModule)
+			m_ScriptModule->Clean();
+
+		m_Project.Build();
+
+		UpdateScriptModule();
+	}
+
 	void EditorLayer::OnScenePlay()
 	{
 		m_SceneState = SceneState::Play;
@@ -425,7 +440,6 @@ namespace Vast {
 		m_Lineup.SetContext(m_ActiveScene);
 
 		ResizeViewport();
-		UpdateScriptModule();
 	}
 
 	void EditorLayer::OnSceneStop()
@@ -436,8 +450,6 @@ namespace Vast {
 
 		m_ActiveScene = m_EditorScene;
 		m_Lineup.SetContext(m_ActiveScene);
-
-		m_ScriptModule->Clean();
 	}
 
 	bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)

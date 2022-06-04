@@ -2,19 +2,21 @@
 
 #include "EditorCore/EditorControl.h"
 
+#include "Scene/Components.h"
+
 namespace Vast {
 
-	void PropertiesPanel::OnGUIRender(Entity entity)
+	void PropertiesPanel::OnGUIRender(Entity entity, const ScriptBuffer& scripts)
 	{
 		ImGui::Begin("Properties");
 
 		if (entity.IsValid())
-			DrawComponents(entity);
+			DrawComponents(entity, scripts);
 
 		ImGui::End();
 	}
 
-	void PropertiesPanel::DrawComponents(Entity entity)
+	void PropertiesPanel::DrawComponents(Entity entity, const ScriptBuffer& scripts)
 	{
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -44,6 +46,12 @@ namespace Vast {
 			if (ImGui::MenuItem("Render Component"))
 			{
 				entity.AddComponent<RenderComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::MenuItem("Native Script"))
+			{
+				entity.AddComponent<NativeScriptComponent>();
 				ImGui::CloseCurrentPopup();
 			}
 
@@ -86,9 +94,9 @@ namespace Vast {
 					float width = component.Texture->GetWidth();
 					float tot = height + width;
 					float thumbnailSize = 256.0f;
+					ImGui::Text("Texture: %s", component.Texture->GetFilepath().c_str());
 					ImGui::ImageButton((ImTextureID)component.Texture->GetRendererID(),
 						{ (width / tot) * thumbnailSize, (height / tot) * thumbnailSize }, { 0, 1 }, { 1, 0 });
-					ImGui::Text("%s", component.Texture->GetFilepath().c_str());
 				}
 				else
 					ImGui::Button("Texture");
@@ -159,6 +167,36 @@ namespace Vast {
 					float farClip = camera.GetPerspectiveFarClip();
 					if (ImGui::DragFloat("Far Clip", &farClip))
 						camera.SetPerspectiveFarClip(farClip);
+				}
+			});
+
+		EditorControl::DrawComponent<NativeScriptComponent>("Script", entity, [&](NativeScriptComponent& component)
+			{
+				uint16 currScriptIndex = 0;
+				const char* preview;
+				if (component.Name.empty())
+					preview = "None";
+				else
+					preview = component.Name.c_str();
+
+				if (ImGui::BeginCombo("Script", preview))
+				{
+					for (uint16 i = 0; i < scripts.GetBuffer().size(); i++)
+					{
+						bool isSelected = currScriptIndex == i;
+
+						if (ImGui::Selectable(scripts.GetBuffer()[i].Name.c_str(), isSelected))
+						{
+							currScriptIndex = i;
+							component = scripts.GetBuffer()[i];
+							preview = scripts.GetBuffer()[i].Name.c_str();
+						}
+
+						if (isSelected)
+							ImGui::SetItemDefaultFocus();
+					}
+					
+					ImGui::EndCombo();
 				}
 			});
 	}
