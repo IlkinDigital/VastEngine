@@ -59,10 +59,10 @@ namespace Vast {
             << tab << "}\n\n"
 
             << tab << "filter{ 'system:windows', 'configurations:Debug' }\n"
-            << tab << tab << "buildoptions '/MDd'\n"
+            << tab << tab << "buildoptions '/MTd'\n"
 
             << tab << "filter{ 'system:windows', 'configurations:Release' }\n"
-            << tab << tab << "buildoptions '/MD'\n"
+            << tab << tab << "buildoptions '/MT'\n"
 
             << tab << "filter 'system:windows'\n"
             << tab << tab << "systemversion 'latest'\n"

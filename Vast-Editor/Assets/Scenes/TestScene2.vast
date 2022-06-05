@@ -27,6 +27,8 @@ Entities:
         OrthographicNear: -1
         OrthographicFar: 1
       Primary: true
+    NativeScriptComponent:
+      Name: Vast::CameraController
   - Entity: 687346678967896
     TagComponent:
       Tag: Terrain
@@ -57,3 +59,5 @@ Entities:
     RenderComponent:
       Color: [0, 0, 0, 1]
       Texture: Assets/Textures/PatrickAlpha.png
+    NativeScriptComponent:
+      Name: Vast::CharacterController

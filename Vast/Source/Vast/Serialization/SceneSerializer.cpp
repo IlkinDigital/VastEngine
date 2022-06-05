@@ -121,6 +121,19 @@ namespace Vast {
 					if (texturePath != "")
 						rc.Texture = Texture2D::Create(texturePath);
 				}
+
+				/**
+				* Native Script Component
+				*/
+				auto nscriptComponent = entity["NativeScriptComponent"];
+				if (nscriptComponent)
+				{
+					auto& nsc = deserializedEntity.AddComponent<NativeScriptComponent>();
+
+					nsc.Name = nscriptComponent["Name"].as<String>();
+
+					// Instantiation from ScriptBuffer does the client application
+				}
 			}
 		}
 
@@ -168,6 +181,11 @@ namespace Vast {
 			{
 				out << YAML::Key << "Color" << YAML::Value << rc.Color;
 				out << YAML::Key << "Texture" << YAML::Value << ((rc.Texture) ? rc.Texture->GetFilepath() : "");
+			});
+
+		SerializeComponent<NativeScriptComponent>(out, "NativeScriptComponent", entity, [&](NativeScriptComponent& nsc)
+			{
+				out << YAML::Key << "Name" << YAML::Value << nsc.Name;
 			});
 
 		out << YAML::EndMap;

@@ -392,6 +392,25 @@ namespace Vast {
 
 			m_ActiveScene = m_EditorScene;
 
+			// Instantiate scripts (Temporary while no static ScriptBuffer)
+			auto view = m_ActiveScene->GetRegistry().view<NativeScriptComponent>();
+			for (auto entityID : view)
+			{
+				bool scriptExists = false;
+				auto& nsc = view.get<NativeScriptComponent>(entityID);
+				for (auto& script : m_ScriptBuffer.GetBuffer())
+				{
+					if (nsc.Name == script.Name)
+					{
+						nsc = script;
+						scriptExists = true;
+					}
+				}
+
+				if (!scriptExists)
+					VAST_ERROR("'{0}' script couldn't be loaded", nsc.Name);
+			}
+
 			m_Lineup.SetContext(m_ActiveScene);
 			m_Gizmo.UpdateData({}, m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetViewProjection());
 			ResizeViewport();
