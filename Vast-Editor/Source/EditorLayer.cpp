@@ -11,6 +11,9 @@
 
 namespace Vast {
 
+// Returns relative filepath through project's directory
+#define PROJDIR(path) (m_Project.GetProjectPath() / path)
+
 	typedef void(*InitScriptsFn)();
 	typedef void(*InitModuleFn)(Application*);
 	typedef const DArray<NativeScriptComponent>&(*GetScriptsFn)();
@@ -32,12 +35,14 @@ namespace Vast {
 				OpenScene(filepath);
 			});
 
+		m_ContentBrowser.SetRootDirectory(PROJDIR("Content"));
+
 		CodeGenerator gen(m_Project);
 		gen.GenerateProjectFile();
 
 		UpdateScriptModule();
 
-		OpenScene("Assets/Scenes/TestScene2.vast");
+		OpenScene(PROJDIR("Content/Assets/Scenes/TestScene2.vast"));
 	}
 
 
@@ -257,16 +262,16 @@ namespace Vast {
 		m_Lineup.SetContext(m_ActiveScene);
 	}
 
-	void EditorLayer::OpenScene(const String& filepath)
+	void EditorLayer::OpenScene(const Filepath& filepath)
 	{
-		if (!filepath.empty())
+		if (std::filesystem::exists(filepath))
 		{
 			if (m_SceneState == SceneState::Play)
 				OnSceneStop();
-			
+
 			m_EditorScene = CreateRef<Scene>();
 			SceneSerializer serializer(m_EditorScene);
-			serializer.Deserialize(filepath);
+			serializer.Deserialize(filepath.string());
 			m_SceneFilepath = filepath;
 
 			m_ActiveScene = m_EditorScene;
@@ -294,14 +299,16 @@ namespace Vast {
 			m_Gizmo.UpdateData({}, m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetViewProjection());
 			ResizeViewport();
 		}
+		else
+			VAST_ERROR("Invalid path to scene '{0}'", filepath.string());
 	}
 
-	void EditorLayer::SaveScene(const String& filepath)
+	void EditorLayer::SaveScene(const Filepath& filepath)
 	{
 		if (!filepath.empty())
 		{
 			SceneSerializer serializer(m_EditorScene);
-			serializer.Serialize(filepath);
+			serializer.Serialize(filepath.string());
 		}
 	}
 

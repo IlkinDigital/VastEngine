@@ -2,6 +2,8 @@
 
 #include "Vast.h"
 
+#include "GUI/FontManager.h"
+
 #include "Panels/ViewportPanel.h"
 #include "Panels/LineupPanel.h"
 #include "Panels/PropertiesPanel.h"
@@ -33,8 +35,8 @@ namespace Vast {
 		void UpdateScriptModule();
 
 		void NewScene();
-		void OpenScene(const String& filepath);
-		void SaveScene(const String& filepath);
+		void OpenScene(const Filepath& filepath);
+		void SaveScene(const Filepath& filepath);
 
 		void BuildScripts();
 
@@ -56,7 +58,7 @@ namespace Vast {
 		Ref<Scene> m_ActiveScene; // Pointer to current scene - editor/runtime
 		Ref<Scene> m_EditorScene, m_RuntimeScene;
 		EditorCamera m_EditorCamera;
-		String m_SceneFilepath;
+		Filepath m_SceneFilepath;
 
 		Project m_Project;
 		Ref<RuntimeModule> m_ScriptModule;

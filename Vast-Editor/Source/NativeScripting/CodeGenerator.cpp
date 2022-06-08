@@ -32,12 +32,15 @@ EnginePath = 'D:/Lester_Files/dev/Projects/VastEngine'
     kind 'SharedLib'
     language 'C++'
     cppdialect 'C++20'
-    staticruntime 'off'
+    staticruntime 'on'
 
     targetdir('Binaries/' ..outputdir .. '/%{prj.name}')
     objdir('Binaries-Int/' ..outputdir .. '/%{prj.name}')
 
     files {'Source/**.h', 'Source/**.cpp'}
+
+    pchheader "gamepch.h"
+    pchsource "Source/gamepch.cpp"
 
     includedirs
     {
@@ -64,24 +67,24 @@ EnginePath = 'D:/Lester_Files/dev/Projects/VastEngine'
         'Engine/Glad.lib'
     }
 
-    filter{ 'system:windows', 'configurations:Debug' }
-        buildoptions '/MTd'
-    filter{ 'system:windows', 'configurations:Release' }
-        buildoptions '/MT'
     filter 'system:windows'
         systemversion 'latest'
+
     defines
     {
         'VAST_PLATFORM_WINDOWS'
     }
+
     filter 'configurations:Debug'
         defines 'VAST_CONFIG_DEBUG'
         runtime 'Debug'
         symbols 'on'
+
     filter 'configurations:Release'
         defines 'VAST_CONFIG_RELEASE'
         runtime 'Release'
         optimize 'on'
+
     filter 'configurations:Distribution'
         defines 'VAST_CONFIG_DISTRIBUTION'
         runtime 'Release'
@@ -169,11 +172,8 @@ extern "C"
         StringStream genCpp;
 
         genCpp << 
-R"(
+R"(#include "gamepch.h"
 #include "Generated.h"
-
-#include "Vast/ApplicationCore/Application.h"
-#include <unordered_map>
 
 )";
 
