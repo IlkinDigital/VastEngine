@@ -18,77 +18,79 @@ namespace Vast {
 	void CodeGenerator::GenerateProjectFile()
 	{
         StringStream ss;
-        const char* tab = "    ";
-        ss << "workspace '" << m_Project.GetName() << "'\n"
-            << tab << "architecture 'x64'\n"
-            << tab << "configurations{'Debug', 'Release', 'Distribution'}\n\n"
-            << "outputdir = '%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}'\n"
-            << "EnginePath = 'D:/Lester_Files/dev/Projects/VastEngine'\n\n" // TODO: Remove hardcoded path to engine
-            << "project '" << m_Project.GetName() << "'\n"
-            << tab << "kind 'SharedLib'\n"
-            << tab << "language 'C++'\n"
-            << tab << "cppdialect 'C++20'\n"
-            << tab << "staticruntime 'off'\n\n"
-            << tab << "targetdir('Binaries/' ..outputdir .. '/%{prj.name}')\n"
-            << tab << "objdir('Binaries-Int/' ..outputdir .. '/%{prj.name}')\n\n"
-            << tab << "files {'Source/**.h', 'Source/**.cpp'}\n\n"
+        ss
+            << "workspace '" << m_Project.GetName() << "'"
+            << R"(
+    architecture 'x64'
+    configurations{'Debug', 'Release', 'Distribution'}
 
-            << tab << "includedirs\n"
-            << tab << "{\n"
-            << tab << tab << "'Source',\n"
-            << tab << tab << "'%{EnginePath}/Vast/Source',\n"
-            << tab << tab << "'%{EnginePath}/Vast/Source/Vast',\n"
-            << tab << tab << "'%{EnginePath}/Vast/Source/Vast/Core',\n"
-            << tab << tab << "'%{EnginePath}/Vast/Vendor/spdlog/include',\n"
-            << tab << tab << "'%{EnginePath}/Vast/Vendor/entt',\n"
-            << tab << tab << "'%{EnginePath}/Vast/Vendor/glm'\n"
-            << tab << "}\n\n"
+outputdir = '%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}'
+EnginePath = 'D:/Lester_Files/dev/Projects/VastEngine' 
+)" // TODO: Remove hardcoded path to engine
+<< "project '" << m_Project.GetName() << "'"
+<< R"(
+    kind 'SharedLib'
+    language 'C++'
+    cppdialect 'C++20'
+    staticruntime 'off'
 
-            << tab << "defines\n"
-            << tab << "{\n"
-            << tab << tab << "'_CRT_SECURE_NO_WARNINGS',\n"
-            << tab << tab << "'VAST_SCRIPT_DLL'\n"
-            << tab << "}\n\n"
+    targetdir('Binaries/' ..outputdir .. '/%{prj.name}')
+    objdir('Binaries-Int/' ..outputdir .. '/%{prj.name}')
 
-            << tab << "links\n"
-            << tab << "{\n"
-            << tab << tab << "'Engine/Vast.lib',\n"
-            << tab << tab << "'Engine/GLFW.lib',\n"
-            << tab << tab << "'Engine/ImGui.lib',\n"
-            << tab << tab << "'Engine/Glad.lib'\n"
-            << tab << "}\n\n"
+    files {'Source/**.h', 'Source/**.cpp'}
 
-            << tab << "filter{ 'system:windows', 'configurations:Debug' }\n"
-            << tab << tab << "buildoptions '/MTd'\n"
+    includedirs
+    {
+        'Source',
+        '%{EnginePath}/Vast/Source',
+        '%{EnginePath}/Vast/Source/Vast',
+        '%{EnginePath}/Vast/Source/Vast/Core',
+        '%{EnginePath}/Vast/Vendor/spdlog/include',
+        '%{EnginePath}/Vast/Vendor/entt',
+        '%{EnginePath}/Vast/Vendor/glm'
+    }
 
-            << tab << "filter{ 'system:windows', 'configurations:Release' }\n"
-            << tab << tab << "buildoptions '/MT'\n"
+    defines
+    {
+        '_CRT_SECURE_NO_WARNINGS',
+        'VAST_SCRIPT_DLL'
+    }
 
-            << tab << "filter 'system:windows'\n"
-            << tab << tab << "systemversion 'latest'\n"
+    links
+    {
+        'Engine/Vast.lib',
+        'Engine/GLFW.lib',
+        'Engine/ImGui.lib',
+        'Engine/Glad.lib'
+    }
 
-            << tab << "defines\n"
-            << tab << "{\n"
-            << tab << tab << "'VAST_PLATFORM_WINDOWS'\n"
-            << tab << "}\n"
-
-            << tab << "filter 'configurations:Debug'\n"
-            << tab << tab << "defines 'VAST_CONFIG_DEBUG'\n"
-            << tab << tab << "runtime 'Debug'\n"
-            << tab << tab << "symbols 'on'\n"
-
-            << tab << "filter 'configurations:Release'\n"
-            << tab << tab << "defines 'VAST_CONFIG_RELEASE'\n"
-            << tab << tab << "runtime 'Release'\n"
-            << tab << tab << "optimize 'on'\n"
-
-            << tab << "filter 'configurations:Distribution'\n"
-            << tab << tab << "defines 'VAST_CONFIG_DISTRIBUTION'\n"
-            << tab << tab << "runtime 'Release'\n"
-            << tab << tab << "optimize 'on'\n";
+    filter{ 'system:windows', 'configurations:Debug' }
+        buildoptions '/MTd'
+    filter{ 'system:windows', 'configurations:Release' }
+        buildoptions '/MT'
+    filter 'system:windows'
+        systemversion 'latest'
+    defines
+    {
+        'VAST_PLATFORM_WINDOWS'
+    }
+    filter 'configurations:Debug'
+        defines 'VAST_CONFIG_DEBUG'
+        runtime 'Debug'
+        symbols 'on'
+    filter 'configurations:Release'
+        defines 'VAST_CONFIG_RELEASE'
+        runtime 'Release'
+        optimize 'on'
+    filter 'configurations:Distribution'
+        defines 'VAST_CONFIG_DISTRIBUTION'
+        runtime 'Release'
+        optimize 'on'
+)";
 
         std::ofstream fs(m_Project.GetProjectPath() / "premake5.lua");
         fs << ss.str();
+        fs.close();
 	}
 
 	void CodeGenerator::GenerateExportFile()
@@ -137,6 +139,7 @@ namespace Vast {
                 userFiles.erase(userFiles.begin() + i);
 
             i++;
+            fs.close();
         }
 
         /**
@@ -226,8 +229,10 @@ R"(
         std::filesystem::create_directory(m_Project.GetProjectPath() / "Source" / "Generated");
         std::ofstream fsHeader(m_Project.GetProjectPath() / "Source" / "Generated" / "Generated.h");
         fsHeader << genHeader.str();
+        fsHeader.close();
         std::ofstream fsCpp(m_Project.GetProjectPath() / "Source" / "Generated" / "Generated.cpp");
         fsCpp << genCpp.str();
+        fsCpp.close();
 	}
 
 }

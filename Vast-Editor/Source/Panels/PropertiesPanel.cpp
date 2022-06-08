@@ -185,15 +185,12 @@ namespace Vast {
 					{
 						bool isSelected = currScriptIndex == i;
 
-						if (ImGui::Selectable(scripts.GetBuffer()[i].Name.c_str(), isSelected))
+						if (ImGui::Selectable(scripts.GetBuffer()[i].Name.c_str(), false))
 						{
 							currScriptIndex = i;
 							component = scripts.GetBuffer()[i];
 							preview = scripts.GetBuffer()[i].Name.c_str();
 						}
-
-						if (isSelected)
-							ImGui::SetItemDefaultFocus();
 					}
 					
 					ImGui::EndCombo();

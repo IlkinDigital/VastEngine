@@ -12,8 +12,17 @@ namespace Vast {
 
 	WindowsModule::WindowsModule(const Filepath& filepath)
 	{
-		m_ModuleHandle = LoadLibraryA(filepath.string().c_str());
-		VAST_CORE_ASSERT(m_ModuleHandle, "Couldn't load module");
+		Clean(); // TODO: Maybe remove
+		String path = filepath.string();
+		m_ModuleHandle = LoadLibraryA(path.c_str());
+
+		if (!m_ModuleHandle)
+		{
+			VAST_CORE_ERROR("Couldn't load module from '{0}'", path);
+			m_IsLoaded = false;
+		}
+		else
+			m_IsLoaded = true;
 	}
 
 	WindowsModule::~WindowsModule()
@@ -23,8 +32,16 @@ namespace Vast {
 
 	void WindowsModule::Clean()
 	{
-		if (m_ModuleHandle)
+		LPWSTR filename = new WCHAR[128]{};
+		GetModuleFileName(m_ModuleHandle, filename, 127);
+		if (filename[0])
+		{
 			FreeLibrary(m_ModuleHandle);
+			char buffer[128]{};
+			wcstombs(buffer, filename, 128);
+			VAST_CORE_WARN("Script Module - {0} - has been cleaned", buffer);
+		}
+		delete[] filename;
 	}
 
 	RuntimeModule::FnPtr WindowsModule::OpenFunction(const String& name)

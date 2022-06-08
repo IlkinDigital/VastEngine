@@ -32,133 +32,12 @@ namespace Vast {
 				OpenScene(filepath);
 			});
 
+		CodeGenerator gen(m_Project);
+		gen.GenerateProjectFile();
+
 		UpdateScriptModule();
 
 		OpenScene("Assets/Scenes/TestScene2.vast");
-
-#if 0
-		class CharacterController : public ScriptableEntity
-		{
-		public:
-			void OnUpdate(Timestep ts) override
-			{
-				auto& transform = GetComponent<TransformComponent>();
-				
-				if (Input::IsPressed(Key::W))
-					transform.Translation.y += m_Speed * ts;
-				if (Input::IsPressed(Key::S))
-					transform.Translation.y -= m_Speed * ts;
-				if (Input::IsPressed(Key::D))
-					transform.Translation.x += m_Speed * ts;
-				if (Input::IsPressed(Key::A))
-					transform.Translation.x -= m_Speed * ts;
-			}
-		private:
-			float m_Speed = 3.0f;
-		};
-
-		class FollowCamera : public ScriptableEntity
-		{
-		public:
-			void OnCreate() override
-			{
-				UUID id = 7326193114781319049;
-				m_TargetEntity = GetEntity(id);
-			}
-
-			void OnUpdate(Timestep ts)
-			{
-				auto& cameraPos = GetComponent<TransformComponent>().Translation;
-				auto& targetPos = m_TargetEntity.GetComponent<TransformComponent>().Translation;
-
-				cameraPos.x = targetPos.x;
-				cameraPos.y = targetPos.y;
-			}
-
-		private:
-			Entity m_TargetEntity;
-		};
-
-		auto characterView = m_ActiveScene->GetRegistry().view<RenderComponent>();
-		auto cameraView = m_ActiveScene->GetRegistry().view<CameraComponent>();
-
-		for (auto entity : characterView)
-		{
-			if (m_ActiveScene->GetRegistry().get<TagComponent>(entity).Tag == "Patrick Star")
-			{
-				m_ActiveScene->GetRegistry().emplace<NativeScriptComponent>(entity).Bind<CharacterController>();
-				for (auto camera : cameraView)
-					m_ActiveScene->GetRegistry().emplace<NativeScriptComponent>(camera).Bind<FollowCamera>();
-				break;
-			}
-		}
-#endif
-
-#if 0
-		m_PatrickTexture = Texture2D::Create("Assets/Textures/PatrickAlpha.png");
-		m_BGTexture = Texture2D::Create("Assets/Textures/magic-cliffs-preview-detail.png");
-
-		Entity camera = m_ActiveScene->CreateEntity("Omni camera");
-		Entity box2 = m_ActiveScene->CreateEntity("Blue square");
-		Entity box1 = m_ActiveScene->CreateEntity("Patrick Star");
-		Entity bg = m_ActiveScene->CreateEntity("Background");
-
-		auto& cc = camera.AddComponent<CameraComponent>();
-		cc.Camera.SetProjectionType(SceneCamera::ProjectionType::Perspective);
-		auto& tc = camera.GetComponent<TransformComponent>();
-		tc.Translation.z = 5.0f;
-		tc.Translation.x = 2.0f;
-
-		box1.AddComponent<RenderComponent>(m_PatrickTexture);
-		box1.GetComponent<TransformComponent>().Translation = { 0.5f, 1.0f, 1.0f };
-		box1.GetComponent<TransformComponent>().Scale = { 1.0f, 1.7f, 1.0f };
-
-		bg.AddComponent<RenderComponent>(m_BGTexture);
-		bg.GetComponent<TransformComponent>().Translation = { 0.0f, 0.0f, 0.6f };
-		bg.GetComponent<TransformComponent>().Scale = { 16.0f, 6.0f, 6.0f };
-
-		auto& rc2 = box2.AddComponent<RenderComponent>();
-		rc2.Color = { 0.2f, 0.4f, 0.8f, 0.5f };
-		box2.GetComponent<TransformComponent>().Translation = { 0.0f, 0.0f, 2.0f };
-
-		class CameraController : public ScriptableEntity
-		{
-		public:
-			void OnCreate() override
-			{
-			}
-
-			void OnUpdate(Timestep ts) override
-			{
-				auto& transform = GetComponent<TransformComponent>();
-				auto& pos = GetComponent<TransformComponent>().Translation;
-
-				Vector2 mouse = Input::GetMousePosition();
-				Vector2 delta = (mouse - m_InitialPos) * 0.3f;
-				m_InitialPos = mouse;
-
-				if (Input::IsPressed(Mouse::Right))
-				{
-					float yaw = transform.Rotation.y;
-					float pitch = transform.Rotation.x;
-					yaw -= m_RotSpeed * delta.x * ts;
-					pitch -= m_RotSpeed * delta.y * ts;
-					transform.Rotation = { pitch, yaw, 0.0f };
-				}
-			}
-		private:
-			Vector2 m_InitialPos;
-			float m_RotSpeed = 5.0f;
-		};
-
-		auto group = m_ActiveScene->GetRegistry().view<CameraComponent>();
-
-		for (auto entity : group)
-		{
-			m_ActiveScene->GetRegistry().emplace<NativeScriptComponent>(entity).Bind<CameraController>();
-		}
-#endif
-
 	}
 
 
@@ -354,10 +233,10 @@ namespace Vast {
 
 	void EditorLayer::UpdateScriptModule()
 	{
-		if (std::filesystem::exists(m_Project.GetScriptModulePath()))
-		{
-			m_ScriptModule = RuntimeModule::Create(m_Project.GetScriptModulePath());
+		m_ScriptModule = RuntimeModule::Create(m_Project.GetScriptModulePath());
 
+		if (m_ScriptModule->IsLoaded())
+		{
 			InitModule = m_ScriptModule->LoadFunction<InitModuleFn>("InitModule");
 			InitScripts = m_ScriptModule->LoadFunction<InitScriptsFn>("InitScripts");
 			GetScripts = m_ScriptModule->LoadFunction<GetScriptsFn>("GetScripts");
@@ -434,12 +313,17 @@ namespace Vast {
 		CodeGenerator gen(m_Project);
 		gen.GenerateExportFile();
 		
-		if (m_ScriptModule)
+		if (std::filesystem::exists(m_Project.GetScriptModulePath().root_directory()))
+		{
 			m_ScriptModule->Clean();
+			m_Project.Build();
+			UpdateScriptModule();
+		}
+		else
+		{
+			VAST_ERROR("FAILED to load script module, invalid path to dll");
+		}
 
-		m_Project.Build();
-
-		UpdateScriptModule();
 	}
 
 	void EditorLayer::OnScenePlay()

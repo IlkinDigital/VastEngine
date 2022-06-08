@@ -11,6 +11,8 @@ namespace Vast {
 
 		virtual void Clean() = 0;
 
+		virtual bool IsLoaded() const = 0;
+
 		template<typename ReturnTy>
 		ReturnTy LoadFunction(const String& name);
 

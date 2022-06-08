@@ -52,14 +52,17 @@ namespace Vast {
 
 		m_Registry.view<NativeScriptComponent>().each([=](auto entityID, NativeScriptComponent& nsc)
 			{
-				if (!nsc.Instance)
+				if (nsc.IsBound)
 				{
-					nsc.Instance = nsc.InstantiateScript();
-					nsc.Instance->m_Entity = Entity(entityID, this);
-					nsc.Instance->OnCreate();
-				}
+					if (!nsc.Instance)
+					{
+						nsc.Instance = nsc.InstantiateScript();
+						nsc.Instance->m_Entity = Entity(entityID, this);
+						nsc.Instance->OnCreate();
+					}
 
-				nsc.Instance->OnUpdate(ts);
+					nsc.Instance->OnUpdate(ts);
+				}
 			});
 
 		/**
