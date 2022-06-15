@@ -7,8 +7,13 @@
 #include "Components.h"
 
 #include "Renderer/Renderer2D.h"
+#include "Scripting/ScriptBuffer.h"
 
 namespace Vast {
+
+	Scene::Scene()
+	{
+	}
 
 	Entity Scene::CreateEntity(const String& label)
 	{

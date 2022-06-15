@@ -3,20 +3,21 @@
 #include "EditorCore/EditorControl.h"
 
 #include "Scene/Components.h"
+#include "Scripting/ScriptBuffer.h"
 
 namespace Vast {
 
-	void PropertiesPanel::OnGUIRender(Entity entity, const ScriptBuffer& scripts)
+	void PropertiesPanel::OnGUIRender(Entity entity)
 	{
 		ImGui::Begin("Properties");
 
 		if (entity.IsValid())
-			DrawComponents(entity, scripts);
+			DrawComponents(entity);
 
 		ImGui::End();
 	}
 
-	void PropertiesPanel::DrawComponents(Entity entity, const ScriptBuffer& scripts)
+	void PropertiesPanel::DrawComponents(Entity entity)
 	{
 		if (entity.HasComponent<TagComponent>())
 		{
@@ -181,15 +182,15 @@ namespace Vast {
 
 				if (ImGui::BeginCombo("Script", preview))
 				{
-					for (uint16 i = 0; i < scripts.GetBuffer().size(); i++)
+					for (uint16 i = 0; i < ScriptBuffer::Get().GetBuffer().size(); i++)
 					{
 						bool isSelected = currScriptIndex == i;
 
-						if (ImGui::Selectable(scripts.GetBuffer()[i].Name.c_str(), false))
+						if (ImGui::Selectable(ScriptBuffer::Get().GetBuffer()[i].Name.c_str(), false))
 						{
 							currScriptIndex = i;
-							component = scripts.GetBuffer()[i];
-							preview = scripts.GetBuffer()[i].Name.c_str();
+							component = ScriptBuffer::Get().GetBuffer()[i];
+							preview = ScriptBuffer::Get().GetBuffer()[i].Name.c_str();
 						}
 					}
 					

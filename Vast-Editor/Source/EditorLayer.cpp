@@ -1,12 +1,12 @@
 #include "EditorLayer.h"
 
 #include "Renderer/Renderer2D.h"
+#include "Scripting/ScriptBuffer.h"
 
 #include <imgui.h>
 
 #include "EditorLayout/Layout.h"
 #include "EditorCore/EditorControl.h"
-
 #include "NativeScripting/CodeGenerator.h"
 
 namespace Vast {
@@ -205,7 +205,7 @@ namespace Vast {
 
 		m_Viewport.OnGUIRender(m_Framebuffer->GetColorAttachment(), m_Gizmo);
 		m_Lineup.OnGUIRender();
-		m_Properties.OnGUIRender(m_Lineup.GetSelected(), m_ScriptBuffer);
+		m_Properties.OnGUIRender(m_Lineup.GetSelected());
 
 		m_ContentBrowser.OnGUIRender();
 
@@ -249,7 +249,7 @@ namespace Vast {
 
 			InitModule(Application::GetPointer());
 			InitScripts();
-			m_ScriptBuffer.Set(GetScripts());
+			ScriptBuffer::Get().SetBuffer(GetScripts());
 		}
 	}
 
@@ -276,25 +276,6 @@ namespace Vast {
 			m_SceneFilepath = filepath;
 
 			m_ActiveScene = m_EditorScene;
-
-			// Instantiate scripts (Temporary while no static ScriptBuffer)
-			auto view = m_ActiveScene->GetRegistry().view<NativeScriptComponent>();
-			for (auto entityID : view)
-			{
-				bool scriptExists = false;
-				auto& nsc = view.get<NativeScriptComponent>(entityID);
-				for (auto& script : m_ScriptBuffer.GetBuffer())
-				{
-					if (nsc.Name == script.Name)
-					{
-						nsc = script;
-						scriptExists = true;
-					}
-				}
-
-				if (!scriptExists)
-					VAST_ERROR("'{0}' script couldn't be loaded", nsc.Name);
-			}
 
 			m_Lineup.SetContext(m_ActiveScene);
 			m_Gizmo.UpdateData({}, m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetViewProjection());

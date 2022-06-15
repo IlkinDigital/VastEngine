@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Scene/Entity.h"
-#include "NativeScripting/ScriptBuffer.h"
 
 namespace Vast {
 
@@ -10,10 +9,10 @@ namespace Vast {
 	public:
 		PropertiesPanel() = default;
 
-		void OnGUIRender(Entity entity, const ScriptBuffer& scripts);
+		void OnGUIRender(Entity entity);
 		
 	private:
-		void DrawComponents(Entity entity, const ScriptBuffer& scripts);
+		void DrawComponents(Entity entity);
 	private:
 		Entity m_Entity = {};
 	};

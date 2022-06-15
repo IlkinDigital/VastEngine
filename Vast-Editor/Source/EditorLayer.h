@@ -10,7 +10,6 @@
 #include "Panels/ContentBrowserPanel.h"
 
 #include "Project/Project.h"
-#include "NativeScripting/ScriptBuffer.h"
 
 namespace Vast {
 
@@ -62,7 +61,6 @@ namespace Vast {
 
 		Project m_Project;
 		Ref<RuntimeModule> m_ScriptModule;
-		ScriptBuffer m_ScriptBuffer;
 
 		ImVec4* m_Colors = ImGui::GetStyle().Colors;
 

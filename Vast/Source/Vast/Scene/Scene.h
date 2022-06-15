@@ -13,7 +13,7 @@ namespace Vast {
 	class Scene
 	{
 	public:
-		Scene() = default;
+		Scene();
 
 		static Ref<Scene> Clone(const Ref<Scene>& srcScene);
 

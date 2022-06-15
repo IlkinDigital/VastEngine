@@ -6,6 +6,8 @@
 
 #include "SerializationCore.h"
 
+#include "Scripting/ScriptBuffer.h"
+
 namespace Vast {
 
 	void SceneSerializer::Serialize(const String& filepath)
@@ -128,11 +130,11 @@ namespace Vast {
 				auto nscriptComponent = entity["NativeScriptComponent"];
 				if (nscriptComponent)
 				{
-					auto& nsc = deserializedEntity.AddComponent<NativeScriptComponent>();
-
-					nsc.Name = nscriptComponent["Name"].as<String>();
-
-					// Instantiation from ScriptBuffer does the client application
+					auto nsc = ScriptBuffer::Get().FindByName(nscriptComponent["Name"].as<String>());
+					if (nsc)
+					{
+						deserializedEntity.AddComponent<NativeScriptComponent>(*nsc);
+					}
 				}
 			}
 		}
