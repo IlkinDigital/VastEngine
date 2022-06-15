@@ -15,7 +15,7 @@ namespace Vast {
         }
     }
 
-	void CodeGenerator::GenerateProjectFile()
+	void CodeGenerator::GeneratePremakeFile()
 	{
         StringStream ss;
         ss
@@ -39,8 +39,8 @@ EnginePath = 'D:/Lester_Files/dev/Projects/VastEngine'
 
     files {'Source/**.h', 'Source/**.cpp'}
 
-    pchheader "gamepch.h"
-    pchsource "Source/gamepch.cpp"
+    pchheader "enginepch.h"
+    pchsource "Source/enginepch.cpp"
 
     includedirs
     {
@@ -96,7 +96,22 @@ EnginePath = 'D:/Lester_Files/dev/Projects/VastEngine'
         fs.close();
 	}
 
-	void CodeGenerator::GenerateExportFile()
+    void CodeGenerator::GeneratePCHFiles()
+    {
+        Filepath root = m_Project.GetProjectPath() / "Source";
+
+        String pchHeader = "#pragma once\n#include <Vast.h>\n";
+        String pchCpp = "#include \"enginepch.h\"";
+
+        std::ofstream fs(root / "enginepch.h");
+        fs << pchHeader;
+        fs.close();
+        fs.open(root / "enginepch.cpp");
+        fs << pchCpp;
+        fs.close();
+    }
+
+	void CodeGenerator::GenerateExportFiles()
 	{
         /**
         * User files preprocessing
@@ -172,7 +187,7 @@ extern "C"
         StringStream genCpp;
 
         genCpp << 
-R"(#include "gamepch.h"
+R"(#include "enginepch.h"
 #include "Generated.h"
 
 )";

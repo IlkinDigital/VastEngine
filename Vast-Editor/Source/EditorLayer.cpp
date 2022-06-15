@@ -38,7 +38,8 @@ namespace Vast {
 		m_ContentBrowser.SetRootDirectory(PROJDIR("Content"));
 
 		CodeGenerator gen(m_Project);
-		gen.GenerateProjectFile();
+		gen.GeneratePremakeFile();
+		gen.GeneratePCHFiles();
 
 		UpdateScriptModule();
 
@@ -318,7 +319,7 @@ namespace Vast {
 			OnSceneStop();
 
 		CodeGenerator gen(m_Project);
-		gen.GenerateExportFile();
+		gen.GenerateExportFiles();
 		
 		if (std::filesystem::exists(m_Project.GetScriptModulePath().root_directory()))
 		{
