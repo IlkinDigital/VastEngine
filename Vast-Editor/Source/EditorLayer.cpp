@@ -9,10 +9,15 @@
 #include "EditorCore/EditorControl.h"
 #include "NativeScripting/CodeGenerator.h"
 
+#include "Serialization/ProjectSerializer.h"
+#include "Project/ProjectGenerator.h"
+
+#include <shellapi.h>
+
 namespace Vast {
 
 // Returns relative filepath through project's directory
-#define PROJDIR(path) (m_Project.GetProjectPath() / path)
+#define PROJDIR(path) (m_Project->GetProjectPath() / path)
 
 	typedef void(*InitScriptsFn)();
 	typedef void(*InitModuleFn)(Application*);
@@ -35,13 +40,7 @@ namespace Vast {
 				OpenScene(filepath);
 			});
 
-		m_ContentBrowser.SetRootDirectory(PROJDIR("Content"));
-
-		CodeGenerator gen(m_Project);
-		gen.GeneratePremakeFile();
-		gen.GeneratePCHFiles();
-
-		UpdateScriptModule();
+		OpenProject("D:/Lester_Files/dev/VastProjects/GameTest");
 
 		OpenScene(PROJDIR("Content/Assets/Scenes/TestScene2.vast"));
 	}
@@ -107,15 +106,21 @@ namespace Vast {
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("New", "Ctrl + N"))
+				if (ImGui::MenuItem("New Scene", "Ctrl + N"))
 					NewScene();
-				if (ImGui::MenuItem("Open", "Ctrl + O"))
+				if (ImGui::MenuItem("Open Scene", "Ctrl + O"))
 					OpenScene(FileIO::Dialogs::OpenFile("Vast Scene (*.vast)\0*.vast\0"));
-				if (ImGui::MenuItem("Save As", "Ctrl + Alt + S"))
+				if (ImGui::MenuItem("Save Scene As", "Ctrl + Alt + S"))
 					SaveScene(FileIO::Dialogs::SaveFile("Vast Scene (*.vast)\0*.vast\0"));
+				if (ImGui::MenuItem("New Project"))
+					NewProject("Hello World", FileIO::Dialogs::SaveFile("Vast Project (vast.project)\0vast.project\0").parent_path());
+				if (ImGui::MenuItem("Open Project"))
+					OpenProject(FileIO::Dialogs::OpenFile("Vast Project (vast.project)\0vast.project\0").parent_path());
 
 				ImGui::EndMenu();
 			}
+
+			ImGui::Text("%s", m_Project->GetName().c_str());
 
 			ImGui::EndMenuBar();
 		}
@@ -239,7 +244,7 @@ namespace Vast {
 
 	void EditorLayer::UpdateScriptModule()
 	{
-		m_ScriptModule = RuntimeModule::Create(m_Project.GetScriptModulePath());
+		m_ScriptModule = RuntimeModule::Create(m_Project->GetScriptModulePath());
 
 		if (m_ScriptModule->IsLoaded())
 		{
@@ -294,6 +299,46 @@ namespace Vast {
 		}
 	}
 
+	void EditorLayer::OpenProject(const Filepath& filepath)
+	{
+		bool first = !(bool)m_Project;
+		String name;
+		if (!first)
+			name = m_Project->GetName();
+
+		m_Project = CreateRef<Project>();
+
+		ProjectSerializer ps(m_Project);
+		ps.Deserialize(filepath);
+
+		m_ContentBrowser.SetRootDirectory(PROJDIR("Content"));
+
+		if (name != m_Project->GetName())
+			UpdateScriptModule();
+
+		// TODO: Open last opened scene registered by .ini
+		NewScene();
+	}
+
+	void EditorLayer::NewProject(const String& name, const Filepath& filepath)
+	{
+		m_Project = CreateRef<Project>(name, filepath);
+		ProjectSerializer ps(m_Project);
+		ps.Serialize(filepath);
+
+		ProjectGenerator pg(m_Project);
+		pg.GenerateDirectories();
+		pg.GeneratePremakeFile();
+		pg.DownloadDependencies(PROJDIR("Engine"));
+
+		CodeGenerator gen(m_Project);
+		gen.GeneratePCH();
+
+		ShellExecute(NULL, L"open", L"cmd", L"/c Vendor\\premake\\premake5.exe vs2022", m_Project->GetProjectPath().wstring().c_str(), SW_NORMAL);
+
+		m_ContentBrowser.SetRootDirectory(PROJDIR("Content"));
+	}
+
 	void EditorLayer::BuildScripts()
 	{
 		if (m_SceneState == SceneState::Play)
@@ -302,10 +347,10 @@ namespace Vast {
 		CodeGenerator gen(m_Project);
 		gen.GenerateExportFiles();
 		
-		if (std::filesystem::exists(m_Project.GetScriptModulePath().root_directory()))
+		if (std::filesystem::exists(m_Project->GetScriptModulePath().root_directory()))
 		{
 			m_ScriptModule->Clean();
-			m_Project.Build();
+			m_Project->Build();
 			UpdateScriptModule();
 		}
 		else

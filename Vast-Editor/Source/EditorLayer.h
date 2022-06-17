@@ -17,7 +17,7 @@ namespace Vast {
 	{
 	public:
 		EditorLayer(const String& name)
-			: Layer(name), m_Project("GameTest", "D:/Lester_Files/dev/VastProjects/GameTest") {}
+			: Layer(name) {}
 
 		void OnAttach() override;
 
@@ -36,6 +36,9 @@ namespace Vast {
 		void NewScene();
 		void OpenScene(const Filepath& filepath);
 		void SaveScene(const Filepath& filepath);
+
+		void OpenProject(const Filepath& filepath);
+		void NewProject(const String& name, const Filepath& filepath);
 
 		void BuildScripts();
 
@@ -59,7 +62,7 @@ namespace Vast {
 		EditorCamera m_EditorCamera;
 		Filepath m_SceneFilepath;
 
-		Project m_Project;
+		Ref<Project> m_Project;
 		Ref<RuntimeModule> m_ScriptModule;
 
 		ImVec4* m_Colors = ImGui::GetStyle().Colors;

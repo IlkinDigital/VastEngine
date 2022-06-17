@@ -1,10 +1,17 @@
+#include "vastpch.h"
 #include "Project.h"
 
 namespace Vast {
 
 	Project::Project(const String& name, const Filepath& projectPath)
-		: m_Name(name), m_ProjectPath(projectPath)
 	{
+		Set(name, projectPath);
+	}
+
+	void Project::Set(const String& name, const Filepath& projectPath)
+	{
+		m_Name = name;
+		m_ProjectPath = projectPath;
 		InvalidateScriptPath();
 	}
 

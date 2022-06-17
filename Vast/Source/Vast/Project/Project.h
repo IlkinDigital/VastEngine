@@ -7,7 +7,10 @@ namespace Vast {
 	class Project
 	{
 	public:
+		Project() = default;
 		Project(const String& name, const Filepath& projectPath);
+
+		void Set(const String& name, const Filepath& projectPath);
 
 		const String& GetName() const { return m_Name; }
 		const Filepath& GetProjectPath() const { return m_ProjectPath; }

@@ -19,7 +19,7 @@ namespace Vast {
 	{
         StringStream ss;
         ss
-            << "workspace '" << m_Project.GetName() << "'"
+            << "workspace '" << m_Project->GetName() << "'"
             << R"(
     architecture 'x64'
     configurations{'Debug', 'Release', 'Distribution'}
@@ -27,7 +27,7 @@ namespace Vast {
 outputdir = '%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}'
 EnginePath = 'D:/Lester_Files/dev/Projects/VastEngine' 
 )" // TODO: Remove hardcoded path to engine
-<< "project '" << m_Project.GetName() << "'"
+<< "project '" << m_Project->GetName() << "'"
 << R"(
     kind 'SharedLib'
     language 'C++'
@@ -91,14 +91,14 @@ EnginePath = 'D:/Lester_Files/dev/Projects/VastEngine'
         optimize 'on'
 )";
 
-        std::ofstream fs(m_Project.GetProjectPath() / "premake5.lua");
+        std::ofstream fs(m_Project->GetProjectPath() / "premake5.lua");
         fs << ss.str();
         fs.close();
 	}
 
-    void CodeGenerator::GeneratePCHFiles()
+    void CodeGenerator::GeneratePCH()
     {
-        Filepath root = m_Project.GetProjectPath() / "Source";
+        Filepath root = m_Project->GetProjectPath() / "Source";
 
         String pchHeader = "#pragma once\n#include <Vast.h>\n";
         String pchCpp = "#include \"enginepch.h\"";
@@ -120,7 +120,7 @@ EnginePath = 'D:/Lester_Files/dev/Projects/VastEngine'
         DArray<Filepath> userFiles;
         DArray<String> userClasses;
 
-        Filepath root = m_Project.GetProjectPath() / "Source";
+        Filepath root = m_Project->GetProjectPath() / "Source";
 
         IterateAndAddHeaders(root, userFiles);
 
@@ -241,11 +241,11 @@ R"(
         /**
         * Writing generated files
         */
-        std::filesystem::create_directory(m_Project.GetProjectPath() / "Source" / "Generated");
-        std::ofstream fsHeader(m_Project.GetProjectPath() / "Source" / "Generated" / "Generated.h");
+        std::filesystem::create_directory(m_Project->GetProjectPath() / "Source" / "Generated");
+        std::ofstream fsHeader(m_Project->GetProjectPath() / "Source" / "Generated" / "Generated.h");
         fsHeader << genHeader.str();
         fsHeader.close();
-        std::ofstream fsCpp(m_Project.GetProjectPath() / "Source" / "Generated" / "Generated.cpp");
+        std::ofstream fsCpp(m_Project->GetProjectPath() / "Source" / "Generated" / "Generated.cpp");
         fsCpp << genCpp.str();
         fsCpp.close();
 	}
