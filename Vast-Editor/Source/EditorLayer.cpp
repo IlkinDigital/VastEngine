@@ -12,7 +12,7 @@
 #include "Serialization/ProjectSerializer.h"
 #include "Project/ProjectGenerator.h"
 
-#include <shellapi.h>
+#include "Utils/System/System.h"
 
 namespace Vast {
 
@@ -340,7 +340,7 @@ namespace Vast {
 		gen.GeneratePCH();
 		gen.GenerateExportFiles();
 
-		ShellExecute(NULL, L"open", L"cmd", L"/c Vendor\\premake\\premake5.exe vs2022", m_Project->GetProjectPath().wstring().c_str(), SW_NORMAL);
+		System::RunCommand(m_Project->GetProjectPath(), "Vendor\\premake\\premake5.exe vs2022");
 
 		m_ContentBrowser.SetRootDirectory(PROJDIR("Content"));
 		m_ScriptModule->Clear();
