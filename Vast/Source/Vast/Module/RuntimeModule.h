@@ -9,7 +9,7 @@ namespace Vast {
 	public:
 		virtual ~RuntimeModule() = default; 
 
-		virtual void Clean() = 0;
+		virtual void Clear() = 0;
 
 		virtual bool IsLoaded() const = 0;
 

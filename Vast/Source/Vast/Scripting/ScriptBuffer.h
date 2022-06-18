@@ -14,6 +14,8 @@ namespace Vast {
 		void SetBuffer(const DArray<NativeScriptComponent>& buffer) { m_Buffer = buffer; }
 		const DArray<NativeScriptComponent>& GetBuffer() { return m_Buffer; }
 
+		void ClearBuffer() { m_Buffer.clear(); }
+
 		Scope<NativeScriptComponent> FindByName(const String& name);
 	private:
 		DArray<NativeScriptComponent> m_Buffer;

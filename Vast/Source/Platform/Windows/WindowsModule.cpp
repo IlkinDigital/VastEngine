@@ -12,7 +12,7 @@ namespace Vast {
 
 	WindowsModule::WindowsModule(const Filepath& filepath)
 	{
-		Clean(); // TODO: Maybe remove
+		Clear(); // TODO: Maybe remove
 		String path = filepath.string();
 		m_ModuleHandle = LoadLibraryA(path.c_str());
 
@@ -30,7 +30,7 @@ namespace Vast {
 		//Clean();
 	}
 
-	void WindowsModule::Clean()
+	void WindowsModule::Clear()
 	{
 		LPWSTR filename = new WCHAR[128]{};
 		GetModuleFileName(m_ModuleHandle, filename, 127);
@@ -39,7 +39,7 @@ namespace Vast {
 			FreeLibrary(m_ModuleHandle);
 			char buffer[128]{};
 			wcstombs(buffer, filename, 128);
-			VAST_CORE_WARN("Script Module - {0} - has been cleaned", buffer);
+			VAST_CORE_WARN("Script Module - {0} - has been cleared", buffer);
 		}
 		delete[] filename;
 	}

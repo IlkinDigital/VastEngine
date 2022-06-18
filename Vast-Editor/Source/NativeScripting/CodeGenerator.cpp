@@ -10,7 +10,7 @@ namespace Vast {
         {
             if (path.is_directory() && path != start / "Generated")
                 IterateAndAddHeaders(path, array);
-            else if (path.path().filename().extension() == ".h")
+            else if (path.path().filename().extension() == ".h" && path.path().filename() != "enginepch.h")
                 array.emplace_back(path.path());
         }
     }

@@ -12,7 +12,7 @@ namespace Vast {
 
 		virtual bool IsLoaded() const override { return m_IsLoaded; }
 
-		virtual void Clean() override;
+		virtual void Clear() override;
 	protected:
 		virtual FnPtr OpenFunction(const String& name) override;
 	private:

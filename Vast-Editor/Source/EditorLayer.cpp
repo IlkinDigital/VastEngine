@@ -40,7 +40,7 @@ namespace Vast {
 				OpenScene(filepath);
 			});
 
-		OpenProject("D:/Lester_Files/dev/VastProjects/GameTest");
+		OpenProject("D:/Lester_Files/dev/VastProjects/Hello_World");
 
 		OpenScene(PROJDIR("Content/Assets/Scenes/TestScene2.vast"));
 	}
@@ -113,7 +113,7 @@ namespace Vast {
 				if (ImGui::MenuItem("Save Scene As", "Ctrl + Alt + S"))
 					SaveScene(FileIO::Dialogs::SaveFile("Vast Scene (*.vast)\0*.vast\0"));
 				if (ImGui::MenuItem("New Project"))
-					NewProject("Hello World", FileIO::Dialogs::SaveFile("Vast Project (vast.project)\0vast.project\0").parent_path());
+					NewProject("Hello_World", FileIO::Dialogs::SaveFile("Vast Project (vast.project)\0vast.project\0").parent_path());
 				if (ImGui::MenuItem("Open Project"))
 					OpenProject(FileIO::Dialogs::OpenFile("Vast Project (vast.project)\0vast.project\0").parent_path());
 
@@ -314,7 +314,12 @@ namespace Vast {
 		m_ContentBrowser.SetRootDirectory(PROJDIR("Content"));
 
 		if (name != m_Project->GetName())
+		{
+			if (m_ScriptModule)
+				m_ScriptModule->Clear();
+			ScriptBuffer::Get().ClearBuffer();
 			UpdateScriptModule();
+		}
 
 		// TODO: Open last opened scene registered by .ini
 		NewScene();
@@ -333,10 +338,13 @@ namespace Vast {
 
 		CodeGenerator gen(m_Project);
 		gen.GeneratePCH();
+		gen.GenerateExportFiles();
 
 		ShellExecute(NULL, L"open", L"cmd", L"/c Vendor\\premake\\premake5.exe vs2022", m_Project->GetProjectPath().wstring().c_str(), SW_NORMAL);
 
 		m_ContentBrowser.SetRootDirectory(PROJDIR("Content"));
+		m_ScriptModule->Clear();
+		ScriptBuffer::Get().ClearBuffer();
 	}
 
 	void EditorLayer::BuildScripts()
@@ -349,7 +357,7 @@ namespace Vast {
 		
 		if (std::filesystem::exists(m_Project->GetScriptModulePath().root_directory()))
 		{
-			m_ScriptModule->Clean();
+			m_ScriptModule->Clear();
 			m_Project->Build();
 			UpdateScriptModule();
 		}
