@@ -2,10 +2,14 @@
 
 #include "Vast.h"
 
+#include "GUI/FontManager.h"
+
 #include "Panels/ViewportPanel.h"
 #include "Panels/LineupPanel.h"
 #include "Panels/PropertiesPanel.h"
 #include "Panels/ContentBrowserPanel.h"
+
+#include "Project/Project.h"
 
 namespace Vast {
 
@@ -27,9 +31,16 @@ namespace Vast {
 	private:
 		void ResizeViewport();
 
+		void UpdateScriptModule();
+
 		void NewScene();
-		void OpenScene(const String& filepath);
-		void SaveScene(const String& filepath);
+		void OpenScene(const Filepath& filepath);
+		void SaveScene(const Filepath& filepath);
+
+		void OpenProject(const Filepath& filepath);
+		void NewProject(const String& name, const Filepath& filepath);
+
+		void BuildScripts();
 
 		void OnScenePlay();
 		void OnSceneStop();
@@ -49,7 +60,10 @@ namespace Vast {
 		Ref<Scene> m_ActiveScene; // Pointer to current scene - editor/runtime
 		Ref<Scene> m_EditorScene, m_RuntimeScene;
 		EditorCamera m_EditorCamera;
-		String m_SceneFilepath;
+		Filepath m_SceneFilepath;
+
+		Ref<Project> m_Project;
+		Ref<RuntimeModule> m_ScriptModule;
 
 		ImVec4* m_Colors = ImGui::GetStyle().Colors;
 

@@ -6,6 +6,8 @@
 
 #include "SerializationCore.h"
 
+#include "Scripting/ScriptBuffer.h"
+
 namespace Vast {
 
 	void SceneSerializer::Serialize(const String& filepath)
@@ -54,6 +56,10 @@ namespace Vast {
 		{
 			for (auto entity : entities)
 			{
+				/**
+				* UUID Component
+				*/
+
 				UUID uuid(entity["Entity"].as<uint64>());
 
 				/**
@@ -117,6 +123,19 @@ namespace Vast {
 					if (texturePath != "")
 						rc.Texture = Texture2D::Create(texturePath);
 				}
+
+				/**
+				* Native Script Component
+				*/
+				auto nscriptComponent = entity["NativeScriptComponent"];
+				if (nscriptComponent)
+				{
+					auto nsc = ScriptBuffer::Get().FindByName(nscriptComponent["Name"].as<String>());
+					if (nsc)
+					{
+						deserializedEntity.AddComponent<NativeScriptComponent>(*nsc);
+					}
+				}
 			}
 		}
 
@@ -164,6 +183,11 @@ namespace Vast {
 			{
 				out << YAML::Key << "Color" << YAML::Value << rc.Color;
 				out << YAML::Key << "Texture" << YAML::Value << ((rc.Texture) ? rc.Texture->GetFilepath() : "");
+			});
+
+		SerializeComponent<NativeScriptComponent>(out, "NativeScriptComponent", entity, [&](NativeScriptComponent& nsc)
+			{
+				out << YAML::Key << "Name" << YAML::Value << nsc.Name;
 			});
 
 		out << YAML::EndMap;

@@ -1,5 +1,7 @@
 #include "EditorControl.h"
 
+#include "GUI/FontManager.h"
+
 #include <imgui.h>
 #include <imgui_internal.h>
 

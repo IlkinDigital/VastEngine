@@ -10,6 +10,8 @@
 
 #include "Clock/Clock.h"
 
+#include <GLFW/glfw3.h>
+
 namespace Vast {
 
 	Application* Application::s_Instance = nullptr;

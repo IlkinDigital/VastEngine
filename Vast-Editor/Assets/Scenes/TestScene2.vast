@@ -1,5 +1,37 @@
 Scene: Untitled
 Entities:
+  - Entity: 7326193114781319049
+    TagComponent:
+      Tag: Patrick Star
+    TransformComponent:
+      Translation: [-0.180000007, 0.870000005, 0.5]
+      Rotation: [0, -0, 0]
+      Scale: [0.599999964, 1, 0.999907613]
+    RenderComponent:
+      Color: [0, 0, 0, 1]
+      Texture: Assets/Textures/PatrickAlpha.png
+    NativeScriptComponent:
+      Name: CharacterController
+  - Entity: 687348699967896
+    TagComponent:
+      Tag: Background
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [16, 6, 6]
+    RenderComponent:
+      Color: [0, 0, 0, 1]
+      Texture: Assets\Textures\magic-cliffs-preview-detail.png
+  - Entity: 687346678967896
+    TagComponent:
+      Tag: Terrain
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [16, 6, 6]
+    RenderComponent:
+      Color: [0, 0, 0, 1]
+      Texture: Assets\Textures\magic-cliffs-preview-detail.png
   - Entity: 6169794551153234054
     TagComponent:
       Tag: Camera
@@ -17,41 +49,13 @@ Entities:
         OrthographicNear: -1
         OrthographicFar: 1
       Primary: true
-  - Entity: 687346678967896
+    NativeScriptComponent:
+      Name: Vast::CameraController
+  - Entity: 17391778786752378625
     TagComponent:
-      Tag: Terrain
+      Tag: Patrick Star 2
     TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [16, 6, 6]
-    RenderComponent:
-      Color: [0, 0, 0, 1]
-      Texture: Assets\Textures\magic-cliffs-preview-detail.png
-  - Entity: 687348678967796
-    TagComponent:
-      Tag: Patrick Star
-    TransformComponent:
-      Translation: [-0.889999986, 0.899999976, 0.5]
-      Rotation: [0, -0, 0]
-      Scale: [0.599999964, 1, 0.999907613]
-    RenderComponent:
-      Color: [0, 0, 0, 1]
-      Texture: Assets/Textures/PatrickAlpha.png
-  - Entity: 687348699967896
-    TagComponent:
-      Tag: Background
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Rotation: [0, 0, 0]
-      Scale: [16, 6, 6]
-    RenderComponent:
-      Color: [0, 0, 0, 1]
-      Texture: Assets\Textures\magic-cliffs-preview-detail.png
-  - Entity: 7326193114781319049
-    TagComponent:
-      Tag: Patrick Star
-    TransformComponent:
-      Translation: [-0.180000007, 0.870000005, 0.5]
+      Translation: [-0.899999976, 0.870000005, 0.5]
       Rotation: [0, -0, 0]
       Scale: [0.599999964, 1, 0.999907613]
     RenderComponent:

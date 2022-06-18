@@ -24,6 +24,12 @@ namespace Vast {
 	public:
 		virtual ~Window() = default;
 
+		/**
+		 * Called for required intitializations
+		 * Primarily used to allow sharing of window handles between projects
+		 */ 
+		virtual bool Init() { return true; }
+
 		virtual void OnUpdate() = 0;
 
 		virtual uint32 GetWidth() const = 0;

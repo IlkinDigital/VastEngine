@@ -68,6 +68,7 @@ project "Vast"
         "%{prj.name}/Source/Vast/Core", -- to easily access commonly used headers
         "%{Include.spdlog}",
         "%{Include.glfw}",
+        "Vast/Vendor/",
         "%{Include.glad}",
         "%{Include.imgui}",
         "%{Include.glm}",
@@ -171,3 +172,4 @@ project "Vast-Editor"
         defines "VAST_CONFIG_DISTRIBUTION"
         runtime "Release"
         optimize "on"
+        

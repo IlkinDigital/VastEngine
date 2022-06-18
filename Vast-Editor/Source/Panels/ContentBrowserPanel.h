@@ -9,12 +9,15 @@ namespace Vast {
 	class ContentBrowserPanel
 	{
 	public:
-		ContentBrowserPanel();
+		ContentBrowserPanel(); // LEGACY: Takes a path relative to Editor
+		ContentBrowserPanel(const Filepath& rootDir);
+
+		void SetRootDirectory(const Filepath& rootDir);
 
 		void OnGUIRender();
 	private:
-		String m_RootDirectory = "Assets";
-		std::filesystem::path m_CurrentPath = m_RootDirectory;
+		Filepath m_RootDirectory = "Assets";
+		Filepath m_CurrentPath = m_RootDirectory;
 
 		Ref<Texture2D> m_FolderIcon;
 		Ref<Texture2D> m_FileIcon;

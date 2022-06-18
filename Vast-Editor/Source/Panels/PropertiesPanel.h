@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vast.h"
+#include "Scene/Entity.h"
 
 namespace Vast {
 

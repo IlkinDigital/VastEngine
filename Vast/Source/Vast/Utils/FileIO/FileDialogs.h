@@ -7,8 +7,8 @@ namespace Vast::FileIO {
 	class Dialogs
 	{
 	public:
-		static String OpenFile(const char* filter);
-		static String SaveFile(const char* filter);
+		static Filepath OpenFile(const char* filter);
+		static Filepath SaveFile(const char* filter);
 	};
 
 }

@@ -31,7 +31,7 @@
 // -----------------------------------------
 // 
 // ---- GUI --------------------------------
-#include "GUI/FontManager.h"
+
 // -----------------------------------------
 
 // ---- Scene ------------------------------
@@ -50,4 +50,5 @@
 #include "Camera/PerspectiveCamera.h"
 #include "Camera/EditorCamera.h"
 #include "Serialization/SceneSerializer.h"
+#include "Module/RuntimeModule.h"
 // -----------------------------------------

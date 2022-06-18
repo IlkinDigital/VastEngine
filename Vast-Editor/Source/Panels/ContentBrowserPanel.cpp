@@ -1,11 +1,29 @@
 #include "ContentBrowserPanel.h"
 
+#include "GUI/FontManager.h"
+
+#include <imgui.h>
+
 namespace Vast {
 
 	ContentBrowserPanel::ContentBrowserPanel()
 	{
 		m_FolderIcon = Texture2D::Create("Resources/Icons/FolderIcon.png");
 		m_FileIcon = Texture2D::Create("Resources/Icons/FileIcon.png");
+	}
+
+	ContentBrowserPanel::ContentBrowserPanel(const Filepath& rootDir)
+	{
+		m_RootDirectory = rootDir.string();
+		m_CurrentPath = m_RootDirectory;
+		m_FolderIcon = Texture2D::Create("Resources/Icons/FolderIcon.png");
+		m_FileIcon = Texture2D::Create("Resources/Icons/FileIcon.png");
+	}
+
+	void ContentBrowserPanel::SetRootDirectory(const Filepath& rootDir)
+	{
+		m_RootDirectory = rootDir;
+		m_CurrentPath = m_RootDirectory;
 	}
 
 	void ContentBrowserPanel::OnGUIRender()

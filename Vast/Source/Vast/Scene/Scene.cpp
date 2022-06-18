@@ -7,8 +7,13 @@
 #include "Components.h"
 
 #include "Renderer/Renderer2D.h"
+#include "Scripting/ScriptBuffer.h"
 
 namespace Vast {
+
+	Scene::Scene()
+	{
+	}
 
 	Entity Scene::CreateEntity(const String& label)
 	{
@@ -52,14 +57,17 @@ namespace Vast {
 
 		m_Registry.view<NativeScriptComponent>().each([=](auto entityID, NativeScriptComponent& nsc)
 			{
-				if (!nsc.Instance)
+				if (nsc.IsBound)
 				{
-					nsc.Instance = nsc.InstantiateScript();
-					nsc.Instance->m_Entity = Entity(entityID, this);
-					nsc.Instance->OnCreate();
-				}
+					if (!nsc.Instance)
+					{
+						nsc.Instance = nsc.InstantiateScript();
+						nsc.Instance->m_Entity = Entity(entityID, this);
+						nsc.Instance->OnCreate();
+					}
 
-				nsc.Instance->OnUpdate(ts);
+					nsc.Instance->OnUpdate(ts);
+				}
 			});
 
 		/**

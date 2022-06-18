@@ -2,6 +2,8 @@
 
 #include "Entity.h"
 
+#define REG_CLASS(uclass)
+
 namespace Vast {
 
 	class ScriptableEntity

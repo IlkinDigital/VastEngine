@@ -1,13 +1,31 @@
 #include "EditorLayer.h"
 
 #include "Renderer/Renderer2D.h"
+#include "Scripting/ScriptBuffer.h"
 
 #include <imgui.h>
 
 #include "EditorLayout/Layout.h"
 #include "EditorCore/EditorControl.h"
+#include "NativeScripting/CodeGenerator.h"
+
+#include "Serialization/ProjectSerializer.h"
+#include "Project/ProjectGenerator.h"
+
+#include "Utils/System/System.h"
 
 namespace Vast {
+
+// Returns relative filepath through project's directory
+#define PROJDIR(path) (m_Project->GetProjectPath() / path)
+
+	typedef void(*InitScriptsFn)();
+	typedef void(*InitModuleFn)(Application*);
+	typedef const DArray<NativeScriptComponent>&(*GetScriptsFn)();
+
+	static InitModuleFn InitModule;
+	static InitScriptsFn InitScripts;
+	static GetScriptsFn GetScripts;
 
 	void EditorLayer::OnAttach()
 	{
@@ -22,129 +40,9 @@ namespace Vast {
 				OpenScene(filepath);
 			});
 
-		OpenScene("Assets/Scenes/TestScene2.vast");
+		OpenProject("D:/Lester_Files/dev/VastProjects/Hello_World");
 
-		class CharacterController : public ScriptableEntity
-		{
-		public:
-			void OnUpdate(Timestep ts) override
-			{
-				auto& transform = GetComponent<TransformComponent>();
-				
-				if (Input::IsPressed(Key::W))
-					transform.Translation.y += m_Speed * ts;
-				if (Input::IsPressed(Key::S))
-					transform.Translation.y -= m_Speed * ts;
-				if (Input::IsPressed(Key::D))
-					transform.Translation.x += m_Speed * ts;
-				if (Input::IsPressed(Key::A))
-					transform.Translation.x -= m_Speed * ts;
-			}
-		private:
-			float m_Speed = 3.0f;
-		};
-
-		class FollowCamera : public ScriptableEntity
-		{
-		public:
-			void OnCreate() override
-			{
-				UUID id = 7326193114781319049;
-				m_TargetEntity = GetEntity(id);
-			}
-
-			void OnUpdate(Timestep ts)
-			{
-				auto& cameraPos = GetComponent<TransformComponent>().Translation;
-				auto& targetPos = m_TargetEntity.GetComponent<TransformComponent>().Translation;
-
-				cameraPos.x = targetPos.x;
-				cameraPos.y = targetPos.y;
-			}
-
-		private:
-			Entity m_TargetEntity;
-		};
-
-		auto characterView = m_ActiveScene->GetRegistry().view<RenderComponent>();
-		auto cameraView = m_ActiveScene->GetRegistry().view<CameraComponent>();
-
-		for (auto entity : characterView)
-		{
-			if (m_ActiveScene->GetRegistry().get<TagComponent>(entity).Tag == "Patrick Star")
-			{
-				m_ActiveScene->GetRegistry().emplace<NativeScriptComponent>(entity).Bind<CharacterController>();
-				for (auto camera : cameraView)
-					m_ActiveScene->GetRegistry().emplace<NativeScriptComponent>(camera).Bind<FollowCamera>();
-				break;
-			}
-		}
-
-#if 0
-		m_PatrickTexture = Texture2D::Create("Assets/Textures/PatrickAlpha.png");
-		m_BGTexture = Texture2D::Create("Assets/Textures/magic-cliffs-preview-detail.png");
-
-		Entity camera = m_ActiveScene->CreateEntity("Omni camera");
-		Entity box2 = m_ActiveScene->CreateEntity("Blue square");
-		Entity box1 = m_ActiveScene->CreateEntity("Patrick Star");
-		Entity bg = m_ActiveScene->CreateEntity("Background");
-
-		auto& cc = camera.AddComponent<CameraComponent>();
-		cc.Camera.SetProjectionType(SceneCamera::ProjectionType::Perspective);
-		auto& tc = camera.GetComponent<TransformComponent>();
-		tc.Translation.z = 5.0f;
-		tc.Translation.x = 2.0f;
-
-		box1.AddComponent<RenderComponent>(m_PatrickTexture);
-		box1.GetComponent<TransformComponent>().Translation = { 0.5f, 1.0f, 1.0f };
-		box1.GetComponent<TransformComponent>().Scale = { 1.0f, 1.7f, 1.0f };
-
-		bg.AddComponent<RenderComponent>(m_BGTexture);
-		bg.GetComponent<TransformComponent>().Translation = { 0.0f, 0.0f, 0.6f };
-		bg.GetComponent<TransformComponent>().Scale = { 16.0f, 6.0f, 6.0f };
-
-		auto& rc2 = box2.AddComponent<RenderComponent>();
-		rc2.Color = { 0.2f, 0.4f, 0.8f, 0.5f };
-		box2.GetComponent<TransformComponent>().Translation = { 0.0f, 0.0f, 2.0f };
-
-		class CameraController : public ScriptableEntity
-		{
-		public:
-			void OnCreate() override
-			{
-			}
-
-			void OnUpdate(Timestep ts) override
-			{
-				auto& transform = GetComponent<TransformComponent>();
-				auto& pos = GetComponent<TransformComponent>().Translation;
-
-				Vector2 mouse = Input::GetMousePosition();
-				Vector2 delta = (mouse - m_InitialPos) * 0.3f;
-				m_InitialPos = mouse;
-
-				if (Input::IsPressed(Mouse::Right))
-				{
-					float yaw = transform.Rotation.y;
-					float pitch = transform.Rotation.x;
-					yaw -= m_RotSpeed * delta.x * ts;
-					pitch -= m_RotSpeed * delta.y * ts;
-					transform.Rotation = { pitch, yaw, 0.0f };
-				}
-			}
-		private:
-			Vector2 m_InitialPos;
-			float m_RotSpeed = 5.0f;
-		};
-
-		auto group = m_ActiveScene->GetRegistry().view<CameraComponent>();
-
-		for (auto entity : group)
-		{
-			m_ActiveScene->GetRegistry().emplace<NativeScriptComponent>(entity).Bind<CameraController>();
-		}
-#endif
-
+		OpenScene(PROJDIR("Content/Assets/Scenes/TestScene2.vast"));
 	}
 
 
@@ -208,15 +106,21 @@ namespace Vast {
 		{
 			if (ImGui::BeginMenu("File"))
 			{
-				if (ImGui::MenuItem("New", "Ctrl + N"))
+				if (ImGui::MenuItem("New Scene", "Ctrl + N"))
 					NewScene();
-				if (ImGui::MenuItem("Open", "Ctrl + O"))
+				if (ImGui::MenuItem("Open Scene", "Ctrl + O"))
 					OpenScene(FileIO::Dialogs::OpenFile("Vast Scene (*.vast)\0*.vast\0"));
-				if (ImGui::MenuItem("Save As", "Ctrl + Alt + S"))
+				if (ImGui::MenuItem("Save Scene As", "Ctrl + Alt + S"))
 					SaveScene(FileIO::Dialogs::SaveFile("Vast Scene (*.vast)\0*.vast\0"));
+				if (ImGui::MenuItem("New Project"))
+					NewProject("Hello_World", FileIO::Dialogs::SaveFile("Vast Project (vast.project)\0vast.project\0").parent_path());
+				if (ImGui::MenuItem("Open Project"))
+					OpenProject(FileIO::Dialogs::OpenFile("Vast Project (vast.project)\0vast.project\0").parent_path());
 
 				ImGui::EndMenu();
 			}
+
+			ImGui::Text("%s", m_Project->GetName().c_str());
 
 			ImGui::EndMenuBar();
 		}
@@ -290,6 +194,9 @@ namespace Vast {
 			}
 			ImGui::PopStyleColor();
 
+			if (ImGui::Button("Build"))
+				BuildScripts();
+
 			ImGui::End();
 		}
 
@@ -335,6 +242,22 @@ namespace Vast {
 		}
 	}
 
+	void EditorLayer::UpdateScriptModule()
+	{
+		m_ScriptModule = RuntimeModule::Create(m_Project->GetScriptModulePath());
+
+		if (m_ScriptModule->IsLoaded())
+		{
+			InitModule = m_ScriptModule->LoadFunction<InitModuleFn>("InitModule");
+			InitScripts = m_ScriptModule->LoadFunction<InitScriptsFn>("InitScripts");
+			GetScripts = m_ScriptModule->LoadFunction<GetScriptsFn>("GetScripts");
+
+			InitModule(Application::GetPointer());
+			InitScripts();
+			ScriptBuffer::Get().SetBuffer(GetScripts());
+		}
+	}
+
 	void EditorLayer::NewScene()
 	{
 		if (m_SceneState == SceneState::Play)
@@ -345,16 +268,16 @@ namespace Vast {
 		m_Lineup.SetContext(m_ActiveScene);
 	}
 
-	void EditorLayer::OpenScene(const String& filepath)
+	void EditorLayer::OpenScene(const Filepath& filepath)
 	{
-		if (!filepath.empty())
+		if (std::filesystem::exists(filepath))
 		{
 			if (m_SceneState == SceneState::Play)
 				OnSceneStop();
-			
+
 			m_EditorScene = CreateRef<Scene>();
 			SceneSerializer serializer(m_EditorScene);
-			serializer.Deserialize(filepath);
+			serializer.Deserialize(filepath.string());
 			m_SceneFilepath = filepath;
 
 			m_ActiveScene = m_EditorScene;
@@ -363,15 +286,86 @@ namespace Vast {
 			m_Gizmo.UpdateData({}, m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetViewProjection());
 			ResizeViewport();
 		}
+		else
+			VAST_ERROR("Invalid path to scene '{0}'", filepath.string());
 	}
 
-	void EditorLayer::SaveScene(const String& filepath)
+	void EditorLayer::SaveScene(const Filepath& filepath)
 	{
 		if (!filepath.empty())
 		{
 			SceneSerializer serializer(m_EditorScene);
-			serializer.Serialize(filepath);
+			serializer.Serialize(filepath.string());
 		}
+	}
+
+	void EditorLayer::OpenProject(const Filepath& filepath)
+	{
+		bool first = !(bool)m_Project;
+		String name;
+		if (!first)
+			name = m_Project->GetName();
+
+		m_Project = CreateRef<Project>();
+
+		ProjectSerializer ps(m_Project);
+		ps.Deserialize(filepath);
+
+		m_ContentBrowser.SetRootDirectory(PROJDIR("Content"));
+
+		if (name != m_Project->GetName())
+		{
+			if (m_ScriptModule)
+				m_ScriptModule->Clear();
+			ScriptBuffer::Get().ClearBuffer();
+			UpdateScriptModule();
+		}
+
+		// TODO: Open last opened scene registered by .ini
+		NewScene();
+	}
+
+	void EditorLayer::NewProject(const String& name, const Filepath& filepath)
+	{
+		m_Project = CreateRef<Project>(name, filepath);
+		ProjectSerializer ps(m_Project);
+		ps.Serialize(filepath);
+
+		ProjectGenerator pg(m_Project);
+		pg.GenerateDirectories();
+		pg.GeneratePremakeFile();
+		pg.DownloadDependencies(PROJDIR("Engine"));
+
+		CodeGenerator gen(m_Project);
+		gen.GeneratePCH();
+		gen.GenerateExportFiles();
+
+		System::RunCommand(m_Project->GetProjectPath(), "Vendor\\premake\\premake5.exe vs2022");
+
+		m_ContentBrowser.SetRootDirectory(PROJDIR("Content"));
+		m_ScriptModule->Clear();
+		ScriptBuffer::Get().ClearBuffer();
+	}
+
+	void EditorLayer::BuildScripts()
+	{
+		if (m_SceneState == SceneState::Play)
+			OnSceneStop();
+
+		CodeGenerator gen(m_Project);
+		gen.GenerateExportFiles();
+		
+		if (std::filesystem::exists(m_Project->GetScriptModulePath().root_directory()))
+		{
+			m_ScriptModule->Clear();
+			m_Project->Build();
+			UpdateScriptModule();
+		}
+		else
+		{
+			VAST_ERROR("FAILED to load script module, invalid path to dll");
+		}
+
 	}
 
 	void EditorLayer::OnScenePlay()
