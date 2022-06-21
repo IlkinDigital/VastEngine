@@ -15,9 +15,10 @@ namespace Vast::Board2D {
 		StateMachine(const Ref<Flipbook>& outFlipbook);
 
 		const Ref<Flipbook>& GetCurrentFlipbook() const { return m_OutputFlipbook; }
-
 		void PushFlipbook(uint16 state, const Ref<Flipbook>& flipbook);
+
 		void ActivateState(uint16 state);
+		void EditState(uint16 state, const Ref<Flipbook>& flipbook);
 	private:
 		std::unordered_map<uint16, Ref<Flipbook>> m_StateFlipbookMap; // State to flibook map
 

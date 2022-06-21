@@ -14,6 +14,9 @@
 
 #include "Utils/System/System.h"
 
+#include "Board2D/BoardFlipbook.h"
+#include "Board2D/BoardStateMachine.h"
+
 namespace Vast {
 
 // Returns relative filepath through project's directory

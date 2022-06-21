@@ -34,4 +34,18 @@ namespace Vast::Board2D {
 		}
 	}
 
+	void StateMachine::EditState(uint16 state, const Ref<Flipbook>& flipbook)
+	{
+		if (m_StateFlipbookMap.find(state) == m_StateFlipbookMap.end())
+		{
+			VAST_CORE_ERROR("Specified state doesn't exist");
+			return;
+		}
+
+		m_StateFlipbookMap[state] = flipbook;
+		
+		if (m_CurrentState == state)
+			m_OutputFlipbook = m_StateFlipbookMap[state];
+	}
+
 }
