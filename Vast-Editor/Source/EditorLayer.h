@@ -41,6 +41,7 @@ namespace Vast {
 		void NewProject(const String& name, const Filepath& filepath);
 
 		void BuildScripts();
+		void RunPremake();
 
 		void OnScenePlay();
 		void OnSceneStop();

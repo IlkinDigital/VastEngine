@@ -23,6 +23,9 @@ namespace Vast {
 			return m_Entity.m_Scene->GetEntity(id);
 		}
 
+		DArray<Entity> GetEntityByName(const String& name);
+		Entity CreateEntity(const String& name);
+
 	protected:
 		virtual void OnCreate() {}
 		virtual void OnDestroy() {}

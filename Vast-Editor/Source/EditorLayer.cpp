@@ -40,9 +40,7 @@ namespace Vast {
 				OpenScene(filepath);
 			});
 
-		OpenProject("D:/Lester_Files/dev/VastProjects/Hello_World");
-
-		OpenScene(PROJDIR("Content/Assets/Scenes/TestScene2.vast"));
+		OpenProject("D:/Lester_Files/dev/VastProjects/WackoDuel");
 	}
 
 
@@ -177,6 +175,13 @@ namespace Vast {
 		ImGui::Begin("##Toolbar", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollbar 
 			| ImGuiWindowFlags_NoScrollWithMouse);
 		{
+			if (ImGui::Button("Build"))
+				BuildScripts();
+			ImGui::SameLine();
+			if (ImGui::Button("Run premake"))
+				RunPremake();
+
+			ImGui::SameLine();
 			ImGui::PushStyleColor(ImGuiCol_Button, { 1.0f, 1.0f, 1.0f, 0.0f });
 			float size = ImGui::GetWindowHeight() - 4.0f;
 			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
@@ -194,8 +199,6 @@ namespace Vast {
 			}
 			ImGui::PopStyleColor();
 
-			if (ImGui::Button("Build"))
-				BuildScripts();
 
 			ImGui::End();
 		}
@@ -340,7 +343,7 @@ namespace Vast {
 		gen.GeneratePCH();
 		gen.GenerateExportFiles();
 
-		System::RunCommand(m_Project->GetProjectPath(), "Vendor\\premake\\premake5.exe vs2022");
+		RunPremake();
 
 		m_ContentBrowser.SetRootDirectory(PROJDIR("Content"));
 		m_ScriptModule->Clear();
@@ -368,6 +371,11 @@ namespace Vast {
 
 	}
 
+	void EditorLayer::RunPremake()
+	{
+		System::RunCommand(m_Project->GetProjectPath(), "Vendor\\premake\\premake5.exe vs2022");
+	}
+
 	void EditorLayer::OnScenePlay()
 	{
 		m_SceneState = SceneState::Play;
@@ -385,7 +393,7 @@ namespace Vast {
 		m_SceneState = SceneState::Edit;
 		
 		m_RuntimeScene = nullptr;
-
+		
 		m_ActiveScene = m_EditorScene;
 		m_Lineup.SetContext(m_ActiveScene);
 	}
