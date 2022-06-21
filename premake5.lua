@@ -35,7 +35,7 @@ project "Vast"
     language "C++"
     cppdialect "C++20"
     kind "StaticLib"
-    staticruntime "on"
+    staticruntime "off"
 
     targetdir ("Binaries/" .. outputdir .. "/%{prj.name}")
     objdir ("Binaries-Int/" .. outputdir .. "/%{prj.name}")
@@ -120,7 +120,7 @@ project "Vast-Editor"
     kind "ConsoleApp"
     language "C++"
     cppdialect "C++20"
-    staticruntime "on"
+    staticruntime "off"
 
     targetdir ("Binaries/" .. outputdir .. "/%{prj.name}")
     objdir ("Binaries-Int/" .. outputdir .. "/%{prj.name}")
