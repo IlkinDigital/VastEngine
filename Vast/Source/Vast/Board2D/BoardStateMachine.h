@@ -12,7 +12,7 @@ namespace Vast::Board2D {
 	class StateMachine
 	{
 	public:
-		StateMachine(const Ref<Flipbook>& outFlipbook);
+		StateMachine();
 
 		const Ref<Flipbook>& GetCurrentFlipbook() const { return m_OutputFlipbook; }
 		void PushFlipbook(uint16 state, const Ref<Flipbook>& flipbook);

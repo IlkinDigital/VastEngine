@@ -3,8 +3,7 @@
 
 namespace Vast::Board2D {
 
-	StateMachine::StateMachine(const Ref<Flipbook>& outFlipbook)
-		: m_OutputFlipbook(outFlipbook)
+	StateMachine::StateMachine()
 	{
 	}
 
