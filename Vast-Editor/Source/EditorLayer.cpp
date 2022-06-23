@@ -47,7 +47,7 @@ namespace Vast {
 				OpenScene(filepath);
 			});
 
-		OpenProject("C:/LesterFiles/dev/VastProjects/WackoDuel");
+		OpenProject("D:/Lester_Files/dev/VastProjects/WackoDuel");
 	}
 
 

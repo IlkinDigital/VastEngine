@@ -125,9 +125,10 @@ EnginePath = 'D:/Lester_Files/dev/Projects/VastEngine'
         IterateAndAddHeaders(root, userFiles);
 
         // Search and add registered classes
-        int i = 0;
-        for (auto& file : userFiles)
+        for (auto it = userFiles.begin(); it != userFiles.end();)
         {
+            auto& file = *it;
+
             std::ifstream fs(file);
             
             bool isScript = false;
@@ -153,11 +154,12 @@ EnginePath = 'D:/Lester_Files/dev/Projects/VastEngine'
                 }
             }
 
-            if (!isScript)
-                userFiles.erase(userFiles.begin() + i);
-
-            i++;
             fs.close();
+
+            if (!isScript)
+                it = userFiles.erase(it);
+            else
+                it++;
         }
 
         /**
