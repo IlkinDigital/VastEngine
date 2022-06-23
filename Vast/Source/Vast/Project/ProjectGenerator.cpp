@@ -28,7 +28,7 @@ EnginePath = 'D:/Lester_Files/dev/Projects/VastEngine'
     kind 'SharedLib'
     language 'C++'
     cppdialect 'C++20'
-    staticruntime 'on'
+    staticruntime 'off'
 
     targetdir('Binaries/' ..outputdir .. '/%{prj.name}')
     objdir('Binaries-Int/' ..outputdir .. '/%{prj.name}')
