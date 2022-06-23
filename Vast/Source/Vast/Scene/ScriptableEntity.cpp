@@ -29,4 +29,11 @@ namespace Vast {
         return m_Entity.m_Scene->CreateEntity(name);
     }
 
+    void ScriptableEntity::DestroySelf()
+    {
+        OnDestroy();
+        m_Entity.m_Scene->DestroyEntity(m_Entity);
+        m_Destroyed = true;
+    }
+
 }

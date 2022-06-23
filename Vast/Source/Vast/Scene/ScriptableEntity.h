@@ -26,12 +26,15 @@ namespace Vast {
 		DArray<Entity> GetEntityByName(const String& name);
 		Entity CreateEntity(const String& name);
 
+		void DestroySelf();
+
 	protected:
 		virtual void OnCreate() {}
 		virtual void OnDestroy() {}
 		virtual void OnUpdate(Timestep ts) {}
 		virtual void OnEvent(Event& event) {}
 	private:
+		bool m_Destroyed = false;
 		Entity m_Entity;
 	};
 
