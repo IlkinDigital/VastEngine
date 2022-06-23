@@ -48,6 +48,8 @@ namespace Vast {
 			});
 
 		OpenProject("D:/Lester_Files/dev/VastProjects/WackoDuel");
+
+		RendererCommand::SetClearColor({ 0.15f, 0.15f, 0.15f, 1.0f });
 	}
 
 
@@ -63,7 +65,6 @@ namespace Vast {
 
 		m_Framebuffer->Bind();
 
-		RendererCommand::SetClearColor({ 0.15f, 0.15f, 0.15f, 1.0f });
 		RendererCommand::Clear();
 
 		switch (m_SceneState)

@@ -93,16 +93,7 @@ namespace Vast {
 		{
 			Renderer2D::BeginScene(*mainCamera, cameraTransform);
 
-			auto group = m_Registry.view<TransformComponent, RenderComponent>();
-			for (auto entity : group)
-			{
-				auto [transform, renderable] = group.get<TransformComponent, RenderComponent>(entity);
-
-				if (renderable.Texture)
-					Renderer2D::DrawQuad(transform.Transform(), renderable.Texture);
-				else
-					Renderer2D::DrawQuad(transform.Transform(), renderable.Color);
-			}
+			RenderScene();
 
 			Renderer2D::EndScene();
 		}
@@ -112,16 +103,7 @@ namespace Vast {
 	{
 		Renderer2D::BeginScene(camera);
 
-		auto group = m_Registry.view<TransformComponent, RenderComponent>();
-		for (auto entity : group)
-		{
-			auto [transform, renderable] = group.get<TransformComponent, RenderComponent>(entity);
-
-			if (renderable.Texture)
-				Renderer2D::DrawQuad(transform.Transform(), renderable.Texture);
-			else
-				Renderer2D::DrawQuad(transform.Transform(), renderable.Color);
-		}
+		RenderScene();
 
 		Renderer2D::EndScene();
 	}
@@ -205,5 +187,30 @@ namespace Vast {
 		CopyComponent<NativeScriptComponent>(dstRegistry, srcRegistry, enttMap);
 
 		return newScene;
+	}
+
+	void Scene::RenderScene()
+	{
+		auto group = m_Registry.view<TransformComponent, RenderComponent>();
+		DArray<std::pair<TransformComponent, RenderComponent>> renderables;
+		for (auto entity : group)
+		{
+			auto& transform = group.get<TransformComponent>(entity);
+			auto& renderable = group.get<RenderComponent>(entity);
+			renderables.emplace_back(std::pair(transform, renderable));
+		}
+
+		std::sort(renderables.begin(), renderables.end(), [&](std::pair<TransformComponent, RenderComponent>& p1, std::pair<TransformComponent, RenderComponent>& p2)
+			{
+				return p1.first.Translation.z < p2.first.Translation.z;
+			});
+
+		for (auto& item : renderables)
+		{
+			if (item.second.Texture)
+				Renderer2D::DrawQuad(item.first.Transform(), item.second.Texture);
+			else
+				Renderer2D::DrawQuad(item.first.Transform(), item.second.Color);
+		}
 	}
 }

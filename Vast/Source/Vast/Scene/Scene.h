@@ -31,6 +31,8 @@ namespace Vast {
 		Entity GetPrimaryCamera();
 		EntityRegistry& GetRegistry() { return m_Registry; }
 	private:
+		void RenderScene();
+	private:
 		EntityRegistry m_Registry;
 	};
 
