@@ -3,6 +3,8 @@
 #include "Renderer/Renderer2D.h"
 #include "Scripting/ScriptBuffer.h"
 
+#include "Clock/FrameTime.h"
+
 #include <imgui.h>
 
 #include "EditorLayout/Layout.h"
@@ -21,6 +23,8 @@ namespace Vast {
 
 // Returns relative filepath through project's directory
 #define PROJDIR(path) (m_Project->GetProjectPath() / path)
+
+	static FrameTime s_FrameTime(100);
 
 	typedef void(*InitScriptsFn)();
 	typedef void(*InitModuleFn)(Application*);
@@ -43,19 +47,13 @@ namespace Vast {
 				OpenScene(filepath);
 			});
 
-		OpenProject("D:/Lester_Files/dev/VastProjects/WackoDuel");
+		OpenProject("C:/LesterFiles/dev/VastProjects/WackoDuel");
 	}
 
 
 	void EditorLayer::OnUpdate(Timestep ts)
 	{
-		m_FPSWait += ts;
-		if (m_FPSWait > 0.1f)
-		{
-			m_FPS = 1.0f / ts;
-			m_FPSWait = 0.0f;
-		}
-
+		s_FrameTime.Update(ts);
 
 		auto spec = m_Framebuffer->GetSpecification();
 		if (spec.Width != m_Viewport.GetWidth() || spec.Height != m_Viewport.GetHeight())
@@ -208,7 +206,8 @@ namespace Vast {
 
 		ImGui::Begin("Settings");
 		
-		ImGui::Text("FPS: %.3f", m_FPS);
+		ImGui::Text("%d FPS", s_FrameTime.GetFPS());
+		ImGui::Text("Frame Time: %.4f ms", s_FrameTime.GetFrameTime());
 		
 		ImGui::End();
 
