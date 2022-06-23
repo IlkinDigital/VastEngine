@@ -6,6 +6,8 @@
 
 #include "Camera/EditorCamera.h"
 
+#include "Events/Event.h"
+
 namespace Vast {
 	
 	class Entity;
@@ -27,6 +29,8 @@ namespace Vast {
 		void OnRuntimeUpdate(Timestep ts);
 		void OnUpdate(Timestep ts, const EditorCamera& camera);
 		void OnViewportResize(uint32 width, uint32 height);
+
+		void OnEvent(Event& event);
 
 		Entity GetPrimaryCamera();
 		EntityRegistry& GetRegistry() { return m_Registry; }

@@ -234,6 +234,8 @@ namespace Vast {
 	{
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<KeyPressedEvent>(VAST_BIND_EVENT(OnKeyPressed));
+
+		m_ActiveScene->OnEvent(event);
 	}
 
 	void EditorLayer::ResizeViewport()

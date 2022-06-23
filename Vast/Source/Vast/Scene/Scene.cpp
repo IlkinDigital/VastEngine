@@ -118,6 +118,17 @@ namespace Vast {
 		}
 	}
 
+	void Scene::OnEvent(Event& event)
+	{
+		m_Registry.view<NativeScriptComponent>().each([&](auto entityID, NativeScriptComponent& nsc)
+			{
+				if (nsc.IsBound && nsc.Instance)
+				{
+					nsc.Instance->OnEvent(event);
+				}
+			});
+	}
+
 	Entity Scene::GetPrimaryCamera()
 	{
 		auto group = m_Registry.view<CameraComponent>();

@@ -30,6 +30,7 @@ namespace Vast {
 		virtual void OnCreate() {}
 		virtual void OnDestroy() {}
 		virtual void OnUpdate(Timestep ts) {}
+		virtual void OnEvent(Event& event) {}
 	private:
 		Entity m_Entity;
 	};
