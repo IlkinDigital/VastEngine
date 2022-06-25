@@ -68,6 +68,8 @@ namespace Vast {
 
 					if (!nsc.Instance->m_Destroyed)
 						nsc.Instance->OnUpdate(ts);
+					else
+						delete nsc.Instance;
 				}
 			});
 

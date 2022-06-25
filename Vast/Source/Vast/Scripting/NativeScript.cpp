@@ -1,9 +1,9 @@
 #include "vastpch.h"
-#include "ScriptableEntity.h"
+#include "NativeScript.h"
 
 namespace Vast {
 
-    DArray<Entity> ScriptableEntity::GetEntityByName(const String& name)
+    DArray<Entity> NativeScript::GetEntityByName(const String& name)
     {
         DArray<Entity> entities;
 
@@ -24,12 +24,12 @@ namespace Vast {
         return entities;
     }
 
-    Entity ScriptableEntity::CreateEntity(const String& name)
+    Entity NativeScript::CreateEntity(const String& name)
     {
         return m_Entity.m_Scene->CreateEntity(name);
     }
 
-    void ScriptableEntity::DestroySelf()
+    void NativeScript::DestroySelf()
     {
         OnDestroy();
         m_Entity.m_Scene->DestroyEntity(m_Entity);

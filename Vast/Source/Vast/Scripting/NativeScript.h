@@ -1,16 +1,16 @@
 #pragma once
 
-#include "Entity.h"
+#include "Scene/Entity.h"
 
 #define REG_CLASS(uclass)
 
 namespace Vast {
 
-	class ScriptableEntity
+	class NativeScript
 	{
 		friend class Scene;
 	public:
-		virtual ~ScriptableEntity() = default;
+		virtual ~NativeScript() = default;
 
 		template<typename Ty>
 		Ty& GetComponent()

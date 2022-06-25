@@ -1,17 +1,16 @@
 #pragma once
 
-#include "Scene/ScriptableEntity.h"
+#include "Scripting/NativeScript.h"
 
 namespace Vast {
 
 	struct NativeScriptComponent
 	{
-		ScriptableEntity* Instance = nullptr;
+		NativeScript* Instance = nullptr;
 		String Name = "None";
 		bool IsBound = false;
 
-		std::function<ScriptableEntity* ()> InstantiateScript;
-		std::function<void (NativeScriptComponent*)> DestroyScript;
+		std::function<NativeScript*()> InstantiateScript;
 
 		NativeScriptComponent() = default;
 		NativeScriptComponent(const NativeScriptComponent&) = default;
@@ -19,16 +18,11 @@ namespace Vast {
 		template<typename Ty, typename... Args>
 		void Bind(Args&&... args)
 		{
-			InstantiateScript = std::move([&]() 
+			InstantiateScript = [args...]()
 				{ 
-					return static_cast<ScriptableEntity*>(new Ty(std::forward<Args>(args)...));
-				});
+					return static_cast<NativeScript*>(new Ty(args...));
+				};
 
-			DestroyScript = std::move([&](NativeScriptComponent* nsc) 
-				{ 
-					delete nsc->Instance; 
-					nsc->Instance = nullptr; 
-				});
 			IsBound = true;
 		}
 	};

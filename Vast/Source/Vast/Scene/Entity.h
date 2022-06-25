@@ -37,7 +37,7 @@ namespace Vast {
 		EntityID m_EntityHandle = entt::null;
 		Scene* m_Scene = nullptr;
 
-		friend class ScriptableEntity;
+		friend class NativeScript;
 	};
 
 	template<typename Ty, typename ...Args>
