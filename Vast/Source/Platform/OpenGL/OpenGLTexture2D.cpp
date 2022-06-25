@@ -14,13 +14,13 @@ namespace Vast {
 		SetupFilters();
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const String& filepath)
+	OpenGLTexture2D::OpenGLTexture2D(const Filepath& filepath)
 	{
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
 		
 		stbi_uc* bitmap = nullptr;
-		bitmap = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
+		bitmap = stbi_load(filepath.string().c_str(), &width, &height, &channels, 0);
 
 		VAST_CORE_ASSERT(bitmap, "Couldn't load texture file");
 

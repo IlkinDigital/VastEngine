@@ -8,10 +8,10 @@ namespace Vast {
 	{
 	public:
 		// TODO: Create asset manager
-		virtual const String& GetFilepath() const = 0;
+		virtual const Filepath& GetFilepath() const = 0;
 
 		static Ref<Texture2D> Create(uint32 width, uint32 height);
-		static Ref<Texture2D> Create(const String& filepath);
+		static Ref<Texture2D> Create(const Filepath& filepath);
 	};
 
 }

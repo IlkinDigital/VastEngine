@@ -14,7 +14,7 @@ namespace Vast {
 
 	ContentBrowserPanel::ContentBrowserPanel(const Filepath& rootDir)
 	{
-		m_RootDirectory = rootDir.string();
+		m_RootDirectory = rootDir;
 		m_CurrentPath = m_RootDirectory;
 		m_FolderIcon = Texture2D::Create("Resources/Icons/FolderIcon.png");
 		m_FileIcon = Texture2D::Create("Resources/Icons/FileIcon.png");

@@ -10,7 +10,7 @@ namespace Vast {
         return CreateRef<OpenGLTexture2D>(width, height);
     }
 
-    Ref<Texture2D> Vast::Texture2D::Create(const String& filepath)
+    Ref<Texture2D> Vast::Texture2D::Create(const Filepath& filepath)
     {
         return CreateRef<OpenGLTexture2D>(filepath);
     }

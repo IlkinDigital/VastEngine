@@ -15,6 +15,7 @@ namespace Vast {
 		const String& GetName() const { return m_Name; }
 		const Filepath& GetProjectPath() const { return m_ProjectPath; }
 		const Filepath& GetScriptModulePath() const { return m_ScriptPath; }
+		Filepath GetContentFolderPath() const { return m_ProjectPath / "Content"; }
 
 		void SetProjectPath(const Filepath& path) { m_ProjectPath = path; InvalidateScriptPath(); }
 

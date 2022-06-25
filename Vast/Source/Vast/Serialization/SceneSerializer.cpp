@@ -8,9 +8,11 @@
 
 #include "Scripting/ScriptBuffer.h"
 
+#include "Utils/FileIO/FileIO.h"
+
 namespace Vast {
 
-	void SceneSerializer::Serialize(const String& filepath)
+	void SceneSerializer::Serialize(const Filepath& filepath)
 	{
 		YAML::Emitter out;
 
@@ -37,7 +39,7 @@ namespace Vast {
 		fs << out.c_str();
 	}
 
-	bool SceneSerializer::Deserialize(const String& filepath)
+	bool SceneSerializer::Deserialize(const Filepath& filepath)
 	{
 		std::ifstream fs(filepath);
 		StringStream strStream;
@@ -119,9 +121,20 @@ namespace Vast {
 
 					rc.Color = renderComponent["Color"].as<Vector4>();
 					
-					auto texturePath = renderComponent["Texture"].as<String>();
+					Filepath texturePath = renderComponent["Texture"].as<String>();
 					if (texturePath != "")
-						rc.Texture = Texture2D::Create(texturePath);
+					{
+						if (texturePath.is_absolute())
+						{
+							rc.Texture = Texture2D::Create(texturePath);
+						}
+						else
+						{
+							Filepath path = m_Project->GetContentFolderPath();
+							path += texturePath;
+							rc.Texture = Texture2D::Create(path);
+						}
+					}
 				}
 
 				/**
@@ -182,7 +195,14 @@ namespace Vast {
 		SerializeComponent<RenderComponent>(out, "RenderComponent", entity, [&](RenderComponent& rc)
 			{
 				out << YAML::Key << "Color" << YAML::Value << rc.Color;
-				out << YAML::Key << "Texture" << YAML::Value << ((rc.Texture) ? rc.Texture->GetFilepath() : "");
+				if (rc.Texture)
+				{
+					Filepath path = FileIO::Relative(rc.Texture->GetFilepath(), m_Project->GetContentFolderPath());
+
+					out << YAML::Key << "Texture" << YAML::Value << path.string();
+				}
+				else
+					out << YAML::Key << "Texture" << YAML::Value << "";
 			});
 
 		SerializeComponent<NativeScriptComponent>(out, "NativeScriptComponent", entity, [&](NativeScriptComponent& nsc)

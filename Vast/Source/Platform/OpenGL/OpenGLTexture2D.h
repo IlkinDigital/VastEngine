@@ -10,14 +10,14 @@ namespace Vast {
 	{
 	public:
 		OpenGLTexture2D(uint32 width, uint32 height);
-		OpenGLTexture2D(const String& filepath);
+		OpenGLTexture2D(const Filepath& filepath);
 		~OpenGLTexture2D() override;
 
 		uint32 GetWidth() const override { return m_Width; }
 		uint32 GetHeight() const override { return m_Height; }
 
 		RendererID GetRendererID() const override { return m_RendererID; }
-		const String& GetFilepath() const override { return m_Filepath; };
+		const Filepath& GetFilepath() const override { return m_Filepath; };
 
 		void SetData(void* data, uint32 size) override;
 		void Bind(uint32 slot = 0) const override;
@@ -29,7 +29,7 @@ namespace Vast {
 		uint32 m_Width, m_Height;
 		GLenum m_DataFormat;
 
-		String m_Filepath;
+		Filepath m_Filepath;
 	};
 
 }

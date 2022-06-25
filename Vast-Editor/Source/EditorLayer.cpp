@@ -284,8 +284,8 @@ namespace Vast {
 				OnSceneStop();
 
 			m_EditorScene = CreateRef<Scene>();
-			SceneSerializer serializer(m_EditorScene);
-			serializer.Deserialize(filepath.string());
+			SceneSerializer serializer(m_EditorScene, m_Project);
+			serializer.Deserialize(filepath);
 			m_SceneFilepath = filepath;
 
 			m_ActiveScene = m_EditorScene;
@@ -302,8 +302,8 @@ namespace Vast {
 	{
 		if (!filepath.empty())
 		{
-			SceneSerializer serializer(m_EditorScene);
-			serializer.Serialize(filepath.string());
+			SceneSerializer serializer(m_EditorScene, m_Project);
+			serializer.Serialize(filepath);
 		}
 	}
 
