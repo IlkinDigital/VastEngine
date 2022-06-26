@@ -5,14 +5,16 @@
 #include "Scene/Components.h"
 #include "Scripting/ScriptBuffer.h"
 
+#include "EditorLayout/Layout.h"
+
 namespace Vast {
 
-	void PropertiesPanel::OnGUIRender(Entity entity)
+	void PropertiesPanel::DrawPanel()
 	{
 		ImGui::Begin("Properties");
 
-		if (entity.IsValid())
-			DrawComponents(entity);
+		if (EditorLayout::GetSelectedEntity().IsValid())
+			DrawComponents(EditorLayout::GetSelectedEntity());
 
 		ImGui::End();
 	}

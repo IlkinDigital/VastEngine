@@ -4,6 +4,8 @@
 
 namespace Vast {
 
+	Entity EditorLayout::s_SelectedEntity = {};
+
 	void EditorLayout::BeginDockspace()
 	{
 		static bool dockspaceOpen = true;

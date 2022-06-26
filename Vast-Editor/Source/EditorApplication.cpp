@@ -1,5 +1,3 @@
-#include <Vast.h>
-
 #include "Vast/ApplicationCore/EntryPoint.h"
 
 #include "EditorLayer.h"

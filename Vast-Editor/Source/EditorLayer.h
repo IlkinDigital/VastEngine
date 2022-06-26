@@ -1,15 +1,14 @@
 #pragma once
 
-#include "Vast.h"
-
-#include "GUI/FontManager.h"
-
 #include "Panels/ViewportPanel.h"
 #include "Panels/LineupPanel.h"
 #include "Panels/PropertiesPanel.h"
 #include "Panels/ContentBrowserPanel.h"
 
+#include "GUI/FontManager.h"
 #include "Project/Project.h"
+
+#include "Renderer/SceneRenderer.h"
 
 namespace Vast {
 
@@ -55,7 +54,7 @@ namespace Vast {
 		PropertiesPanel m_Properties;
 		ContentBrowserPanel m_ContentBrowser;
 
-		Gizmo3D m_Gizmo;
+		Ref<Gizmo3D> m_Gizmo;
 
 		// Scene
 		Ref<Scene> m_ActiveScene; // Pointer to current scene - editor/runtime
@@ -68,10 +67,11 @@ namespace Vast {
 
 		ImVec4* m_Colors = ImGui::GetStyle().Colors;
 
-		Ref<Framebuffer> m_Framebuffer;
 		Ref<Texture2D> m_PlayIcon;
 		Ref<Texture2D> m_StopIcon;
-	
+		
+		SceneRenderer m_SceneRenderer;
+
 		float m_FPS = 0.0f;
 		float m_FPSWait = 0.0f;
 

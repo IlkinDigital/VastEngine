@@ -36,20 +36,23 @@ namespace Vast {
 
 	void EditorLayer::OnAttach()
 	{
-		Window& window = Application::Get().GetWindow();
-		m_Framebuffer = Framebuffer::Create({ window.GetWidth(), window.GetHeight() });
+		m_SceneRenderer.Init(0, 0);
 
 		m_PlayIcon = Texture2D::Create("Resources/Icons/PlayIcon.png");
 		m_StopIcon = Texture2D::Create("Resources/Icons/StopIcon.png");
 
-		m_Viewport.SetDragDropFn([&](const String& filepath)
-			{
-				OpenScene(filepath);
-			});
+		m_Gizmo = CreateRef<Gizmo3D>();
+
+		m_Viewport.Open();
+		m_Viewport.SetDragDropFn([&](const String& filepath) { OpenScene(filepath); });
+		m_Viewport.SetColorAttachment(m_SceneRenderer.GetFramebuffer()->GetColorAttachment());
+		m_Viewport.SetGizmo(m_Gizmo);
+
+		m_Lineup.Open();
+		m_Properties.Open();
+		m_ContentBrowser.Open();
 
 		OpenProject("D:/Lester_Files/dev/VastProjects/WackoDuel");
-
-		RendererCommand::SetClearColor({ 0.15f, 0.15f, 0.15f, 1.0f });
 	}
 
 
@@ -57,15 +60,13 @@ namespace Vast {
 	{
 		s_FrameTime.Update(ts);
 
-		auto spec = m_Framebuffer->GetSpecification();
+		auto spec = m_SceneRenderer.GetFramebuffer()->GetSpecification();
 		if (spec.Width != m_Viewport.GetWidth() || spec.Height != m_Viewport.GetHeight())
 		{
 			ResizeViewport();
 		}
 
-		m_Framebuffer->Bind();
-
-		RendererCommand::Clear();
+		m_SceneRenderer.Begin();
 
 		switch (m_SceneState)
 		{
@@ -78,7 +79,7 @@ namespace Vast {
 			break;
 		}
 
-		m_Framebuffer->Unbind();
+		m_SceneRenderer.End();
 	}
 
 	// For debug color palette purpose only
@@ -117,6 +118,18 @@ namespace Vast {
 				if (ImGui::MenuItem("Open Project"))
 					OpenProject(FileIO::Dialogs::OpenFile("Vast Project (vast.project)\0vast.project\0").parent_path());
 
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("View"))
+			{
+				if (ImGui::MenuItem("Viewport"))
+					m_Viewport.Open();
+				if (ImGui::MenuItem("Lineup"))
+					m_Lineup.Open();
+				if (ImGui::MenuItem("Properties"))
+					m_Properties.Open();
+				if (ImGui::MenuItem("Content Browser"))
+					m_ContentBrowser.Open();
 				ImGui::EndMenu();
 			}
 
@@ -162,13 +175,13 @@ namespace Vast {
 			if (ImGui::DragFloat("Camera Gazing Speed", &gazeSpeed, 0.25f, 1.0f, 10.0f))
 				m_EditorCamera.SetGazeSpeed(gazeSpeed);
 
-			float snapRot = m_Gizmo.GetSnapValues().y;
+			float snapRot = m_Gizmo->GetSnapValues().y;
 			if (ImGui::DragFloat("Rotation Snap", &snapRot))
-				m_Gizmo.SetRotationSnap(snapRot);
+				m_Gizmo->SetRotationSnap(snapRot);
 
-			float snapTS = m_Gizmo.GetSnapValues().x;
+			float snapTS = m_Gizmo->GetSnapValues().x;
 			if (ImGui::DragFloat("Translation/Scale Snap", &snapTS))
-				m_Gizmo.SetTrScSnap(snapTS);
+				m_Gizmo->SetTrScSnap(snapTS);
 
 			ImGui::End();
 		}
@@ -212,15 +225,14 @@ namespace Vast {
 		
 		ImGui::End();
 
-		m_Gizmo.UpdateData(m_Lineup.GetSelected(), m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetProjection());
+		m_Gizmo->UpdateData(EditorLayout::GetSelectedEntity(), m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetProjection());
 
-		m_Viewport.OnGUIRender(m_Framebuffer->GetColorAttachment(), m_Gizmo);
+		m_Viewport.OnGUIRender();
 		m_Lineup.OnGUIRender();
-		m_Properties.OnGUIRender(m_Lineup.GetSelected());
-
+		m_Properties.OnGUIRender();
 		m_ContentBrowser.OnGUIRender();
 
-		ImGui::ShowDemoWindow((bool*)1);
+		//ImGui::ShowDemoWindow((bool*)1);
 
 		EditorLayout::EndDockspace();
 	}
@@ -242,7 +254,7 @@ namespace Vast {
 	{
 		if (m_Viewport.GetWidth() > 0 && m_Viewport.GetHeight() > 0)
 		{
-			m_Framebuffer->Resize({ m_Viewport.GetWidth(), m_Viewport.GetHeight() });
+			m_SceneRenderer.GetFramebuffer()->Resize({m_Viewport.GetWidth(), m_Viewport.GetHeight()});
 			
 			float aspectViewport = (float)m_Viewport.GetWidth() / (float)m_Viewport.GetHeight();
 			m_ActiveScene->OnViewportResize(m_Viewport.GetWidth(), m_Viewport.GetHeight());
@@ -271,6 +283,8 @@ namespace Vast {
 		if (m_SceneState == SceneState::Play)
 			OnSceneStop();
 
+		EditorLayout::SetSelectedEntity({});
+
 		m_ActiveScene = CreateRef<Scene>();
 		m_EditorScene = m_ActiveScene;
 		m_Lineup.SetContext(m_ActiveScene);
@@ -283,6 +297,8 @@ namespace Vast {
 			if (m_SceneState == SceneState::Play)
 				OnSceneStop();
 
+			EditorLayout::SetSelectedEntity({});
+
 			m_EditorScene = CreateRef<Scene>();
 			SceneSerializer serializer(m_EditorScene, m_Project);
 			serializer.Deserialize(filepath);
@@ -291,7 +307,7 @@ namespace Vast {
 			m_ActiveScene = m_EditorScene;
 
 			m_Lineup.SetContext(m_ActiveScene);
-			m_Gizmo.UpdateData({}, m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetViewProjection());
+			m_Gizmo->UpdateData({}, m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetViewProjection());
 			ResizeViewport();
 		}
 		else
@@ -410,16 +426,16 @@ namespace Vast {
 			switch (event.GetKeyCode())
 			{
 				case Key::Q:
-					m_Gizmo.SetGizmoType(Gizmo3D::GizmoType::None);
+					m_Gizmo->SetGizmoType(Gizmo3D::GizmoType::None);
 					break;
 				case Key::W:
-					m_Gizmo.SetGizmoType(Gizmo3D::GizmoType::Translation);
+					m_Gizmo->SetGizmoType(Gizmo3D::GizmoType::Translation);
 					break;
 				case Key::E:
-					m_Gizmo.SetGizmoType(Gizmo3D::GizmoType::Rotation);
+					m_Gizmo->SetGizmoType(Gizmo3D::GizmoType::Rotation);
 					break;
 				case Key::R:
-					m_Gizmo.SetGizmoType(Gizmo3D::GizmoType::Scale);
+					m_Gizmo->SetGizmoType(Gizmo3D::GizmoType::Scale);
 					break;
 			}
 		}
@@ -451,7 +467,7 @@ namespace Vast {
 		case Key::D:
 			if (Input::IsPressed(Key::LeftControl))
 			{
-				Entity selected = m_Lineup.GetSelected();
+				Entity selected = EditorLayout::GetSelectedEntity();
 				if (selected.IsValid())
 					m_ActiveScene->DuplicateEntity(selected);
 			}

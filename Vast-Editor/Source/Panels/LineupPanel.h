@@ -1,25 +1,23 @@
 #pragma once
 
-#include "Vast.h"
+#include "Scene/Scene.h"
+#include "Panel.h"
 
 namespace Vast {
 
-	class LineupPanel
+	class LineupPanel : public Panel
 	{
 	public:
 		LineupPanel() = default;
 		LineupPanel(const Ref<Scene>& context);
 
-		void SetContext(const Ref<Scene>& context) { m_Context = context; m_SelectedNode = {}; }
+		void SetContext(const Ref<Scene>& context) { m_Context = context; }
 
-		Entity GetSelected() const { return m_SelectedNode; }
-
-		void OnGUIRender();
+		virtual void DrawPanel() override;
 	private:
 		void DrawNode(Entity entity);
 	private:
 		Ref<Scene> m_Context;
-		Entity m_SelectedNode = {};
 	};
 
 }

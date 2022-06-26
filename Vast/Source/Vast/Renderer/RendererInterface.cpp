@@ -5,7 +5,7 @@ namespace Vast {
 
     RendererAPI RendererInterface::s_API = RendererAPI::OpenGL;
 
-    RendererAPI Vast::RendererInterface::GetRendererAPI()
+    RendererAPI RendererInterface::GetRendererAPI()
     {      
         return s_API;
     }

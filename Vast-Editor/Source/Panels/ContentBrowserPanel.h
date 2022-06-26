@@ -1,12 +1,11 @@
 #pragma once
 
-#include "Vast.h"
-
-#include <filesystem>
+#include "Renderer/Texture2D.h"
+#include "Panel.h"
 
 namespace Vast {
 
-	class ContentBrowserPanel
+	class ContentBrowserPanel : public Panel
 	{
 	public:
 		ContentBrowserPanel(); // LEGACY: Takes a path relative to Editor
@@ -14,7 +13,7 @@ namespace Vast {
 
 		void SetRootDirectory(const Filepath& rootDir);
 
-		void OnGUIRender();
+		virtual void DrawPanel() override;
 	private:
 		Filepath m_RootDirectory = "Assets";
 		Filepath m_CurrentPath = m_RootDirectory;

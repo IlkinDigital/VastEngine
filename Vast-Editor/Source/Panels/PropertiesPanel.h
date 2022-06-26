@@ -1,15 +1,16 @@
 #pragma once
 
+#include "Panel.h"
 #include "Scene/Entity.h"
 
 namespace Vast {
 
-	class PropertiesPanel
+	class PropertiesPanel : public Panel
 	{
 	public:
 		PropertiesPanel() = default;
 
-		void OnGUIRender(Entity entity);
+		virtual void DrawPanel() override;
 		
 	private:
 		void DrawComponents(Entity entity);

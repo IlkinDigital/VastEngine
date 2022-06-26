@@ -26,7 +26,7 @@ namespace Vast {
 		m_CurrentPath = m_RootDirectory;
 	}
 
-	void ContentBrowserPanel::OnGUIRender()
+	void ContentBrowserPanel::DrawPanel()
 	{
 		ImGui::Begin("Content Browser");
 

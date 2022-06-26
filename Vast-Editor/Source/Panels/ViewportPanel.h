@@ -1,12 +1,11 @@
 #pragma once
 
-#include "Vast.h"
-
+#include "Panel.h"
 #include "Gizmo/Gizmo3D.h"
 
 namespace Vast {
 	
-	class ViewportPanel
+	class ViewportPanel : public Panel
 	{
 	public:
 		ViewportPanel() = default;
@@ -14,16 +13,22 @@ namespace Vast {
 		template<typename Fn>
 		void SetDragDropFn(Fn function) { m_DragDropFn = function; }
 
+		void SetColorAttachment(const RendererID& attachment) { m_ColorAttachment = attachment; }
+		void SetGizmo(const Ref<Gizmo3D>& gizmo) { m_Gizmo = gizmo; }
+
 		uint32 GetWidth() const { return m_Width; }
 		uint32 GetHeight() const { return m_Height; }
 
 		bool IsFocused() const { return m_Focused; }
 		bool IsHovered() const { return m_Hovered; }
 		
-		void OnGUIRender(RendererID colorAttachment, Gizmo3D& gizmo);
+		virtual void DrawPanel() override;
 
 	private:
 		std::function<void(const String&)> m_DragDropFn = {};
+
+		Ref<Gizmo3D> m_Gizmo;
+		RendererID m_ColorAttachment;
 
 		uint32 m_Width = 0;
 		uint32 m_Height = 0;

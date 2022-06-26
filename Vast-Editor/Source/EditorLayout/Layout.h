@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Scene/Entity.h"
+
 namespace Vast {
 
 	class EditorLayout
@@ -11,6 +13,11 @@ namespace Vast {
 		*/
 		static void BeginDockspace();
 		static void EndDockspace();
+
+		static Entity GetSelectedEntity() { return s_SelectedEntity; }
+		static void SetSelectedEntity(Entity entity) { s_SelectedEntity = entity; }
+	private:
+		static Entity s_SelectedEntity;
 	};
 
 }

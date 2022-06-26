@@ -5,7 +5,7 @@
 
 namespace Vast {
 
-	void ViewportPanel::OnGUIRender(RendererID colorAttachment, Gizmo3D& gizmo)
+	void ViewportPanel::DrawPanel()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
 		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoTitleBar);
@@ -24,7 +24,7 @@ namespace Vast {
 			m_Height = viewportPanelSize.y;
 		}
 
-		ImGui::Image((void*)colorAttachment, ImVec2{ (float)m_Width, (float)m_Height }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
+		ImGui::Image((void*)m_ColorAttachment, ImVec2{ (float)m_Width, (float)m_Height }, ImVec2{ 0, 1 }, ImVec2{ 1, 0 });
 
 		if (ImGui::BeginDragDropTarget())
 		{
@@ -38,7 +38,7 @@ namespace Vast {
 		}
 
 		// Gizmos
-		gizmo.OnGUIRender();
+		m_Gizmo->OnGUIRender();
 
 		ImGui::End();
 		ImGui::PopStyleVar();
