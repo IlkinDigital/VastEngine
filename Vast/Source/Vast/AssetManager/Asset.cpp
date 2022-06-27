@@ -3,21 +3,16 @@
 
 namespace Vast {
 
-	Asset::Asset(AssetType type, const Filepath& source, const Filepath& target)
+	Asset::Asset(const Filepath& source, const Filepath& target, UUID uuid)
+		: m_UUID(uuid)
 	{
-		if (std::filesystem::copy_file(source, target))
+		if (source != target)
 		{
-			m_Type = type;
-			m_Path = target;
+			if (std::filesystem::copy_file(source, target))
+				m_Path = target;
+			else
+				VAST_CORE_ASSERT(false, "Couldn't import a file");
 		}
-		else
-			VAST_CORE_ASSERT(false, "Couldn't import a file");
-	}
-
-	Asset::Asset(AssetType type, const Filepath& filepath)
-		: m_Type(type), m_Path(filepath)
-	{
-		VAST_CORE_ASSERT(std::filesystem::exists(filepath), "File doesn't exist");
 	}
 
 }

@@ -11,7 +11,7 @@ namespace Vast {
 		* Sets up docking space
 		* Must be called OnGUIRender
 		*/
-		static void BeginDockspace();
+		static void BeginDockspace(const char* title);
 		static void EndDockspace();
 
 		static Entity GetSelectedEntity() { return s_SelectedEntity; }

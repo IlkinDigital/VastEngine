@@ -22,6 +22,8 @@ namespace Vast::Board2D {
 		void SetTimeline(float duration) { m_Timeline = duration; } // Sets duration of the animation
 		const Ref<Texture2D>& GetCurrentTexture() const { return m_KeyFrames[m_CurrentKeyIndex].Texture; }
 
+		const DArray<KeyFrame>& GetKeyFrames() const { return m_KeyFrames; }
+
 		void PushKeyFrame(const Ref<Texture2D>& texture, float timePos);
 	private:
 		float m_Timer = 0.0f;

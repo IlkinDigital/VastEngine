@@ -4,6 +4,7 @@
 #include "Panels/LineupPanel.h"
 #include "Panels/PropertiesPanel.h"
 #include "Panels/ContentBrowserPanel.h"
+#include "Panels/FlipbookEditor.h"
 
 #include "GUI/FontManager.h"
 #include "Project/Project.h"
@@ -53,6 +54,7 @@ namespace Vast {
 		LineupPanel m_Lineup;
 		PropertiesPanel m_Properties;
 		ContentBrowserPanel m_ContentBrowser;
+		FlipbookEditor m_FBEditor;
 
 		Ref<Gizmo3D> m_Gizmo;
 

@@ -31,7 +31,10 @@ namespace Vast {
 	bool WindowsWindow::Init()
 	{
 		if (!s_GLFWInitialized)
+		{
 			s_GLFWInitialized = glfwInit();
+		}
+
 		return s_GLFWInitialized;
 	}
 
@@ -48,6 +51,10 @@ namespace Vast {
 			VAST_CORE_ASSERT(success, "GLFW couldn't intialize");
 			s_GLFWInitialized = success;
 		}
+
+		//glfwWindowHint(GLFW_VISIBLE, false);
+		//glfwWindowHint(GLFW_FOCUSED, false);
+		//glfwWindowHint(GLFW_DECORATED, (viewport->Flags & ImGuiViewportFlags_NoDecoration) ? false : true);
 
 		m_Window = glfwCreateWindow((int)m_Data.Width, (int)m_Data.Height, m_Data.Title.c_str(), nullptr, nullptr);
 		VAST_INFO("Created a {0} window: W({1}), H({2})", m_Data.Title, m_Data.Width, m_Data.Height);

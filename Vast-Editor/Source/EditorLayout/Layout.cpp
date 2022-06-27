@@ -6,7 +6,7 @@ namespace Vast {
 
 	Entity EditorLayout::s_SelectedEntity = {};
 
-	void EditorLayout::BeginDockspace()
+	void EditorLayout::BeginDockspace(const char* title)
 	{
 		static bool dockspaceOpen = true;
 		static bool opt_fullscreen_persistant = true;
@@ -38,7 +38,7 @@ namespace Vast {
 		// We cannot preserve the docking relationship between an active window and an inactive docking, otherwise 
 		// any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
+		ImGui::Begin(title, &dockspaceOpen, window_flags);
 		ImGui::PopStyleVar();
 
 		if (opt_fullscreen)
@@ -51,7 +51,7 @@ namespace Vast {
 		style.WindowMinSize.x = 370.0f;
 		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 		{
-			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+			ImGuiID dockspace_id = ImGui::GetID(title);
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 

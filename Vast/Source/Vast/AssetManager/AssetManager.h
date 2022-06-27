@@ -1,18 +1,19 @@
 #pragma once
 
 #include "Asset.h"
+#include "Project/Project.h"
 
 namespace Vast {
 
 	class AssetManager
 	{
 	public:
-		using AssetMap = std::unordered_map<String, Asset>;
+		using AssetMap = std::unordered_map<Filepath, Ref<Asset>>;
 	public:
-		AssetManager(const String& rootDir, const AssetMap& assetMap)
-			: m_RootDirectory(rootDir), m_AssetMap(assetMap) {}
+		AssetManager(const Filepath& path);
 	public:
-		String m_RootDirectory = "Assets";
+		Filepath m_RootDirectory;
+		Ref<Project> m_Project;
 		AssetMap m_AssetMap; // Map of filepath to Asset
 	};
 

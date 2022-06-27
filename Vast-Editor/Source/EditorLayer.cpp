@@ -5,8 +5,6 @@
 
 #include "Clock/FrameTime.h"
 
-#include <imgui.h>
-
 #include "EditorLayout/Layout.h"
 #include "EditorCore/EditorControl.h"
 #include "NativeScripting/CodeGenerator.h"
@@ -18,6 +16,8 @@
 
 #include "Board2D/BoardFlipbook.h"
 #include "Board2D/BoardStateMachine.h"
+
+#include <imgui.h>
 
 namespace Vast {
 
@@ -33,6 +33,12 @@ namespace Vast {
 	static InitModuleFn InitModule;
 	static InitScriptsFn InitScripts;
 	static GetScriptsFn GetScripts;
+
+	static Ref<Board2D::Flipbook> s_FB = CreateScope<Board2D::Flipbook>();
+	static Ref<Texture2D> tex1;
+	static Ref<Texture2D> tex2;
+	static Ref<Texture2D> tex3;
+	static Ref<Texture2D> tex4;
 
 	void EditorLayer::OnAttach()
 	{
@@ -51,8 +57,20 @@ namespace Vast {
 		m_Lineup.Open();
 		m_Properties.Open();
 		m_ContentBrowser.Open();
+		m_FBEditor.Open();
 
 		OpenProject("D:/Lester_Files/dev/VastProjects/WackoDuel");
+
+		tex1 = Texture2D::Create(PROJDIR("Content/Assets/Textures/DownIdle.png"));
+		tex2 = Texture2D::Create(PROJDIR("Content/Assets/Textures/RightIdle.png"));
+		tex3 = Texture2D::Create(PROJDIR("Content/Assets/Textures/UpIdle.png"));
+		tex4 = Texture2D::Create(PROJDIR("Content/Assets/Textures/LeftIdle.png"));
+
+		s_FB->PushKeyFrame(tex1, 0.1f);
+		s_FB->PushKeyFrame(tex2, 0.2f);
+		s_FB->PushKeyFrame(tex3, 0.3f);
+		s_FB->PushKeyFrame(tex4, 0.4f);
+		m_FBEditor.SetContext(s_FB);
 	}
 
 
@@ -100,7 +118,7 @@ namespace Vast {
 
 	void EditorLayer::OnGUIRender()
 	{
-		EditorLayout::BeginDockspace();
+		EditorLayout::BeginDockspace("Editor Dockspace");
 
 		// Menu Bar
 		if (ImGui::BeginMenuBar())
@@ -231,8 +249,9 @@ namespace Vast {
 		m_Lineup.OnGUIRender();
 		m_Properties.OnGUIRender();
 		m_ContentBrowser.OnGUIRender();
+		m_FBEditor.OnGUIRender();
 
-		//ImGui::ShowDemoWindow((bool*)1);
+		ImGui::ShowDemoWindow((bool*)1);
 
 		EditorLayout::EndDockspace();
 	}
