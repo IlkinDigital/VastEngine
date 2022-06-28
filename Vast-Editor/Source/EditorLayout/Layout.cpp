@@ -4,8 +4,6 @@
 
 namespace Vast {
 
-	Entity EditorLayout::s_SelectedEntity = {};
-
 	void EditorLayout::BeginDockspace(const char* title)
 	{
 		static bool dockspaceOpen = true;
@@ -59,6 +57,19 @@ namespace Vast {
 	}
 
 	void EditorLayout::EndDockspace()
+	{
+		ImGui::End();
+	}
+
+	bool EditorLayout::BeginWindow(const char* title, bool* open)
+	{
+		bool res = ImGui::Begin(title, open);
+		if (!res)
+			return res;
+		ImGui::DockSpace(ImGui::GetID(title));
+	}
+
+	void EditorLayout::EndWindow()
 	{
 		ImGui::End();
 	}

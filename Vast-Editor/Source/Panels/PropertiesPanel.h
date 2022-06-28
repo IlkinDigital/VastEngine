@@ -8,14 +8,18 @@ namespace Vast {
 	class PropertiesPanel : public Panel
 	{
 	public:
-		PropertiesPanel() = default;
+		PropertiesPanel()
+			: Panel("Properties") {}
+		PropertiesPanel(const String& name)
+			: Panel(name) {}
+
+		void SetContextEntity(const Ref<Entity>& entity) { m_Entity = entity; }
 
 		virtual void DrawPanel() override;
-		
 	private:
 		void DrawComponents(Entity entity);
 	private:
-		Entity m_Entity = {};
+		Ref<Entity> m_Entity = {};
 	};
 
 }

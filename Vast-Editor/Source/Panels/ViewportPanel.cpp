@@ -5,10 +5,20 @@
 
 namespace Vast {
 
+	ViewportPanel::ViewportPanel()
+		: Panel("Viewport")
+	{
+	}
+
+	ViewportPanel::ViewportPanel(const String& name)
+		: Panel(name)
+	{
+	}
+
 	void ViewportPanel::DrawPanel()
 	{
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
-		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoTitleBar);
+		ImGui::Begin(m_Name.c_str(), nullptr);
 
 		m_Focused = ImGui::IsWindowFocused();
 		m_Hovered = ImGui::IsWindowHovered();
@@ -38,7 +48,8 @@ namespace Vast {
 		}
 
 		// Gizmos
-		m_Gizmo->OnGUIRender();
+		if (m_Gizmo)
+			m_Gizmo->OnGUIRender();
 
 		ImGui::End();
 		ImGui::PopStyleVar();

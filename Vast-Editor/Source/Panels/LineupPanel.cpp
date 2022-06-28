@@ -5,15 +5,26 @@
 #include <imgui.h>
 
 namespace Vast {
+	LineupPanel::LineupPanel()
+		: Panel("Lineup")
+	{
+		Init();
+	}
 
 	LineupPanel::LineupPanel(const Ref<Scene>& context)
-		: m_Context(context)
+		: Panel("Lineup"), m_Context(context)
 	{
+		Init();
+	}
+
+	void LineupPanel::Init()
+	{
+		m_SelectedEntity = CreateRef<Entity>();
 	}
 
 	void LineupPanel::DrawPanel()
 	{
-		ImGui::Begin("Lineup");
+		ImGui::Begin(m_Name.c_str());
 
 		m_Context->GetRegistry().each([&](auto entityID)
 			{
@@ -22,7 +33,7 @@ namespace Vast {
 			});
 
 		if (ImGui::IsMouseDown(ImGuiMouseButton_Left) && ImGui::IsWindowHovered())
-			EditorLayout::SetSelectedEntity({});
+			*m_SelectedEntity = Entity();
 
 		if (ImGui::BeginPopupContextWindow(0, 1, false))
 		{
@@ -39,12 +50,12 @@ namespace Vast {
 	{
 		String& label = entity.GetComponent<TagComponent>().Tag;
 
-		ImGuiTreeNodeFlags flags = ((EditorLayout::GetSelectedEntity() == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+		ImGuiTreeNodeFlags flags = ((*m_SelectedEntity == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
 		flags |= ImGuiTreeNodeFlags_SpanAvailWidth;
 		bool opened = ImGui::TreeNodeEx((void*)(uint64)entity.GetHandle(), flags, label.c_str());
 
 		if (ImGui::IsItemClicked())
-			EditorLayout::SetSelectedEntity(entity);
+			*m_SelectedEntity = entity;
 
 		bool deleted = false;
 		bool duplicate = false;
@@ -66,8 +77,8 @@ namespace Vast {
 		if (deleted)
 		{
 			m_Context->DestroyEntity(entity);
-			if (EditorLayout::GetSelectedEntity() == entity)
-				EditorLayout::SetSelectedEntity({});
+			if (*m_SelectedEntity == entity)
+				*m_SelectedEntity = Entity();
 		}
 		else if (duplicate)
 		{

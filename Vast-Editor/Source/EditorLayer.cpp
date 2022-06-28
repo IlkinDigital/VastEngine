@@ -56,8 +56,8 @@ namespace Vast {
 
 		m_Lineup.Open();
 		m_Properties.Open();
+		m_Properties.SetContextEntity(m_Lineup.GetSelectedEntity());
 		m_ContentBrowser.Open();
-		m_FBEditor.Open();
 
 		OpenProject("D:/Lester_Files/dev/VastProjects/WackoDuel");
 
@@ -70,13 +70,14 @@ namespace Vast {
 		s_FB->PushKeyFrame(tex2, 0.2f);
 		s_FB->PushKeyFrame(tex3, 0.3f);
 		s_FB->PushKeyFrame(tex4, 0.4f);
-		m_FBEditor.SetContext(s_FB);
 	}
 
 
 	void EditorLayer::OnUpdate(Timestep ts)
 	{
 		s_FrameTime.Update(ts);
+
+		m_SubwindowManager.OnUpdate(ts);
 
 		auto spec = m_SceneRenderer.GetFramebuffer()->GetSpecification();
 		if (spec.Width != m_Viewport.GetWidth() || spec.Height != m_Viewport.GetHeight())
@@ -148,6 +149,12 @@ namespace Vast {
 					m_Properties.Open();
 				if (ImGui::MenuItem("Content Browser"))
 					m_ContentBrowser.Open();
+				if (ImGui::MenuItem("Flipbook Editor"))
+				{
+					auto fbe = CreateRef<FlipbookEditor>();
+					fbe->SetFlipbook(s_FB);
+					m_SubwindowManager.PushSubwindow(fbe);
+				}
 				ImGui::EndMenu();
 			}
 
@@ -243,13 +250,14 @@ namespace Vast {
 		
 		ImGui::End();
 
-		m_Gizmo->UpdateData(EditorLayout::GetSelectedEntity(), m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetProjection());
+		m_Gizmo->UpdateData(*m_Lineup.GetSelectedEntity(), m_EditorCamera.GetViewMatrix(), m_EditorCamera.GetProjection());
+
+		m_SubwindowManager.OnGUIRender();
 
 		m_Viewport.OnGUIRender();
 		m_Lineup.OnGUIRender();
 		m_Properties.OnGUIRender();
 		m_ContentBrowser.OnGUIRender();
-		m_FBEditor.OnGUIRender();
 
 		ImGui::ShowDemoWindow((bool*)1);
 
@@ -302,7 +310,7 @@ namespace Vast {
 		if (m_SceneState == SceneState::Play)
 			OnSceneStop();
 
-		EditorLayout::SetSelectedEntity({});
+		//EditorLayout::SetSelectedEntity({});
 
 		m_ActiveScene = CreateRef<Scene>();
 		m_EditorScene = m_ActiveScene;
@@ -316,7 +324,7 @@ namespace Vast {
 			if (m_SceneState == SceneState::Play)
 				OnSceneStop();
 
-			EditorLayout::SetSelectedEntity({});
+			//EditorLayout::SetSelectedEntity({});
 
 			m_EditorScene = CreateRef<Scene>();
 			SceneSerializer serializer(m_EditorScene, m_Project);
@@ -486,7 +494,7 @@ namespace Vast {
 		case Key::D:
 			if (Input::IsPressed(Key::LeftControl))
 			{
-				Entity selected = EditorLayout::GetSelectedEntity();
+				Entity selected = *m_Lineup.GetSelectedEntity();
 				if (selected.IsValid())
 					m_ActiveScene->DuplicateEntity(selected);
 			}

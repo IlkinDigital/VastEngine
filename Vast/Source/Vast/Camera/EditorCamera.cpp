@@ -54,9 +54,10 @@ namespace Vast {
 				m_Position += speed * GetUpDirection() * (float)ts;
 			if (Input::IsPressed(Key::E))
 				m_Position += speed * -GetUpDirection() * (float)ts;
+			
+			CalculateView();
 		}
-
-		CalculateView();
+		
 	}
 
 	void EditorCamera::MouseGaze(Timestep ts, const Vector2& delta)

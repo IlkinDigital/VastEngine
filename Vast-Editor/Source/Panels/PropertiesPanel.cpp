@@ -5,16 +5,14 @@
 #include "Scene/Components.h"
 #include "Scripting/ScriptBuffer.h"
 
-#include "EditorLayout/Layout.h"
-
 namespace Vast {
 
 	void PropertiesPanel::DrawPanel()
 	{
-		ImGui::Begin("Properties");
+		ImGui::Begin(m_Name.c_str());
 
-		if (EditorLayout::GetSelectedEntity().IsValid())
-			DrawComponents(EditorLayout::GetSelectedEntity());
+		if (m_Entity->IsValid())
+			DrawComponents(*m_Entity);
 
 		ImGui::End();
 	}
@@ -97,7 +95,7 @@ namespace Vast {
 					float width = component.Texture->GetWidth();
 					float tot = height + width;
 					float thumbnailSize = 256.0f;
-					ImGui::Text("Texture: %s", component.Texture->GetFilepath().c_str());
+					ImGui::Text("Texture: %s", component.Texture->GetFilepath().filename().string().c_str());
 					ImGui::ImageButton((ImTextureID)component.Texture->GetRendererID(),
 						{ (width / tot) * thumbnailSize, (height / tot) * thumbnailSize }, { 0, 1 }, { 1, 0 });
 				}

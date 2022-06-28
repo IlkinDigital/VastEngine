@@ -14,10 +14,8 @@ namespace Vast {
 		static void BeginDockspace(const char* title);
 		static void EndDockspace();
 
-		static Entity GetSelectedEntity() { return s_SelectedEntity; }
-		static void SetSelectedEntity(Entity entity) { s_SelectedEntity = entity; }
-	private:
-		static Entity s_SelectedEntity;
+		static bool BeginWindow(const char* title, bool* open);
+		static void EndWindow();
 	};
 
 }

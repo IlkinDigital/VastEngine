@@ -8,7 +8,8 @@ namespace Vast {
 	class ViewportPanel : public Panel
 	{
 	public:
-		ViewportPanel() = default;
+		ViewportPanel();
+		ViewportPanel(const String& name);
 
 		template<typename Fn>
 		void SetDragDropFn(Fn function) { m_DragDropFn = function; }
@@ -27,8 +28,8 @@ namespace Vast {
 	private:
 		std::function<void(const String&)> m_DragDropFn = {};
 
-		Ref<Gizmo3D> m_Gizmo;
-		RendererID m_ColorAttachment;
+		Ref<Gizmo3D> m_Gizmo = {};
+		RendererID m_ColorAttachment = {};
 
 		uint32 m_Width = 0;
 		uint32 m_Height = 0;

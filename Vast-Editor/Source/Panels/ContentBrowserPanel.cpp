@@ -7,12 +7,14 @@
 namespace Vast {
 
 	ContentBrowserPanel::ContentBrowserPanel()
+		: Panel("Content Browser")
 	{
 		m_FolderIcon = Texture2D::Create("Resources/Icons/FolderIcon.png");
 		m_FileIcon = Texture2D::Create("Resources/Icons/FileIcon.png");
 	}
 
 	ContentBrowserPanel::ContentBrowserPanel(const Filepath& rootDir)
+		: Panel("Content Browser")
 	{
 		m_RootDirectory = rootDir;
 		m_CurrentPath = m_RootDirectory;
@@ -28,7 +30,7 @@ namespace Vast {
 
 	void ContentBrowserPanel::DrawPanel()
 	{
-		ImGui::Begin("Content Browser");
+		ImGui::Begin(m_Name.c_str());
 
 		if (m_CurrentPath != m_RootDirectory)
 		{

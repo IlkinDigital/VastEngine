@@ -10,6 +10,7 @@
 #include "Project/Project.h"
 
 #include "Renderer/SceneRenderer.h"
+#include "Panels/SubwindowManager.h"
 
 namespace Vast {
 
@@ -54,7 +55,8 @@ namespace Vast {
 		LineupPanel m_Lineup;
 		PropertiesPanel m_Properties;
 		ContentBrowserPanel m_ContentBrowser;
-		FlipbookEditor m_FBEditor;
+
+		SubwindowManager m_SubwindowManager;
 
 		Ref<Gizmo3D> m_Gizmo;
 

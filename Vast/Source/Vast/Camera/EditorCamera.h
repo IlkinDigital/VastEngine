@@ -15,7 +15,7 @@ namespace Vast {
 
 		void OnUpdate(Timestep ts);
 
-		void SetViewportSize(float width, float height) { m_ViewportWidth = width; m_ViewportHeight = height; CalculateProjection(); }
+		void SetViewportSize(float width, float height) { m_ViewportWidth = width; m_ViewportHeight = height; CalculateProjection(); CalculateView(); }
 
 		float GetGazeSpeed() const { return m_GazeSpeed; }
 		void SetGazeSpeed(float speed) { m_GazeSpeed = speed; }
@@ -26,12 +26,18 @@ namespace Vast {
 		Vector3 GetUpDirection() const;
 		Vector3 GetRightDirection() const;
 		Vector3 GetForwardDirection() const;
-		Vector3& GetPosition() { return m_Position; }
 		glm::quat GetOrientation() const;
+
+		const Vector3& GetPosition() const { return m_Position; }
+		void SetPosition(const Vector3& position) { m_Position = position; CalculateView(); }
 
 		float GetPitch() const { return m_Pitch; }
 		float GetYaw() const { return m_Yaw; }
 		float GetRoll() const { return m_Roll; }
+
+		void SetPitch(float pitch) { m_Pitch = pitch; CalculateView(); }
+		void SetYaw(float yaw) { m_Yaw = yaw; CalculateView(); }
+		void SetRoll(float roll) { m_Roll = roll; CalculateView(); }
 	private:
 		void CalculateProjection();
 		void CalculateView();
