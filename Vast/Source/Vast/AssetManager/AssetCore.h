@@ -4,6 +4,9 @@
 
 namespace Vast {
 
-	enum class AssetType { Texture, Scene };
+	enum class AssetType : uint16
+	{
+		None = 0, Texture, BoardFlipbook, Scene
+	};
 
 }

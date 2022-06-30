@@ -2,6 +2,8 @@
 
 #include "Scene/Entity.h"
 
+#include "Panels/Panel.h"
+
 namespace Vast {
 
 	class EditorLayout
@@ -14,7 +16,7 @@ namespace Vast {
 		static void BeginDockspace(const char* title);
 		static void EndDockspace();
 
-		static bool BeginWindow(const char* title, bool* open);
+		static bool BeginWindow(const Subwindow& subwindow, bool* open);
 		static void EndWindow();
 	};
 

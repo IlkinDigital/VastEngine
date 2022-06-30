@@ -11,6 +11,7 @@
 
 #include "Renderer/SceneRenderer.h"
 #include "Panels/SubwindowManager.h"
+#include <Vast/AssetManager/Asset.h>
 
 namespace Vast {
 
@@ -50,6 +51,8 @@ namespace Vast {
 		bool OnWindowResize(WindowResizeEvent& event);
 		bool OnKeyPressed(KeyPressedEvent& event);
 	private:
+		Ref<Asset> m_Asset;
+
 		// Panels
 		ViewportPanel m_Viewport;
 		LineupPanel m_Lineup;

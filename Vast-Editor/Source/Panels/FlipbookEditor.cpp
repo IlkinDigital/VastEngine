@@ -65,7 +65,7 @@ namespace Vast {
 
 	void FlipbookEditor::DrawPanel()
 	{
-		if (!EditorLayout::BeginWindow("Flipbook Editor", &m_IsOpen))
+		if (!EditorLayout::BeginWindow(*this, &m_IsOpen))
 		{
 			EditorLayout::EndWindow();
 			return;

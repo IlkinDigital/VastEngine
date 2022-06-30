@@ -21,4 +21,10 @@ namespace Vast {
 	{
 		return std::make_unique<T>(std::forward<Args>(args)...);
 	}
+
+	template<typename Ty1, typename Ty2>
+	Ref<Ty1> RefCast(const Ref<Ty2>& other)
+	{
+		return std::static_pointer_cast<Ty1>(other);
+	}
 }

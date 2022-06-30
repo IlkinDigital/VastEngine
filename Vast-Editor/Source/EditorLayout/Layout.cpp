@@ -61,12 +61,12 @@ namespace Vast {
 		ImGui::End();
 	}
 
-	bool EditorLayout::BeginWindow(const char* title, bool* open)
+	bool EditorLayout::BeginWindow(const Subwindow& subwindow, bool* open)
 	{
-		bool res = ImGui::Begin(title, open);
+		bool res = ImGui::Begin(subwindow.GetName().c_str(), open);
 		if (!res)
 			return res;
-		ImGui::DockSpace(ImGui::GetID(title));
+		ImGui::DockSpace(ImGui::GetID(subwindow.GetName().c_str()));
 	}
 
 	void EditorLayout::EndWindow()

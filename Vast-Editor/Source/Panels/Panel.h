@@ -3,6 +3,8 @@
 #include "ApplicationCore/Layer/Layer.h"
 #include "Core/UUID.h"
 
+#include <imgui.h>
+
 namespace Vast {
 
 	class Panel
@@ -49,7 +51,9 @@ namespace Vast {
 		virtual void OnGUIRender() override
 		{
 			if (m_IsOpen)
+			{
 				DrawPanel();
+			}
 		}
 	protected:
 		bool m_IsOpen = false;

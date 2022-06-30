@@ -18,6 +18,9 @@
 #include "Board2D/BoardStateMachine.h"
 
 #include <imgui.h>
+#include <Vast/Serialization/AssetSerializer.h>
+#include <Vast/AssetManager/TextureAsset.h>
+#include <fstream>
 
 namespace Vast {
 
@@ -70,6 +73,20 @@ namespace Vast {
 		s_FB->PushKeyFrame(tex2, 0.2f);
 		s_FB->PushKeyFrame(tex3, 0.3f);
 		s_FB->PushKeyFrame(tex4, 0.4f);
+
+		//Ref<TextureAsset> ta = CreateRef<TextureAsset>("TestAS", "Assets/Textures/TestAS.asset", UUID());
+		//
+		//std::ifstream fs(m_Project->GetContentFolderPath() / "Assets/Textures/Rock.png", std::ios::binary);
+		//uint32 size = std::filesystem::file_size(m_Project->GetContentFolderPath() / "Assets/Textures/Rock.png");
+		//DArray<char> data(size, '\0');
+		//fs.read(data.data(), size);
+
+		//ta->SetFileData(data);
+		//
+		//m_Asset = ta;
+
+		AssetSerializer as(m_Project, m_Asset);
+		as.Deserialize("Assets/Textures/TestAS.asset");
 	}
 
 

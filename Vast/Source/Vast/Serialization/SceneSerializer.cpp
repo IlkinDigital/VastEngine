@@ -46,7 +46,6 @@ namespace Vast {
 		strStream << fs.rdbuf();
 
 		YAML::Node data = YAML::Load(strStream.str());
-
 		if (!data["Scene"])
 			return false;
 

@@ -5,16 +5,19 @@
 #include "UUID.h"
 
 namespace Vast {
-	
+
 	class Asset
 	{
 	public:
-		Asset(const Filepath& source, const Filepath& target, UUID uuid);
+		Asset(AssetType assetType, const String& name, const Filepath& path, UUID uuid);
 
-		virtual void Serialize(const Filepath& path) = 0;
-		virtual void Deserialize(const Filepath& path) = 0;
+		UUID GetUUID() const { return m_UUID; }
+		AssetType GetType() const { return m_AssetType; }
+		const String& GetName() const { return m_Name; }
+		const Filepath& GetPath() const { return m_Path; }
 	protected:
 		UUID m_UUID;
+		AssetType m_AssetType;
 		String m_Name;
 		Filepath m_Path; // Relative to the Content folder
 	};
