@@ -86,7 +86,7 @@ namespace Vast {
 		switch (type)
 		{
 		case AssetType::Texture:
-			m_Asset = CreateRef<TextureAsset>(name, path, uuid);
+			m_Asset = CreateRef<Texture2DAsset>(name, path, uuid);
 			break;
 		default:
 			VAST_CORE_ASSERT(false, "Vast doesn't support this AssetType");
@@ -108,7 +108,7 @@ namespace Vast {
 		fs.write(head, std::strlen(head));
 		fs.write("\0", 1);
 	
-		const auto& data = RefCast<TextureAsset>(m_Asset)->GetFileData();
+		const auto& data = RefCast<Texture2DAsset>(m_Asset)->GetFileData();
 		fs.write(data.data(), data.size());
 
 		fs.close();
@@ -135,8 +135,9 @@ namespace Vast {
 	
 		DArray<char> fileData(data.begin() + i, data.end());
 		
-		Ref<TextureAsset> ta = RefCast<TextureAsset>(m_Asset);
+		Ref<Texture2DAsset> ta = RefCast<Texture2DAsset>(m_Asset);
 		ta->SetFileData(fileData);
+		ta->SetTexture(Texture2D::Create(ta));
 
 		return true;
 	}

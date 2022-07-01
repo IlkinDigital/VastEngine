@@ -15,7 +15,7 @@ namespace Vast {
         return CreateRef<OpenGLTexture2D>(filepath);
     }
 
-    Ref<Texture2D> Texture2D::Create(const Ref<TextureAsset>& asset)
+    Ref<Texture2D> Texture2D::Create(const Ref<Texture2DAsset>& asset)
     {
         return CreateRef<OpenGLTexture2D>(asset);
     }

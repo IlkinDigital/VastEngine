@@ -1,6 +1,8 @@
 #include "vastpch.h"
 #include "OpenGLTexture2D.h"
 
+#include "AssetManager/TextureAsset.h"
+
 #include <stb_image.h>
 
 namespace Vast {
@@ -30,7 +32,7 @@ namespace Vast {
 		m_Filepath = filepath;
 	}
 
-	OpenGLTexture2D::OpenGLTexture2D(const Ref<TextureAsset>& asset)
+	OpenGLTexture2D::OpenGLTexture2D(const Ref<Texture2DAsset>& asset)
 	{
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);

@@ -11,8 +11,8 @@ namespace Vast {
 		AssetImporter(const Ref<Project>& project)
 			: m_Project(project) {}
 
-		Ref<TextureAsset> ImportTexture(const Filepath& imagePath, const Filepath& toPath);
-		void ExportTexture(const Ref<TextureAsset>& asset, const Filepath& toPath);
+		Ref<Texture2DAsset> ImportTexture(const Filepath& imagePath, const Filepath& toPath);
+		void ExportTexture(const Ref<Texture2DAsset>& asset, const Filepath& toPath);
 	private:
 		Ref<Project> m_Project;
 	};

@@ -11,7 +11,7 @@ namespace Vast {
 	public:
 		OpenGLTexture2D(uint32 width, uint32 height);
 		OpenGLTexture2D(const Filepath& filepath);
-		OpenGLTexture2D(const Ref<TextureAsset>& asset);
+		OpenGLTexture2D(const Ref<Texture2DAsset>& asset);
 		~OpenGLTexture2D() override;
 
 		uint32 GetWidth() const override { return m_Width; }

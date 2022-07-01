@@ -6,11 +6,11 @@
 
 namespace Vast {
 
-    Ref<TextureAsset> AssetImporter::ImportTexture(const Filepath& imagePath, const Filepath& toPath)
+    Ref<Texture2DAsset> AssetImporter::ImportTexture(const Filepath& imagePath, const Filepath& toPath)
     {
         if (FileIO::IsImage(imagePath))
         {
-            auto ta = CreateRef<TextureAsset>(imagePath.filename().string(), toPath, UUID());
+            auto ta = CreateRef<Texture2DAsset>(imagePath.filename().string(), toPath, UUID());
             std::ifstream fs(imagePath, std::ios::binary);
             if (fs.is_open())
             {
@@ -28,7 +28,7 @@ namespace Vast {
         return nullptr;
     }
 
-    void AssetImporter::ExportTexture(const Ref<TextureAsset>& asset, const Filepath& toPath)
+    void AssetImporter::ExportTexture(const Ref<Texture2DAsset>& asset, const Filepath& toPath)
     {
         std::ofstream fs(toPath, std::ios::binary);
         fs.write(asset->GetFileData().data(), asset->GetFileData().size());

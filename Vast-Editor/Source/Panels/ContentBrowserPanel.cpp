@@ -4,6 +4,8 @@
 
 #include "Utils/FileIO/FileIO.h"
 
+#include "AssetManager/TextureAsset.h"
+
 #include <imgui.h>
 
 namespace Vast {
@@ -74,8 +76,10 @@ namespace Vast {
 			{
 				ImGui::PushID(path.c_str());
 				Filepath relative = FileIO::Relative(p.path(), m_Project->GetContentFolderPath());
-				Ref<TextureAsset> ta = RefCast<TextureAsset>(m_Project->GetAssetManager()->GetAsset(relative));
-				ImGui::ImageButton((ImTextureID)Texture2D::Create(ta)->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
+				Ref<Texture2D> tex = RefCast<Texture2DAsset>(m_Project->GetAssetManager()->GetAsset(relative))->GetTexture();
+				float tot = tex->GetHeight() + tex->GetWidth();
+				ImGui::ImageButton((ImTextureID)tex->GetRendererID(), 
+					{ ((float)tex->GetWidth() / tot) * thumbnailSize, ((float)tex->GetHeight() / tot) * thumbnailSize}, {0, 1}, {1, 0});
 				if (ImGui::BeginDragDropSource())
 				{
 					const char* itemPath = path.c_str();

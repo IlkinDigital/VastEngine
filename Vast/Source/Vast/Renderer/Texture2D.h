@@ -1,9 +1,10 @@
 #pragma once
 
 #include "Texture.h"
-#include "AssetManager/TextureAsset.h"
 
 namespace Vast {
+
+	class Texture2DAsset;
 
 	class Texture2D : public Texture
 	{
@@ -14,7 +15,7 @@ namespace Vast {
 		static Ref<Texture2D> Create(uint32 width, uint32 height);
 		// DEPRECATED: Asset manager must be used
 		static Ref<Texture2D> Create(const Filepath& filepath);
-		static Ref<Texture2D> Create(const Ref<TextureAsset>& asset);
+		static Ref<Texture2D> Create(const Ref<Texture2DAsset>& asset);
 	};
 
 }
