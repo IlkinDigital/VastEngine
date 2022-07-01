@@ -2,7 +2,8 @@
 #include "AssetManager.h"
 
 namespace Vast {
-	AssetManager::AssetManager(const Filepath& path)
+	AssetManager::AssetManager(const Ref<Project>& project)
+		: m_Project(project)
 	{
 	}
 }

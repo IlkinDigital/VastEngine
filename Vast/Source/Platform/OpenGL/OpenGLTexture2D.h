@@ -11,6 +11,7 @@ namespace Vast {
 	public:
 		OpenGLTexture2D(uint32 width, uint32 height);
 		OpenGLTexture2D(const Filepath& filepath);
+		OpenGLTexture2D(const Ref<TextureAsset>& asset);
 		~OpenGLTexture2D() override;
 
 		uint32 GetWidth() const override { return m_Width; }
@@ -22,6 +23,7 @@ namespace Vast {
 		void SetData(void* data, uint32 size) override;
 		void Bind(uint32 slot = 0) const override;
 	private:
+		void Create(unsigned char* bitmap, int channels);
 		// Sets up texture resizing algorithms 
 		void SetupFilters() const; 
 	private:

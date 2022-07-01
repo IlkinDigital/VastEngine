@@ -40,6 +40,9 @@ namespace Vast {
 			ImGui::PopFont();
 		}
 
+		if (ImGui::Button("Import Texture"))
+			VAST_TRACE("Import Texture Pressed");
+
 		static float padding = 10.0f;
 		static float thumbnailSize = 128.0f;
 		float panelWidth = ImGui::GetContentRegionAvail().x;

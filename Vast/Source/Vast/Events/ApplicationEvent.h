@@ -35,4 +35,18 @@ namespace Vast {
 		EVENT_TYPE_IMPL(WindowClose)
 	};
 
+	class FilesDropEvent : public Event
+	{
+	public:
+		FilesDropEvent(const DArray<Filepath>& filepaths)
+			: m_Filepaths(filepaths) {}
+
+		const DArray<Filepath>& GetFilepaths() const { return m_Filepaths; }
+
+		EVENT_CATEGORY_IMPL(EventCategory::Application)
+		EVENT_TYPE_IMPL(FilesDrop)
+	private:
+		DArray<Filepath> m_Filepaths;
+	};
+
 }

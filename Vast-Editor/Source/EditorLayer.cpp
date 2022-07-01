@@ -17,10 +17,13 @@
 #include "Board2D/BoardFlipbook.h"
 #include "Board2D/BoardStateMachine.h"
 
+#include "Clock/Clock.h"
+
 #include <imgui.h>
 #include <Vast/Serialization/AssetSerializer.h>
 #include <Vast/AssetManager/TextureAsset.h>
 #include <fstream>
+#include <Vast/AssetManager/AssetImporter.h>
 
 namespace Vast {
 
@@ -64,15 +67,15 @@ namespace Vast {
 
 		OpenProject("D:/Lester_Files/dev/VastProjects/WackoDuel");
 
-		tex1 = Texture2D::Create(PROJDIR("Content/Assets/Textures/DownIdle.png"));
-		tex2 = Texture2D::Create(PROJDIR("Content/Assets/Textures/RightIdle.png"));
-		tex3 = Texture2D::Create(PROJDIR("Content/Assets/Textures/UpIdle.png"));
-		tex4 = Texture2D::Create(PROJDIR("Content/Assets/Textures/LeftIdle.png"));
+		//tex1 = Texture2D::Create(PROJDIR("Content/Assets/Textures/DownIdle.png"));
+		//tex2 = Texture2D::Create(PROJDIR("Content/Assets/Textures/RightIdle.png"));
+		//tex3 = Texture2D::Create(PROJDIR("Content/Assets/Textures/UpIdle.png"));
+		//tex4 = Texture2D::Create(PROJDIR("Content/Assets/Textures/LeftIdle.png"));
 
-		s_FB->PushKeyFrame(tex1, 0.1f);
-		s_FB->PushKeyFrame(tex2, 0.2f);
-		s_FB->PushKeyFrame(tex3, 0.3f);
-		s_FB->PushKeyFrame(tex4, 0.4f);
+		//s_FB->PushKeyFrame(tex1, 0.1f);
+		//s_FB->PushKeyFrame(tex2, 0.2f);
+		//s_FB->PushKeyFrame(tex3, 0.3f);
+		//s_FB->PushKeyFrame(tex4, 0.4f);
 
 		//Ref<TextureAsset> ta = CreateRef<TextureAsset>("TestAS", "Assets/Textures/TestAS.asset", UUID());
 		//
@@ -84,9 +87,6 @@ namespace Vast {
 		//ta->SetFileData(data);
 		//
 		//m_Asset = ta;
-
-		AssetSerializer as(m_Project, m_Asset);
-		as.Deserialize("Assets/Textures/TestAS.asset");
 	}
 
 
@@ -290,6 +290,7 @@ namespace Vast {
 	{
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<KeyPressedEvent>(VAST_BIND_EVENT(OnKeyPressed));
+		dispatcher.Dispatch<FilesDropEvent>(VAST_BIND_EVENT(OnFilesDrop));
 
 		m_ActiveScene->OnEvent(event);
 	}
@@ -522,4 +523,10 @@ namespace Vast {
 		return false;
 	}
 
+	bool EditorLayer::OnFilesDrop(FilesDropEvent& event)
+	{
+
+
+		return false;
+	}
 }

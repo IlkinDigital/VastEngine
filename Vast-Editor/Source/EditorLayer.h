@@ -48,6 +48,7 @@ namespace Vast {
 		void OnScenePlay();
 		void OnSceneStop();
 
+		bool OnFilesDrop(FilesDropEvent& event);
 		bool OnWindowResize(WindowResizeEvent& event);
 		bool OnKeyPressed(KeyPressedEvent& event);
 	private:

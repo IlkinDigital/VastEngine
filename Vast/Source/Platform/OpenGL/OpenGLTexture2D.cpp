@@ -22,10 +22,49 @@ namespace Vast {
 		stbi_uc* bitmap = nullptr;
 		bitmap = stbi_load(filepath.string().c_str(), &width, &height, &channels, 0);
 
-		VAST_CORE_ASSERT(bitmap, "Couldn't load texture file");
+		m_Width = width;
+		m_Height = height;
+
+		Create(bitmap, channels);
+
+		m_Filepath = filepath;
+	}
+
+	OpenGLTexture2D::OpenGLTexture2D(const Ref<TextureAsset>& asset)
+	{
+		int width, height, channels;
+		stbi_set_flip_vertically_on_load(1);
+
+		stbi_uc* bitmap = nullptr;
+		bitmap = stbi_load_from_memory((stbi_uc*)asset->GetFileData().data(), asset->GetFileData().size(), &width, &height, &channels, 0);
 
 		m_Width = width;
 		m_Height = height;
+
+		Create(bitmap, channels);
+	}
+
+	OpenGLTexture2D::~OpenGLTexture2D()
+	{
+		glDeleteTextures(1, &m_RendererID);
+	}
+
+	void OpenGLTexture2D::SetData(void* data, uint32 size)
+	{
+		// Bytes Per Pixel
+		uint16 bpp = m_DataFormat == GL_RGBA ? 4 : 3;
+		VAST_CORE_ASSERT(m_Width * m_Height * bpp == size, "Data must cover the entire texture");
+		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
+	}
+
+	void OpenGLTexture2D::Bind(uint32 slot) const
+	{
+		glBindTextureUnit(slot, m_RendererID);
+	}
+
+	void OpenGLTexture2D::Create(unsigned char* bitmap, int channels)
+	{
+		VAST_CORE_ASSERT(bitmap, "Couldn't load texture file");
 
 		GLenum internalFormat = 0, dataFormat = 0;
 
@@ -52,26 +91,6 @@ namespace Vast {
 		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, dataFormat, GL_UNSIGNED_BYTE, bitmap);
 
 		stbi_image_free(bitmap);
-
-		m_Filepath = filepath;
-	}
-
-	OpenGLTexture2D::~OpenGLTexture2D()
-	{
-		glDeleteTextures(1, &m_RendererID);
-	}
-
-	void OpenGLTexture2D::SetData(void* data, uint32 size)
-	{
-		// Bytes Per Pixel
-		uint16 bpp = m_DataFormat == GL_RGBA ? 4 : 3;
-		VAST_CORE_ASSERT(m_Width * m_Height * bpp == size, "Data must cover the entire texture");
-		glTextureSubImage2D(m_RendererID, 0, 0, 0, m_Width, m_Height, m_DataFormat, GL_UNSIGNED_BYTE, data);
-	}
-
-	void OpenGLTexture2D::Bind(uint32 slot) const
-	{
-		glBindTextureUnit(slot, m_RendererID);
 	}
 
 	void OpenGLTexture2D::SetupFilters() const

@@ -23,4 +23,11 @@ namespace Vast {
 		return relative;
     }
 
+	bool FileIO::IsImage(const Filepath& path)
+	{
+		if (path.has_extension() && path.extension() == ".png")
+			return true;
+		return false;
+	}
+
 }

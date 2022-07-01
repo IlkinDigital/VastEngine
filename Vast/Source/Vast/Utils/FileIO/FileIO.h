@@ -9,6 +9,7 @@ namespace Vast {
 	public:
 		// Returns filepath relative to specified 'relativeTo' parameter
 		static Filepath Relative(const Filepath& path, const Filepath& relativeTo);
+		static bool IsImage(const Filepath& path);
 	};
 
 }

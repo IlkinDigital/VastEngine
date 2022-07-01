@@ -10,9 +10,8 @@ namespace Vast {
 	public:
 		using AssetMap = std::unordered_map<Filepath, Ref<Asset>>;
 	public:
-		AssetManager(const Filepath& path);
+		AssetManager(const Ref<Project>& project);
 	public:
-		Filepath m_RootDirectory;
 		Ref<Project> m_Project;
 		AssetMap m_AssetMap; // Map of filepath to Asset
 	};
