@@ -23,6 +23,11 @@ namespace Vast {
 		return relative;
     }
 
+	Filepath FileIO::Normalize(const Filepath& path)
+	{
+		return std::filesystem::canonical(path);
+	}
+
 	bool FileIO::IsImage(const Filepath& path)
 	{
 		if (path.has_extension() && path.extension() == ".png")

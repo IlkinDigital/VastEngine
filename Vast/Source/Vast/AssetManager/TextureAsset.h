@@ -4,10 +4,10 @@
 
 namespace Vast {
 
-	class TextureAsset : public Asset
+	class Texture2DAsset : public Asset
 	{
 	public:
-		TextureAsset(const String& name, const Filepath& path, UUID uuid);
+		Texture2DAsset(const String& name, const Filepath& path, UUID uuid);
 
 		const DArray<char>& GetFileData() const { return m_FileData; }
 		void SetFileData(const DArray<char>& fileData) { m_FileData = fileData; }

@@ -16,7 +16,8 @@ namespace Vast {
 
 		void Serialize();
 		void Deserialize(const Filepath& path);
-		
+
+		const Ref<Asset>& GetAsset() const { return m_Asset; }
 	private:
 		void SerializeHead(YAML::Emitter& out);
 		void DeserializeHead(const Filepath& path);

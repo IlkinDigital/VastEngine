@@ -36,8 +36,8 @@ namespace Vast {
 		stbi_set_flip_vertically_on_load(1);
 
 		stbi_uc* bitmap = nullptr;
-		bitmap = stbi_load_from_memory((stbi_uc*)asset->GetFileData().data(), asset->GetFileData().size(), &width, &height, &channels, 0);
-
+		const char* data = asset->GetFileData().data();
+		bitmap = stbi_load_from_memory(reinterpret_cast<const stbi_uc*>(data), asset->GetFileData().size(), &width, &height, &channels, 0);
 		m_Width = width;
 		m_Height = height;
 

@@ -87,6 +87,8 @@ namespace Vast {
 		//ta->SetFileData(data);
 		//
 		//m_Asset = ta;
+		m_Project->GetAssetManager()->SetProject(m_Project);
+		m_Project->GetAssetManager()->Init();
 	}
 
 
@@ -380,7 +382,7 @@ namespace Vast {
 		ProjectSerializer ps(m_Project);
 		ps.Deserialize(filepath);
 
-		m_ContentBrowser.SetRootDirectory(PROJDIR("Content"));
+		m_ContentBrowser.SetProject(m_Project);
 
 		if (name != m_Project->GetName())
 		{
@@ -411,7 +413,7 @@ namespace Vast {
 
 		RunPremake();
 
-		m_ContentBrowser.SetRootDirectory(PROJDIR("Content"));
+		m_ContentBrowser.SetProject(m_Project);
 		m_ScriptModule->Clear();
 		ScriptBuffer::Get().ClearBuffer();
 	}

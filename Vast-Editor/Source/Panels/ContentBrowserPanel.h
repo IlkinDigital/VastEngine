@@ -1,22 +1,24 @@
 #pragma once
 
-#include "Renderer/Texture2D.h"
 #include "Panel.h"
+
+#include "Renderer/Texture2D.h"
+#include "Project/Project.h"
 
 namespace Vast {
 
 	class ContentBrowserPanel : public Panel
 	{
 	public:
-		ContentBrowserPanel(); // LEGACY: Takes a path relative to Editor
-		ContentBrowserPanel(const Filepath& rootDir);
+		ContentBrowserPanel(); // DEPRECATED: Takes a path relative to Editor
+		ContentBrowserPanel(const Ref<Project>& project);
 
-		void SetRootDirectory(const Filepath& rootDir);
+		void SetProject(const Ref<Project>& project) { m_Project = project; m_CurrentPath = m_Project->GetContentFolderPath(); }
 
 		virtual void DrawPanel() override;
 	private:
-		Filepath m_RootDirectory = "Assets";
-		Filepath m_CurrentPath = m_RootDirectory;
+		Ref<Project> m_Project;
+		Filepath m_CurrentPath;
 
 		Ref<Texture2D> m_FolderIcon;
 		Ref<Texture2D> m_FileIcon;

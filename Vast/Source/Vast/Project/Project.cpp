@@ -3,6 +3,10 @@
 
 namespace Vast {
 
+	Project::Project()
+	{
+	}
+
 	Project::Project(const String& name, const Filepath& projectPath)
 	{
 		Set(name, projectPath);

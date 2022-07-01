@@ -2,6 +2,8 @@
 
 #include "GUI/FontManager.h"
 
+#include "Utils/FileIO/FileIO.h"
+
 #include <imgui.h>
 
 namespace Vast {
@@ -13,33 +15,29 @@ namespace Vast {
 		m_FileIcon = Texture2D::Create("Resources/Icons/FileIcon.png");
 	}
 
-	ContentBrowserPanel::ContentBrowserPanel(const Filepath& rootDir)
-		: Panel("Content Browser")
+	ContentBrowserPanel::ContentBrowserPanel(const Ref<Project>& project)
+		: Panel("Content Browser"), m_Project(project)
 	{
-		m_RootDirectory = rootDir;
-		m_CurrentPath = m_RootDirectory;
+		m_CurrentPath = m_Project->GetContentFolderPath();
 		m_FolderIcon = Texture2D::Create("Resources/Icons/FolderIcon.png");
 		m_FileIcon = Texture2D::Create("Resources/Icons/FileIcon.png");
 	}
 
-	void ContentBrowserPanel::SetRootDirectory(const Filepath& rootDir)
-	{
-		m_RootDirectory = rootDir;
-		m_CurrentPath = m_RootDirectory;
-	}
-
 	void ContentBrowserPanel::DrawPanel()
 	{
+		if (!m_Project)
+			return;
+
 		ImGui::Begin(m_Name.c_str());
 
-		if (m_CurrentPath != m_RootDirectory)
+		if (m_CurrentPath != m_Project->GetContentFolderPath())
 		{
 			ImGui::PushFont(FontManager::GetFont(FontManager::WeightType::Bold));
 			if (ImGui::Button("<--"))
 				m_CurrentPath = m_CurrentPath.parent_path();
 			ImGui::PopFont();
 		}
-
+		ImGui::SameLine();
 		if (ImGui::Button("Import Texture"))
 			VAST_TRACE("Import Texture Pressed");
 
@@ -56,7 +54,9 @@ namespace Vast {
 		for (auto& p : std::filesystem::directory_iterator(m_CurrentPath))
 		{
 			String path = p.path().string();
-			String filename = p.path().filename().string();
+			String filename = p.path().stem().filename().string();
+
+			bool drawName = false;
 
 			ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.3, 0.3, 0.3, 1 });
@@ -67,11 +67,15 @@ namespace Vast {
 				{
 					m_CurrentPath /= filename;
 				}
+
+				drawName = true;
 			}
-			else
+			else if (p.path().extension() == ".asset")
 			{
 				ImGui::PushID(path.c_str());
-				ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+				Filepath relative = FileIO::Relative(p.path(), m_Project->GetContentFolderPath());
+				Ref<TextureAsset> ta = RefCast<TextureAsset>(m_Project->GetAssetManager()->GetAsset(relative));
+				ImGui::ImageButton((ImTextureID)Texture2D::Create(ta)->GetRendererID(), {thumbnailSize, thumbnailSize}, {0, 1}, {1, 0});
 				if (ImGui::BeginDragDropSource())
 				{
 					const char* itemPath = path.c_str();
@@ -79,12 +83,16 @@ namespace Vast {
 					ImGui::EndDragDropSource();
 				}
 				ImGui::PopID();
+
+				drawName = true;
 			}
 			ImGui::PopStyleColor(2);
 
-			ImGui::Text(filename.c_str());
-
-			ImGui::NextColumn();
+			if (drawName)
+			{
+				ImGui::Text(filename.c_str());
+				ImGui::NextColumn();
+			}
 		}
 
 		ImGui::Columns(1);

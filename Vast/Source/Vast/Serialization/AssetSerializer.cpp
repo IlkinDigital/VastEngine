@@ -60,7 +60,8 @@ namespace Vast {
 
 	void AssetSerializer::DeserializeHead(const Filepath& path)
 	{
-		Filepath fullPath = m_Project->GetContentFolderPath() / path;
+		Filepath fullPath = m_Project->GetContentFolderPath();
+		fullPath += path;
 
 		std::ifstream fs(fullPath);
 		StringStream ss;
@@ -99,7 +100,9 @@ namespace Vast {
 		YAML::Emitter out;
 		SerializeHead(out);
 
-		std::ofstream fs(m_Project->GetContentFolderPath() / m_Asset->GetPath(), std::ios::binary);
+		Filepath path = m_Project->GetContentFolderPath();
+		path += m_Asset->GetPath();
+		std::ofstream fs(path, std::ios::binary);
 		const char* head = out.c_str();
 
 		fs.write(head, std::strlen(head));
@@ -113,7 +116,8 @@ namespace Vast {
 
 	bool AssetSerializer::DeserializeTexture(const Filepath& path)
 	{
-		Filepath fullPath = m_Project->GetContentFolderPath() / path;
+		Filepath fullPath = m_Project->GetContentFolderPath();
+		fullPath += path;
 
 		if (!std::filesystem::is_regular_file(fullPath))
 		{
