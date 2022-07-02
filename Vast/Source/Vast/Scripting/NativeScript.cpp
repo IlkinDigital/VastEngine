@@ -1,6 +1,9 @@
 #include "vastpch.h"
 #include "NativeScript.h"
 
+#include "Project/Project.h"
+#include "AssetManager/AssetManager.h"
+
 namespace Vast {
 
     DArray<Entity> NativeScript::GetEntityByName(const String& name)
@@ -36,4 +39,9 @@ namespace Vast {
         m_Destroyed = true;
     }
 
+    Ref<Asset> NativeScript::LoadAsset(const Filepath& path)
+    {
+        VAST_CORE_ASSERT(m_Project->GetAssetManager(), "AssetManager is null");
+        return m_Project->GetAssetManager()->GetAsset(path);
+    }
 }

@@ -63,6 +63,7 @@ namespace Vast {
 					{
 						nsc.Instance = nsc.InstantiateScript();
 						nsc.Instance->m_Entity = Entity(entityID, this);
+						nsc.Instance->SetProject(AssetManager::Get()->GetProject());
 						nsc.Instance->OnCreate();
 					}
 

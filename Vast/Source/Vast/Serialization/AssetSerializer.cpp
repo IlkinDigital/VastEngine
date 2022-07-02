@@ -2,9 +2,11 @@
 #include "AssetSerializer.h"
 
 #include "AssetManager/TextureAsset.h"
+#include "AssetManager/SceneAsset.h"
 
-#include <filesystem>
-#include <yaml-cpp/yaml.h>
+#include "SceneSerializer.h"
+
+#include "SerializationCore.h"
 
 namespace Vast {
 
@@ -20,6 +22,9 @@ namespace Vast {
 		case AssetType::Texture:
 			SerializeTexture();
 			break;
+		case AssetType::Scene:
+			SerializeScene();
+			break;
 		default:
 			VAST_CORE_ASSERT(false, "Vast doesn't support this AssetType");
 			break;
@@ -34,6 +39,9 @@ namespace Vast {
 		{
 		case AssetType::Texture:
 			DeserializeTexture(path);
+			break;
+		case AssetType::Scene:
+			DeserializeScene(path);
 			break;
 		default:
 			VAST_CORE_ASSERT(false, "Vast doesn't support this AssetType");
@@ -88,6 +96,9 @@ namespace Vast {
 		case AssetType::Texture:
 			m_Asset = CreateRef<Texture2DAsset>(name, path, uuid);
 			break;
+		case AssetType::Scene:
+			m_Asset = CreateRef<SceneAsset>(name, path, uuid);
+			break;
 		default:
 			VAST_CORE_ASSERT(false, "Vast doesn't support this AssetType");
 			break;
@@ -140,6 +151,65 @@ namespace Vast {
 		ta->SetTexture(Texture2D::Create(ta));
 
 		return true;
+	}
+
+	void AssetSerializer::SerializeScene()
+	{
+		YAML::Emitter out;
+		SerializeHead(out);
+		const char* head = out.c_str();
+
+		Filepath path = m_Project->GetContentFolderPath();
+		path += m_Asset->GetPath();
+		std::ofstream fs(path, std::ios::binary);
+
+		Ref<SceneAsset> sa = RefCast<SceneAsset>(m_Asset);
+		SceneSerializer ss(sa->GetScene(), m_Project);
+		String data = ss.Serialize();
+
+		// Compress head and data
+		fs.write(head, std::strlen(head));
+		fs.write("\0", 1);
+		fs.write(data.data(), data.size());
+
+		fs.close();
+	}
+
+	bool AssetSerializer::DeserializeScene(const Filepath& path)
+	{
+		Filepath fullPath = m_Project->GetContentFolderPath();
+		fullPath += path;
+
+		if (!std::filesystem::is_regular_file(fullPath))
+		{
+			VAST_CORE_ERROR("Can't deserialize scene, '{0}' path is invalid", path.string());
+			return false;
+		}
+
+		std::ifstream fs(fullPath, std::ios::binary);
+		String data(std::filesystem::file_size(fullPath), '\0');
+		fs.read(data.data(), data.size());
+
+		int i = 0;
+		for (; data[i] != '\0' && i < data.size(); i++) {}
+		i++;
+
+		String fileData(data.begin() + i, data.end());
+
+		Ref<SceneAsset> sa = RefCast<SceneAsset>(m_Asset);
+		sa->SetScene(CreateRef<Scene>());
+
+		SceneSerializer ss(sa->GetScene(), m_Project);
+		return ss.Deserialize(fileData);
+	}
+
+	void AssetSerializer::SerializeBoardFlipbook()
+	{
+	}
+
+	bool AssetSerializer::DeserializeBoardFlipbook(const Filepath& path)
+	{
+		return false;
 	}
 
 }

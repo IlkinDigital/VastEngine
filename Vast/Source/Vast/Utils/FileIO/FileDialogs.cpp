@@ -10,7 +10,7 @@
 
 namespace Vast {
 
-	Filepath FileIO::Dialogs::OpenFile(const char* filter)
+	Filepath FileDialog::OpenFile(const char* filter)
 	{
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = { 0 };
@@ -30,7 +30,7 @@ namespace Vast {
 		return Filepath();
 	}
 
-	Filepath FileIO::Dialogs::SaveFile(const char* filter)
+	Filepath FileDialog::SaveFile(const char* filter)
 	{
 		OPENFILENAMEA ofn;
 		CHAR szFile[260] = { 0 };

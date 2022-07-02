@@ -2,11 +2,12 @@
 
 #include "GUI/FontManager.h"
 
-#include "Utils/FileIO/FileIO.h"
-
 #include "AssetManager/TextureAsset.h"
+#include "Utils/FileIO/FileIO.h"
+#include "Utils/FileIO/FileDialogs.h"
 
 #include <imgui.h>
+#include <Vast/AssetManager/AssetImporter.h>
 
 namespace Vast {
 
@@ -41,7 +42,19 @@ namespace Vast {
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Import Texture"))
-			VAST_TRACE("Import Texture Pressed");
+		{
+			Filepath origin = FileDialog::OpenFile("");
+			Filepath rel = FileIO::Relative(m_CurrentPath, m_Project->GetContentFolderPath());
+			rel /= (origin.filename().stem().string() + ".asset");
+
+			VAST_TRACE("Origin path: {0}", origin.string());
+			VAST_TRACE("New path: {0}", rel.string());
+
+			AssetImporter importer(m_Project);
+			Ref<Asset> asset = importer.ImportTexture(origin, rel);
+			const auto& am = m_Project->GetAssetManager();
+			am->Init();
+		}
 
 		static float padding = 10.0f;
 		static float thumbnailSize = 128.0f;
@@ -76,10 +89,21 @@ namespace Vast {
 			{
 				ImGui::PushID(path.c_str());
 				Filepath relative = FileIO::Relative(p.path(), m_Project->GetContentFolderPath());
-				Ref<Texture2D> tex = RefCast<Texture2DAsset>(m_Project->GetAssetManager()->GetAsset(relative))->GetTexture();
-				float tot = tex->GetHeight() + tex->GetWidth();
-				ImGui::ImageButton((ImTextureID)tex->GetRendererID(), 
-					{ ((float)tex->GetWidth() / tot) * thumbnailSize, ((float)tex->GetHeight() / tot) * thumbnailSize}, {0, 1}, {1, 0});
+				Ref<Asset> asset = m_Project->GetAssetManager()->GetAsset(relative);
+				
+				if (asset->GetType() == AssetType::Texture)
+				{
+					Ref<Texture2D> tex = RefCast<Texture2DAsset>(m_Project->GetAssetManager()->GetAsset(relative))->GetTexture();
+					float tot = tex->GetHeight() + tex->GetWidth();
+					ImGui::ImageButton((ImTextureID)tex->GetRendererID(),
+						{ ((float)tex->GetWidth() * 2 / tot) * thumbnailSize, ((float)tex->GetHeight() * 2 / tot) * thumbnailSize }, { 0, 1 }, { 1, 0 });
+				}
+				else
+				{
+					ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), 
+						{ thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
+				}
+
 				if (ImGui::BeginDragDropSource())
 				{
 					const char* itemPath = path.c_str();

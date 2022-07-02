@@ -2,9 +2,9 @@
 
 #include "CoreMinimal.h"
 
-namespace Vast::FileIO {
+namespace Vast {
 
-	class Dialogs
+	class FileDialog
 	{
 	public:
 		static Filepath OpenFile(const char* filter);

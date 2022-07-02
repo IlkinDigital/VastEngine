@@ -5,10 +5,14 @@ namespace Vast {
 
 	Project::Project()
 	{
+		m_AssetManager = CreateRef<AssetManager>();
+		AssetManager::Set(m_AssetManager);
 	}
 
 	Project::Project(const String& name, const Filepath& projectPath)
 	{
+		m_AssetManager = CreateRef<AssetManager>();
+		AssetManager::Set(m_AssetManager);
 		Set(name, projectPath);
 	}
 

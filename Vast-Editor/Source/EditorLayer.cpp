@@ -13,6 +13,7 @@
 #include "Project/ProjectGenerator.h"
 
 #include "Utils/System/System.h"
+#include "Utils/FileIO/FileIO.h"
 
 #include "Board2D/BoardFlipbook.h"
 #include "Board2D/BoardStateMachine.h"
@@ -24,6 +25,7 @@
 #include <Vast/AssetManager/TextureAsset.h>
 #include <fstream>
 #include <Vast/AssetManager/AssetImporter.h>
+#include <Vast/AssetManager/SceneAsset.h>
 
 namespace Vast {
 
@@ -148,13 +150,13 @@ namespace Vast {
 				if (ImGui::MenuItem("New Scene", "Ctrl + N"))
 					NewScene();
 				if (ImGui::MenuItem("Open Scene", "Ctrl + O"))
-					OpenScene(FileIO::Dialogs::OpenFile("Vast Scene (*.vast)\0*.vast\0"));
+					OpenScene(FileIO::Relative(FileDialog::OpenFile("Vast Scene (*.asset)\0*.asset\0"), m_Project->GetContentFolderPath()));
 				if (ImGui::MenuItem("Save Scene As", "Ctrl + Alt + S"))
-					SaveScene(FileIO::Dialogs::SaveFile("Vast Scene (*.vast)\0*.vast\0"));
+					SaveScene(FileIO::Relative(FileDialog::SaveFile("Vast Scene (*.asset)\0*.asset\0"), m_Project->GetContentFolderPath()));
 				if (ImGui::MenuItem("New Project"))
-					NewProject("Hello_World", FileIO::Dialogs::SaveFile("Vast Project (vast.project)\0vast.project\0").parent_path());
+					NewProject("Hello_World", FileDialog::SaveFile("Vast Project (vast.project)\0vast.project\0").parent_path());
 				if (ImGui::MenuItem("Open Project"))
-					OpenProject(FileIO::Dialogs::OpenFile("Vast Project (vast.project)\0vast.project\0").parent_path());
+					OpenProject(FileDialog::OpenFile("Vast Project (vast.project)\0vast.project\0").parent_path());
 
 				ImGui::EndMenu();
 			}
@@ -337,19 +339,22 @@ namespace Vast {
 		m_Lineup.SetContext(m_ActiveScene);
 	}
 
-	void EditorLayer::OpenScene(const Filepath& filepath)
+	void EditorLayer::OpenScene(const Filepath& path)
 	{
-		if (std::filesystem::exists(filepath))
+		Filepath fullPath = m_Project->GetContentFolderPath();
+		fullPath += path;
+		if (std::filesystem::exists(fullPath))
 		{
 			if (m_SceneState == SceneState::Play)
 				OnSceneStop();
 
 			//EditorLayout::SetSelectedEntity({});
 
-			m_EditorScene = CreateRef<Scene>();
-			SceneSerializer serializer(m_EditorScene, m_Project);
-			serializer.Deserialize(filepath);
-			m_SceneFilepath = filepath;
+			AssetSerializer as(m_Project, m_Project->GetAssetManager()->GetAsset(path));
+			as.Deserialize(path);
+			m_EditorScene = RefCast<SceneAsset>(as.GetAsset())->GetScene();
+
+			m_SceneFilepath = path;
 
 			m_ActiveScene = m_EditorScene;
 
@@ -358,15 +363,17 @@ namespace Vast {
 			ResizeViewport();
 		}
 		else
-			VAST_ERROR("Invalid path to scene '{0}'", filepath.string());
+			VAST_ERROR("Invalid path to scene '{0}'", fullPath.string());
 	}
 
-	void EditorLayer::SaveScene(const Filepath& filepath)
+	void EditorLayer::SaveScene(const Filepath& path)
 	{
-		if (!filepath.empty())
+		if (!path.empty())
 		{
-			SceneSerializer serializer(m_EditorScene, m_Project);
-			serializer.Serialize(filepath);
+			Ref<SceneAsset> scene = CreateRef<SceneAsset>(path.filename().stem().string(), path, UUID());
+			scene->SetScene(m_EditorScene);
+			AssetSerializer as(m_Project, scene);
+			as.Serialize();
 		}
 	}
 
@@ -495,19 +502,19 @@ namespace Vast {
 			break;
 		case Key::O:
 			if (Input::IsPressed(Key::LeftControl))
-				OpenScene(FileIO::Dialogs::OpenFile("Vast Scene (*.vast)\0*.vast\0"));
+				OpenScene(FileIO::Relative(FileDialog::OpenFile("Vast Scene (*.asset)\0*.asset\0"), m_Project->GetContentFolderPath()));
 			break;
 		case Key::S:
 			if (Input::IsPressed(Key::LeftControl))
 			{
 				if (Input::IsPressed(Key::LeftAlt))
-					SaveScene(FileIO::Dialogs::SaveFile("Vast Scene (*.vast)\0*.vast\0"));
+					SaveScene(FileIO::Relative(FileDialog::SaveFile("Vast Scene (*.asset)\0*.asset\0"), m_Project->GetContentFolderPath()));
 				else
 				{
 					if (!m_SceneFilepath.empty())
 						SaveScene(m_SceneFilepath);
 					else
-						SaveScene(FileIO::Dialogs::SaveFile("Vast Scene (*.vast)\0*.vast\0"));
+						SaveScene(FileIO::Relative(FileDialog::SaveFile("Vast Scene (*.asset)\0*.asset\0"), m_Project->GetContentFolderPath()));
 				}
 			}
 			break;

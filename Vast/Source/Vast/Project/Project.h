@@ -26,7 +26,7 @@ namespace Vast {
 	private:
 		void InvalidateScriptPath();
 	private:
-		Ref<AssetManager> m_AssetManager = CreateRef<AssetManager>();
+		Ref<AssetManager> m_AssetManager;
 
 		String m_Name;
 		Filepath m_ScriptPath;

@@ -3,6 +3,7 @@
 // ---- STL -------------------------------
 #include <initializer_list>
 #include <fstream>
+#include <filesystem>
 // ----------------------------------------
 
 // ---- Core ------------------------------

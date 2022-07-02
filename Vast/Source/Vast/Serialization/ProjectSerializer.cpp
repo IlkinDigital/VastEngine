@@ -1,7 +1,7 @@
 #include "vastpch.h"
 #include "ProjectSerializer.h"
 
-#include <yaml-cpp/yaml.h>
+#include "SerializationCore.h"
 
 namespace Vast {
 

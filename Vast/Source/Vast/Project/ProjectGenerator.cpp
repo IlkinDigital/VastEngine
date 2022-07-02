@@ -60,7 +60,8 @@ EnginePath = 'D:/Lester_Files/dev/Projects/VastEngine'
         'Engine/Vast.lib',
         'Engine/GLFW.lib',
         'Engine/ImGui.lib',
-        'Engine/Glad.lib'
+        'Engine/Glad.lib',
+        'Engine/yaml-cpp.lib'
     }
 
     filter 'system:windows'

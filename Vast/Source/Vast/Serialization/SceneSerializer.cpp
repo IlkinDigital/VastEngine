@@ -154,6 +154,143 @@ namespace Vast {
 		return true;
 	}
 
+	String SceneSerializer::Serialize()
+	{
+		YAML::Emitter out;
+
+		out << YAML::BeginMap;
+		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
+		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
+
+		m_Scene->GetRegistry().each([&](auto entityID)
+			{
+				Entity entity(entityID, m_Scene.get());
+				if (!entity.IsValid())
+				{
+					VAST_CORE_ASSERT(false, "Failed to serialize scene: Invalid entity");
+					return;
+				}
+
+				SerializeEntity(out, entity);
+			});
+
+		out << YAML::EndSeq;
+		out << YAML::EndMap;
+
+		return String(out.c_str());
+	}
+
+	bool SceneSerializer::Deserialize(const String& source)
+	{
+		YAML::Node data = YAML::Load(source);
+		if (!data["Scene"])
+			return false;
+
+		String sceneName = data["Scene"].as<String>();
+		VAST_CORE_TRACE("Deserializing scene: {0}", sceneName);
+
+		auto entities = data["Entities"];
+		if (entities)
+		{
+			for (auto entity : entities)
+			{
+				/**
+				* UUID Component
+				*/
+
+				UUID uuid(entity["Entity"].as<uint64>());
+
+				/**
+				* Tag Component
+				*/
+
+				String tag;
+				auto tagComponent = entity["TagComponent"];
+				if (tagComponent)
+					tag = tagComponent["Tag"].as<String>();
+
+				VAST_CORE_TRACE("Deserializing entity with UUID = {0}, Tag = {1}", uuid, tag);
+
+				Entity deserializedEntity = m_Scene->CreateEntity(uuid, tag);
+
+				/**
+				* Transform Component
+				*/
+				auto transformComponent = entity["TransformComponent"];
+				if (transformComponent)
+				{
+					auto& tc = deserializedEntity.GetComponent<TransformComponent>();
+					tc.Translation = transformComponent["Translation"].as<Vector3>();
+					tc.Rotation = transformComponent["Rotation"].as<Vector3>();
+					tc.Scale = transformComponent["Scale"].as<Vector3>();
+				}
+
+				/**
+				* Camera Component
+				*/
+				auto cameraComponent = entity["CameraComponent"];
+				if (cameraComponent)
+				{
+					auto& cc = deserializedEntity.AddComponent<CameraComponent>();
+
+					auto cameraProps = cameraComponent["Camera"];
+					cc.Camera.SetProjectionType((SceneCamera::ProjectionType)cameraProps["ProjectionType"].as<int>());
+
+					cc.Camera.SetPerspectiveFOV(cameraProps["PerspectiveFOV"].as<float>());
+					cc.Camera.SetPerspectiveNearClip(cameraProps["PerspectiveNear"].as<float>());
+					cc.Camera.SetPerspectiveFarClip(cameraProps["PerspectiveFar"].as<float>());
+
+					cc.Camera.SetOrthographicSize(cameraProps["OrthographicSize"].as<float>());
+					cc.Camera.SetOrthographicNearClip(cameraProps["OrthographicNear"].as<float>());
+					cc.Camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());
+
+					cc.Primary = cameraComponent["Primary"].as<bool>();
+				}
+
+				/**
+				* Render Component
+				*/
+				auto renderComponent = entity["RenderComponent"];
+				if (renderComponent)
+				{
+					auto& rc = deserializedEntity.AddComponent<RenderComponent>();
+
+					rc.Color = renderComponent["Color"].as<Vector4>();
+
+					Filepath texturePath = renderComponent["Texture"].as<String>();
+					if (texturePath != "")
+					{
+						if (texturePath.is_absolute())
+						{
+							rc.Texture = Texture2D::Create(texturePath);
+						}
+						else
+						{
+							Filepath path = m_Project->GetContentFolderPath();
+							path += texturePath;
+							rc.Texture = Texture2D::Create(path);
+						}
+					}
+				}
+
+				/**
+				* Native Script Component
+				*/
+				auto nscriptComponent = entity["NativeScriptComponent"];
+				if (nscriptComponent)
+				{
+					auto nsc = ScriptBuffer::Get().FindByName(nscriptComponent["Name"].as<String>());
+					if (nsc)
+					{
+						deserializedEntity.AddComponent<NativeScriptComponent>(*nsc);
+					}
+				}
+			}
+		}
+
+		return true;
+	}
+
 	void SceneSerializer::SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
 		out << YAML::BeginMap;

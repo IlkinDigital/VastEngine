@@ -8,6 +8,8 @@
 
 namespace Vast {
 
+	Ref<AssetManager> AssetManager::s_Instance = CreateRef<AssetManager>();
+
 	AssetManager::AssetManager(const Ref<Project>& project)
 		: m_Project(project)
 	{
@@ -32,6 +34,7 @@ namespace Vast {
 
 	void AssetManager::Init()
 	{
+		m_AssetMap.clear();
 		IterateAndAddAssets(m_Project->GetContentFolderPath());
 	}
 
