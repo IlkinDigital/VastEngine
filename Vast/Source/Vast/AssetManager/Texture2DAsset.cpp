@@ -1,5 +1,5 @@
 #include "vastpch.h"
-#include "TextureAsset.h"
+#include "Texture2DAsset.h"
 
 namespace Vast {
 

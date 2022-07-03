@@ -5,7 +5,7 @@
 #include "Scene/Components.h"
 #include "Scripting/ScriptBuffer.h"
 
-#include "AssetManager/TextureAsset.h"
+#include "AssetManager/Texture2DAsset.h"
 
 namespace Vast {
 

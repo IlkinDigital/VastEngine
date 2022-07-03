@@ -22,7 +22,7 @@
 
 #include <imgui.h>
 #include <Vast/Serialization/AssetSerializer.h>
-#include <Vast/AssetManager/TextureAsset.h>
+#include <Vast/AssetManager/Texture2DAsset.h>
 #include <fstream>
 #include <Vast/AssetManager/AssetImporter.h>
 #include <Vast/AssetManager/SceneAsset.h>

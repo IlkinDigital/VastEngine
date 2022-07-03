@@ -8,6 +8,7 @@ namespace Vast {
 
 	class Asset
 	{
+		friend class AssetSerializer;
 	public:
 		Asset(AssetType assetType, const String& name, const Filepath& path, UUID uuid);
 

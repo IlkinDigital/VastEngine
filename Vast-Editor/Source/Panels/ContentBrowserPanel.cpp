@@ -2,7 +2,7 @@
 
 #include "GUI/FontManager.h"
 
-#include "AssetManager/TextureAsset.h"
+#include "AssetManager/Texture2DAsset.h"
 #include "Utils/FileIO/FileIO.h"
 #include "Utils/FileIO/FileDialogs.h"
 

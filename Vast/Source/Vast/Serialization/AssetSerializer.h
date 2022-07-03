@@ -15,21 +15,21 @@ namespace Vast {
 		AssetSerializer(const Ref<Project>& project, const Ref<Asset>& asset);
 
 		void Serialize();
-		void Deserialize(const Filepath& path);
+		bool Deserialize(const Filepath& path);
 
 		const Ref<Asset>& GetAsset() const { return m_Asset; }
 	private:
-		void SerializeHead(YAML::Emitter& out);
-		void DeserializeHead(const Filepath& path);
+		String SerializeHead();
+		void DeserializeHead(const String& source, const Filepath& assetPath);
 
-		void SerializeTexture();
-		bool DeserializeTexture(const Filepath& path);
+		String SerializeTexture();
+		bool DeserializeTexture(const String& source);
 
-		void SerializeScene();
-		bool DeserializeScene(const Filepath& path);
+		String SerializeScene();
+		bool DeserializeScene(const String& source);
 
-		void SerializeBoardFlipbook();
-		bool DeserializeBoardFlipbook(const Filepath& path);
+		String SerializeBoardFlipbook();
+		bool DeserializeBoardFlipbook(const String& source);
 	private:
 		Ref<Asset> m_Asset;
 		Ref<Project> m_Project;

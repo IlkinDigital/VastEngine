@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TextureAsset.h"
+#include "Texture2DAsset.h"
 #include "Project/Project.h"
 
 namespace Vast {
