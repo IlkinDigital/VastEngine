@@ -1,5 +1,7 @@
 #include "ViewportPanel.h"
 
+#include "AssetManager/SceneAsset.h"
+
 #include <imgui.h>
 #include <ImGuizmo.h>
 
@@ -38,11 +40,11 @@ namespace Vast {
 
 		if (ImGui::BeginDragDropTarget())
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ASSET"))
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(SceneAsset::GetStaticTypeName()))
 			{
-				String path = (const char*)payload->Data;
+				Asset* asset = (Asset*)payload->Data;
 				if (m_DragDropFn)
-					m_DragDropFn(path);
+					m_DragDropFn(asset->GetPath().string());
 			}
 			ImGui::EndDragDropTarget();
 		}

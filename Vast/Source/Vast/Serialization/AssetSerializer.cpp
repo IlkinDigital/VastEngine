@@ -19,7 +19,7 @@ namespace Vast {
 	{
 		switch (m_Asset->GetType())
 		{
-		case AssetType::Texture:
+		case AssetType::Texture2D:
 			SerializeTexture();
 			break;
 		case AssetType::Scene:
@@ -37,7 +37,7 @@ namespace Vast {
 
 		switch (m_Asset->GetType())
 		{
-		case AssetType::Texture:
+		case AssetType::Texture2D:
 			DeserializeTexture(path);
 			break;
 		case AssetType::Scene:
@@ -93,7 +93,7 @@ namespace Vast {
 
 		switch (type)
 		{
-		case AssetType::Texture:
+		case AssetType::Texture2D:
 			m_Asset = CreateRef<Texture2DAsset>(name, path, uuid);
 			break;
 		case AssetType::Scene:

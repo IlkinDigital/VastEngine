@@ -13,6 +13,7 @@ namespace Vast {
 
 		virtual UUID GetUUID() const { return m_UUID; }
 		virtual AssetType GetType() const { return m_AssetType; }
+		virtual const char* GetTypeName() const { return "None"; }
 		virtual const String& GetName() const { return m_Name; }
 		virtual const Filepath& GetPath() const { return m_Path; }
 	protected:
@@ -21,5 +22,9 @@ namespace Vast {
 		String m_Name;
 		Filepath m_Path; // Relative to the Content folder
 	};
+
+#define ASSET_TYPE_IMPL(type) static AssetType GetStaticType() { return type; }\
+							  static const char* GetStaticTypeName() { return #type; }\
+							  const char* GetTypeName() const override { return #type; }
 
 }

@@ -13,6 +13,8 @@ namespace Vast {
 
 		const Ref<Scene>& GetScene() const { return m_Scene; }
 		void SetScene(const Ref<Scene>& scene) { m_Scene = scene; }
+
+		ASSET_TYPE_IMPL(AssetType::Scene)
 	private:
 		Ref<Scene> m_Scene;
 	};

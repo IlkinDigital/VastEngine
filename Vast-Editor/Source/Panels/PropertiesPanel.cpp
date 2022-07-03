@@ -5,6 +5,8 @@
 #include "Scene/Components.h"
 #include "Scripting/ScriptBuffer.h"
 
+#include "AssetManager/TextureAsset.h"
+
 namespace Vast {
 
 	void PropertiesPanel::DrawPanel()
@@ -104,10 +106,10 @@ namespace Vast {
 
 				if (ImGui::BeginDragDropTarget())
 				{
-					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ASSET"))
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(Texture2DAsset::GetStaticTypeName()))
 					{
-						String path = (const char*)payload->Data;
-						component.Texture = Texture2D::Create(path);
+						Asset* ta = (Asset*)payload->Data;
+						component.Texture = RefCast<Texture2DAsset>(AssetManager::Get()->GetAsset(ta->GetPath()))->GetTexture();
 					}
 					ImGui::EndDragDropTarget();
 				}

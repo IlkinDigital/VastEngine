@@ -91,7 +91,7 @@ namespace Vast {
 				Filepath relative = FileIO::Relative(p.path(), m_Project->GetContentFolderPath());
 				Ref<Asset> asset = m_Project->GetAssetManager()->GetAsset(relative);
 				
-				if (asset->GetType() == AssetType::Texture)
+				if (asset->GetType() == AssetType::Texture2D)
 				{
 					Ref<Texture2D> tex = RefCast<Texture2DAsset>(m_Project->GetAssetManager()->GetAsset(relative))->GetTexture();
 					float tot = tex->GetHeight() + tex->GetWidth();
@@ -106,8 +106,7 @@ namespace Vast {
 
 				if (ImGui::BeginDragDropSource())
 				{
-					const char* itemPath = path.c_str();
-					ImGui::SetDragDropPayload("CONTENT_BROWSER_ASSET", itemPath, (path.size() + 1) * sizeof(char));
+					ImGui::SetDragDropPayload(asset->GetTypeName(), asset.get(), sizeof(*asset.get()));
 					ImGui::EndDragDropSource();
 				}
 				ImGui::PopID();
