@@ -322,11 +322,10 @@ namespace Vast {
 		if (m_SceneState == SceneState::Play)
 			OnSceneStop();
 
-		//EditorLayout::SetSelectedEntity({});
-
 		m_ActiveScene = CreateRef<Scene>();
 		m_EditorScene = m_ActiveScene;
 		m_Lineup.SetContext(m_ActiveScene);
+		m_Lineup.DeselectEntity();
 	}
 
 	void EditorLayer::OpenScene(const Filepath& path)
@@ -338,7 +337,7 @@ namespace Vast {
 			if (m_SceneState == SceneState::Play)
 				OnSceneStop();
 
-			//EditorLayout::SetSelectedEntity({});
+			m_Lineup.DeselectEntity();
 
 			AssetSerializer as(m_Project, m_Project->GetAssetManager()->GetAsset(path));
 			as.Deserialize(path);
