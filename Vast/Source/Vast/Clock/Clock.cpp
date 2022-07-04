@@ -10,4 +10,9 @@ namespace Vast {
         return (float)glfwGetTime(); // TODO: Make platform independent
     }
 
+    float Clock::EpochMilliseconds()
+    {
+        return (float)(glfwGetTime() * 1000.0);
+    }
+
 }

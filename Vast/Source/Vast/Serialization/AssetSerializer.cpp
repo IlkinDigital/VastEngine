@@ -5,9 +5,8 @@
 #include "SerializationCore.h"
 
 #include "AssetManager/Texture2DAsset.h"
+#include "AssetManager/BoardFlipbookAsset.h"
 #include "AssetManager/SceneAsset.h"
-
-#include "Utils/FileIO/Packager/FilePackager.h"
 
 namespace Vast {
 
@@ -26,6 +25,9 @@ namespace Vast {
 		case AssetType::Texture2D:
 			package.Second = SerializeTexture();
 			break;
+		case AssetType::BoardFlipbook:
+			package.Second = SerializeBoardFlipbook();
+			break;
 		case AssetType::Scene:
 			package.Second = SerializeScene();
 			break;
@@ -43,13 +45,48 @@ namespace Vast {
 
 	bool AssetSerializer::Deserialize(const Filepath& path)
 	{
+		if (m_Package.First.empty())
+		{	
+			ReceivePackage(path);
+			DeserializeHead(m_Package.First, path);
+		}
+
+		switch (m_Asset->GetType())
+		{
+		case AssetType::Texture2D:
+			return DeserializeTexture(m_Package.Second);
+		case AssetType::BoardFlipbook:
+			return DeserializeBoardFlipbook(m_Package.Second);
+		case AssetType::Scene:
+			return DeserializeScene(m_Package.Second);
+		default:
+			VAST_CORE_ASSERT(false, "Vast doesn't support this AssetType");
+			break;
+		}
+
+		return false;
+	}
+
+	AssetType AssetSerializer::SerializationType(const Filepath& path)
+	{
+		if (m_Asset)
+			return m_Asset->GetType();
+
+		ReceivePackage(path);
+		DeserializeHead(m_Package.First, path);
+
+		return m_Asset->GetType();
+	}
+
+	void AssetSerializer::ReceivePackage(const Filepath& path)
+	{
 		Filepath fullPath = m_Project->GetContentFolderPath();
 		fullPath += path;
 
 		if (!std::filesystem::is_regular_file(fullPath))
 		{
-			VAST_CORE_ERROR("Can't deserialize texture, '{0}' path is invalid", path.string());
-			return false;
+			VAST_CORE_ERROR("Can't deserialize asset, '{0}' path is invalid", path.string());
+			return;
 		}
 
 		String data(std::filesystem::file_size(fullPath), '\0');
@@ -57,23 +94,7 @@ namespace Vast {
 		std::ifstream fs(fullPath, std::ios::binary);
 		fs.read(data.data(), data.size());
 
-		Package package = FilePackager::Unpack(data);
-
-		DeserializeHead(package.First, path);
-
-		switch (m_Asset->GetType())
-		{
-		case AssetType::Texture2D:
-			return DeserializeTexture(package.Second);
-			break;
-		case AssetType::Scene:
-			return DeserializeScene(package.Second);
-		default:
-			VAST_CORE_ASSERT(false, "Vast doesn't support this AssetType");
-			break;
-		}
-
-		return false;
+		m_Package = FilePackager::Unpack(data);
 	}
 
 	String AssetSerializer::SerializeHead()
@@ -108,6 +129,9 @@ namespace Vast {
 		{
 		case AssetType::Texture2D:
 			m_Asset = CreateRef<Texture2DAsset>(name, assetPath, uuid);
+			break;
+		case AssetType::BoardFlipbook:
+			m_Asset = CreateRef<BoardFlipbookAsset>(name, assetPath, uuid);
 			break;
 		case AssetType::Scene:
 			m_Asset = CreateRef<SceneAsset>(name, assetPath, uuid);
@@ -152,12 +176,57 @@ namespace Vast {
 
 	String AssetSerializer::SerializeBoardFlipbook()
 	{
-		return "";
+		auto bfa = RefCast<BoardFlipbookAsset>(m_Asset);
+		const auto& fb = bfa->GetFlipbook();
+
+		YAML::Emitter out;
+		
+		out << YAML::BeginMap;
+
+		out << YAML::Key << "FPS" << YAML::Value << fb->GetFPS();
+		out << YAML::Key << "KeyFrames" << YAML::Value << YAML::BeginSeq;
+
+		for (const auto& key : fb->GetKeyFrames())
+		{
+			out << YAML::BeginMap;
+
+			Filepath path = key.Texture->GetFilepath();
+			path.replace_extension("");
+			out << YAML::Key << "FrameSource" << YAML::Value << path.string();
+
+			out << YAML::EndMap;
+		}
+
+		out << YAML::EndSeq;
+		out << YAML::EndMap;
+
+		return out.c_str();
 	}
 
 	bool AssetSerializer::DeserializeBoardFlipbook(const String& source)
 	{
-		return false;
+		YAML::Node data = YAML::Load(source);
+		
+		auto fb = CreateRef<Board2D::Flipbook>();
+		
+		if (!data["FPS"])
+			return false;
+		fb->SetFPS(data["FPS"].as<float>());
+
+		auto keyFrames = data["KeyFrames"];
+		if (!keyFrames)
+			return false;
+
+		for (auto frame : keyFrames)
+		{
+			Ref<Asset> raw = AssetManager::Get()->GetAsset(frame["FrameSource"].as<String>());
+			auto asset = RefCast<Texture2DAsset>(raw);
+			fb->PushKeyFrame({ asset->GetTexture() });
+		}
+
+		RefCast<BoardFlipbookAsset>(m_Asset)->SetFlipbook(fb);
+
+		return true;
 	}
 
 }

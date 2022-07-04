@@ -6,6 +6,7 @@ namespace Vast {
 	{
 	public:
 		static float EpochSeconds();
+		static float EpochMilliseconds();
 	};
 
 }

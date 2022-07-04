@@ -1,14 +1,15 @@
 #include "vastpch.h"
 #include "SceneSerializer.h"
 
-#include "Scene/Entity.h"
-#include "Scene/Components.h"
-
 #include "SerializationCore.h"
 
+#include "Scene/Entity.h"
+#include "Scene/Components.h"
 #include "Scripting/ScriptBuffer.h"
 
 #include "Utils/FileIO/FileIO.h"
+
+#include "AssetManager/Texture2DAsset.h"
 
 namespace Vast {
 
@@ -120,18 +121,16 @@ namespace Vast {
 
 					rc.Color = renderComponent["Color"].as<Vector4>();
 					
-					Filepath texturePath = renderComponent["Texture"].as<String>();
-					if (texturePath != "")
+					Filepath path = renderComponent["Texture"].as<String>();
+					if (path != "")
 					{
-						if (texturePath.is_absolute())
+						if (path.is_absolute())
 						{
-							rc.Texture = Texture2D::Create(texturePath);
+							rc.Texture = Texture2D::Create(path);
 						}
 						else
 						{
-							Filepath path = m_Project->GetContentFolderPath();
-							path += texturePath;
-							rc.Texture = Texture2D::Create(path);
+							rc.Texture = RefCast<Texture2DAsset>(AssetManager::Get()->GetAsset(path))->GetTexture();
 						}
 					}
 				}
@@ -257,18 +256,16 @@ namespace Vast {
 
 					rc.Color = renderComponent["Color"].as<Vector4>();
 
-					Filepath texturePath = renderComponent["Texture"].as<String>();
-					if (texturePath != "")
+					Filepath path = renderComponent["Texture"].as<String>();
+					if (path != "")
 					{
-						if (texturePath.is_absolute())
+						if (path.is_absolute())
 						{
-							rc.Texture = Texture2D::Create(texturePath);
+							rc.Texture = Texture2D::Create(path);
 						}
 						else
 						{
-							Filepath path = m_Project->GetContentFolderPath();
-							path += texturePath;
-							rc.Texture = Texture2D::Create(path);
+							rc.Texture = RefCast<Texture2DAsset>(AssetManager::Get()->GetAsset(path))->GetTexture();
 						}
 					}
 				}
@@ -333,9 +330,7 @@ namespace Vast {
 				out << YAML::Key << "Color" << YAML::Value << rc.Color;
 				if (rc.Texture)
 				{
-					Filepath path = FileIO::Relative(rc.Texture->GetFilepath(), m_Project->GetContentFolderPath());
-
-					out << YAML::Key << "Texture" << YAML::Value << path.string();
+					out << YAML::Key << "Texture" << YAML::Value << rc.Texture->GetFilepath().stem().string();
 				}
 				else
 					out << YAML::Key << "Texture" << YAML::Value << "";

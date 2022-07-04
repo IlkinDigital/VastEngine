@@ -6,6 +6,8 @@
 #include "Project/Project.h"
 #include "Serialization/AssetSerializer.h"
 
+#include "Clock/Clock.h"
+
 namespace Vast {
 
 	Ref<AssetManager> AssetManager::s_Instance = CreateRef<AssetManager>();
@@ -34,21 +36,45 @@ namespace Vast {
 
 	void AssetManager::Init()
 	{
+		auto begin = Clock::EpochMilliseconds();
 		m_AssetMap.clear();
-		IterateAndAddAssets(m_Project->GetContentFolderPath());
+
+		/// Scenes must be deserialized last because they may reference
+		/// not yet created assets
+		DArray<Ref<Asset>> sceneAssets;
+
+		IterateAndAddAssets(m_Project->GetContentFolderPath(), sceneAssets);
+
+		for (const auto& asset : sceneAssets)
+		{
+			AssetSerializer as(m_Project, asset);
+			as.Deserialize(asset->GetPath());
+			AddAsset(as.GetAsset());
+		}
+		auto end = Clock::EpochMilliseconds();
+
+		VAST_CORE_TRACE("AssetManager::Init - {0}ms", end - begin);
 	}
 
-	void AssetManager::IterateAndAddAssets(const Filepath& start)
+	void AssetManager::IterateAndAddAssets(const Filepath& start, DArray<Ref<Asset>>& sceneAssets)
 	{
 		for (auto& p : std::filesystem::directory_iterator(start))
 		{
 			if (p.is_directory())
-				IterateAndAddAssets(p);
+				IterateAndAddAssets(p, sceneAssets);
 			else if (p.path().filename().extension() == ".asset")
 			{
 				Filepath path = FileIO::Relative(p.path(), m_Project->GetContentFolderPath());
 				Ref<Asset> asset; 
 				AssetSerializer as(m_Project, asset);
+				
+				// TODO: This check requires asset to be deserialized twice, fix it
+				if (as.SerializationType(path) == AssetType::Scene)
+				{
+					sceneAssets.push_back(as.GetAsset());
+					continue;
+				}
+
 				as.Deserialize(path);
 				asset = as.GetAsset();
 				AddAsset(asset);

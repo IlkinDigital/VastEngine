@@ -29,7 +29,7 @@ namespace Vast {
 
 		Create(bitmap, channels);
 
-		m_Filepath = filepath;
+		m_Path = filepath;
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const Ref<Texture2DAsset>& asset)
@@ -44,6 +44,8 @@ namespace Vast {
 		m_Height = height;
 
 		Create(bitmap, channels);
+
+		m_Path = asset->GetPath();
 	}
 
 	OpenGLTexture2D::~OpenGLTexture2D()
