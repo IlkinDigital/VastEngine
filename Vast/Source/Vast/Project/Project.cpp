@@ -26,6 +26,8 @@ namespace Vast {
 	// TODO: Multi compiler support (only supports MSVC compiler)
 	void Project::Build()
 	{
+		OPTICK_EVENT();
+
 		StringStream ss;
 		ss << R"("C:/Program Files/Microsoft Visual Studio/2022/Community/Msbuild/Current/Bin/amd64/MSBuild.exe" )"
 			<< (m_ProjectPath / (m_Name + ".vcxproj")).string()
@@ -36,6 +38,8 @@ namespace Vast {
 
 	void Project::InvalidateScriptPath()
 	{
+		OPTICK_EVENT();
+
 #ifdef VAST_PLATFORM_WINDOWS
 		const char* platform = "windows-x86_64";
 #else

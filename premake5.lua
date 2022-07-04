@@ -29,6 +29,7 @@ Include["stb"] = "Vast/Vendor/stb"
 Include["entt"] = "Vast/Vendor/entt"
 Include["ImGuizmo"] = "Vast/Vendor/ImGuizmo"
 Include["yaml_cpp"] = "Vast/Vendor/yaml-cpp/include"
+Include["Optick"] = "Vast/Vendor/Optick/include"
 
 project "Vast"
     location "Vast"
@@ -75,7 +76,8 @@ project "Vast"
         "%{Include.stb}",
         "%{Include.entt}",
         "%{Include.ImGuizmo}",
-        "%{Include.yaml_cpp}"
+        "%{Include.yaml_cpp}",
+        "%{Include.Optick}"
     }
 
     links
@@ -85,11 +87,15 @@ project "Vast"
         "Glad",
         "ImGui",
         "yaml-cpp",
-        "opengl32.lib"
+        "opengl32.lib",
+        "Vast/Vendor/Optick/lib/x64/release/OptickCore.lib"
     }
 
     filter "files:Vast/Vendor/ImGuizmo/**.cpp"
-    flags { "NoPCH" }
+        flags { "NoPCH" }
+
+    filter "files:Vast/Vendor/Optick/src/*.cpp"
+        flags { "NoPCH" }
 
     filter "system:windows"
         systemversion "latest"
@@ -104,6 +110,11 @@ project "Vast"
         defines "VAST_CONFIG_DEBUG"
         runtime "Debug"
         symbols "on"
+
+        -- links
+        -- {
+        --     "Vast/Vendor/Optick/lib/x64/debug/OptickCore.lib"
+        -- }
 
     filter "configurations:Release"
         defines "VAST_CONFIG_RELEASE"
@@ -142,12 +153,14 @@ project "Vast-Editor"
         "%{Include.imgui}",
         "%{Include.glm}",
         "%{Include.entt}",
-        "%{Include.ImGuizmo}"
+        "%{Include.ImGuizmo}",
+        "%{Include.Optick}"
     }
 
     links
     {
-        "Vast"
+        "Vast",
+        "Vast/Vendor/Optick/lib/x64/release/OptickCore.lib"
     }
 
     filter "system:windows"

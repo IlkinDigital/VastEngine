@@ -10,6 +10,8 @@ namespace Vast {
 	OpenGLTexture2D::OpenGLTexture2D(uint32 width, uint32 height)
 		: m_Width(width), m_Height(height), m_DataFormat(GL_RGBA)
 	{
+		OPTICK_EVENT();
+
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_RendererID);
 		glTextureStorage2D(m_RendererID, 1, GL_RGBA8, m_Width, m_Height);
 
@@ -17,7 +19,10 @@ namespace Vast {
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const Filepath& filepath)
+		: m_Path(filepath)
 	{
+		OPTICK_EVENT();
+
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
 		
@@ -28,12 +33,12 @@ namespace Vast {
 		m_Height = height;
 
 		Create(bitmap, channels);
-
-		m_Path = filepath;
 	}
 
 	OpenGLTexture2D::OpenGLTexture2D(const Ref<Texture2DAsset>& asset)
 	{
+		OPTICK_EVENT();
+
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
 
@@ -55,6 +60,8 @@ namespace Vast {
 
 	void OpenGLTexture2D::SetData(void* data, uint32 size)
 	{
+		OPTICK_EVENT();
+
 		// Bytes Per Pixel
 		uint16 bpp = m_DataFormat == GL_RGBA ? 4 : 3;
 		VAST_CORE_ASSERT(m_Width * m_Height * bpp == size, "Data must cover the entire texture");
@@ -68,6 +75,8 @@ namespace Vast {
 
 	void OpenGLTexture2D::Create(unsigned char* bitmap, int channels)
 	{
+		OPTICK_EVENT();
+
 		VAST_CORE_ASSERT(bitmap, "Couldn't load texture file");
 
 		GLenum internalFormat = 0, dataFormat = 0;
@@ -83,7 +92,7 @@ namespace Vast {
 			dataFormat = GL_RGB;
 		}
 
-		VAST_CORE_ASSERT(internalFormat & dataFormat, "NOT supported image format specified");
+		VAST_CORE_ASSERT((internalFormat & dataFormat), "NOT supported image format specified");
 
 		m_DataFormat = dataFormat;
 
@@ -99,6 +108,8 @@ namespace Vast {
 
 	void OpenGLTexture2D::SetupFilters() const
 	{
+		OPTICK_EVENT();
+
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTextureParameteri(m_RendererID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 

@@ -5,6 +5,8 @@ namespace Vast {
 
 	String FilePackager::Pack(const Package& package)
 	{
+		OPTICK_EVENT();
+
 		String string;
 		string.reserve(package.First.size() + package.Second.size() + 1);
 
@@ -17,6 +19,8 @@ namespace Vast {
 
 	Package FilePackager::Unpack(const String& pack)
 	{
+		OPTICK_EVENT();
+
 		auto index = pack.find('\0');
 		if (index == pack.npos)
 		{

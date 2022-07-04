@@ -24,6 +24,8 @@ namespace Vast {
 
 	void OpenGLFramebuffer::Bind() const
 	{
+		OPTICK_EVENT();
+
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
 	}
@@ -35,6 +37,8 @@ namespace Vast {
 
 	void OpenGLFramebuffer::Generate()
 	{
+		OPTICK_EVENT();
+
 		if (m_RendererID)
 		{
 			glDeleteFramebuffers(1, &m_RendererID);
@@ -61,8 +65,7 @@ namespace Vast {
 		glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
 		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, m_Specification.Width, m_Specification.Height);
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_DepthAttachment, 0);
-
-		VAST_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete")
+		//VAST_CORE_ASSERT((glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE), "Framebuffer is incomplete")
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}

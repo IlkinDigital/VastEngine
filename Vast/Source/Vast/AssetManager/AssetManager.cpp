@@ -36,7 +36,8 @@ namespace Vast {
 
 	void AssetManager::Init()
 	{
-		auto begin = Clock::EpochMilliseconds();
+		OPTICK_EVENT();
+
 		m_AssetMap.clear();
 
 		/// Scenes must be deserialized last because they may reference
@@ -51,9 +52,6 @@ namespace Vast {
 			as.Deserialize(asset->GetPath());
 			AddAsset(as.GetAsset());
 		}
-		auto end = Clock::EpochMilliseconds();
-
-		VAST_CORE_TRACE("AssetManager::Init - {0}ms", end - begin);
 	}
 
 	void AssetManager::IterateAndAddAssets(const Filepath& start, DArray<Ref<Asset>>& sceneAssets)
@@ -61,14 +59,19 @@ namespace Vast {
 		for (auto& p : std::filesystem::directory_iterator(start))
 		{
 			if (p.is_directory())
+			{
 				IterateAndAddAssets(p, sceneAssets);
+			}
 			else if (p.path().filename().extension() == ".asset")
 			{
+				OPTICK_EVENT("OnExtension  == .asset");
+
 				Filepath path = FileIO::Relative(p.path(), m_Project->GetContentFolderPath());
 				Ref<Asset> asset; 
 				AssetSerializer as(m_Project, asset);
 				
 				// TODO: This check requires asset to be deserialized twice, fix it
+
 				if (as.SerializationType(path) == AssetType::Scene)
 				{
 					sceneAssets.push_back(as.GetAsset());
@@ -78,6 +81,8 @@ namespace Vast {
 				as.Deserialize(path);
 				asset = as.GetAsset();
 				AddAsset(asset);
+
+				VAST_CORE_TRACE("{0}", asset->GetName());
 			}
 		}
 	}

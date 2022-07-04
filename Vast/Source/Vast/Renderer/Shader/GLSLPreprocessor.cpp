@@ -5,6 +5,8 @@ namespace Vast {
 
     GLSLPreprocessor::Shaders GLSLPreprocessor::PreprocessSource(const String& source)
     {
+        OPTICK_EVENT();
+
         // Get location of shader types
 
         auto vertexStart = source.find("#vertex");
@@ -31,6 +33,8 @@ namespace Vast {
 
     GLSLPreprocessor::Shaders GLSLPreprocessor::PreprocessFile(const String& filepath)
     {
+        OPTICK_EVENT();
+
         std::ifstream fs(filepath);
 
         // Is file opened check

@@ -38,24 +38,32 @@ namespace Vast {
 
 	void OpenGLShader::UploadMat4(const String& name, const Mat4& data) const
 	{
+		OPTICK_EVENT();
+
 		GLuint location = glGetUniformLocation(m_Program, name.c_str());
 		glUniformMatrix4fv(location, 1, GL_FALSE, Math::ValuePointer(data));
 	}
 
 	void OpenGLShader::UploadInt(const String& name, int data) const
 	{
+		OPTICK_EVENT();
+
 		GLuint location = glGetUniformLocation(m_Program, name.c_str());
 		glUniform1i(location, data);
 	}
 
 	void OpenGLShader::UploadIntArray(const String& name, int* data, uint32 count) const
 	{
+		OPTICK_EVENT();
+
 		GLuint location = glGetUniformLocation(m_Program, name.c_str());
 		glUniform1iv(location, count, data);
 	}
 
 	void OpenGLShader::Compile(const String& vertexSource, const String& fragSource)
 	{
+		OPTICK_EVENT();
+
 		// Vertex shader compilation
 		GLuint vtxToken = glCreateShader(GL_VERTEX_SHADER);
 		{

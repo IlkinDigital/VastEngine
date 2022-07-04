@@ -127,7 +127,7 @@ namespace Vast::Math {
 #endif
 
 		rotation.y = asin(-Row[0][2]);
-		if (cos(rotation.y) != 0) {
+		if (cos(rotation.y) != 0.0f) {
 			rotation.x = atan2(Row[1][2], Row[2][2]);
 			rotation.z = atan2(Row[0][1], Row[0][0]);
 		}

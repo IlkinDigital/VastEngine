@@ -28,6 +28,8 @@ namespace Vast {
 	OpenGLVertexArray::OpenGLVertexArray()
 		: m_RendererID(0)
 	{
+		OPTICK_EVENT();
+
 		glCreateVertexArrays(1, &m_RendererID);
 		VAST_CORE_ASSERT(m_RendererID, "Vertex array couldn't be created");
 	}
@@ -39,6 +41,8 @@ namespace Vast {
 
 	void OpenGLVertexArray::AddVertexBuffer(const Ref<VertexBuffer>& buffer)
 	{
+		OPTICK_EVENT();
+
 		Bind();
 		buffer->Bind();
 
@@ -63,6 +67,8 @@ namespace Vast {
 
 	void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& buffer)
 	{
+		OPTICK_EVENT();
+
 		Bind();
 		buffer->Bind();
 

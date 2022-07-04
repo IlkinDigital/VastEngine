@@ -99,6 +99,8 @@ namespace Vast {
 	{
 		while (m_Running)
 		{
+			OPTICK_FRAME("MainThread");
+
 			// ---- Setup timestep ---------------
 			float epoch = Clock::EpochSeconds();
 			float ts = epoch - m_LastFrameTime;

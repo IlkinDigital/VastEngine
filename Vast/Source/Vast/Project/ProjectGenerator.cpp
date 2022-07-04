@@ -5,6 +5,8 @@ namespace Vast {
 
     void ProjectGenerator::GenerateDirectories()
     {
+        OPTICK_EVENT();
+
         std::filesystem::create_directories(m_Project->GetProjectPath() / "Content" / "Assets");
         std::filesystem::create_directories(m_Project->GetProjectPath() / "Vendor" / "premake");
         std::filesystem::create_directory(m_Project->GetProjectPath() / "Engine");
@@ -13,6 +15,8 @@ namespace Vast {
 
     void ProjectGenerator::GeneratePremakeFile()
     {
+        OPTICK_EVENT();
+
         StringStream ss;
         ss
             << "workspace '" << m_Project->GetName() << "'"
@@ -95,6 +99,8 @@ EnginePath = 'D:/Lester_Files/dev/Projects/VastEngine'
 
     void ProjectGenerator::DownloadDependencies(const Filepath& dest)
     {
+        OPTICK_EVENT();
+
         Filepath binPath = std::filesystem::current_path().parent_path() / "Binaries";
 
         // Define binaries folder based on build config and platform

@@ -40,6 +40,8 @@ namespace Vast {
 
 	void Renderer2D::Init()
 	{
+		OPTICK_EVENT();
+
 		uint32 indices[]
 		{
 			0, 1, 2,
@@ -82,6 +84,8 @@ namespace Vast {
 
 	void Renderer2D::BeginScene(const Camera& camera, const Mat4& transform)
 	{
+		OPTICK_EVENT();
+
 		s_Data.QuadShader->Bind();
 		Mat4 viewProj = camera.GetProjection() * Math::Inverse(transform);
 
@@ -90,6 +94,8 @@ namespace Vast {
 
 	void Renderer2D::BeginScene(const EditorCamera& camera)
 	{
+		OPTICK_EVENT();
+
 		s_Data.QuadShader->Bind();
 
 		s_Data.QuadShader->UploadMat4("u_ViewProjection", camera.GetViewProjection());
@@ -101,6 +107,8 @@ namespace Vast {
 
 	void Renderer2D::DrawQuad(const Mat4& transform, const Vector4& color)
 	{
+		OPTICK_EVENT();
+
 		s_Data.WhiteTexture->Bind();
 
 		s_Data.QuadVertices[0].Position = transform * s_Data.QuadVertexPositions[0];
@@ -127,6 +135,8 @@ namespace Vast {
 
 	void Renderer2D::DrawQuad(const Mat4& transform, const Ref<Texture2D>& texture)
 	{
+		OPTICK_EVENT();
+
 		texture->Bind();
 
 		Vector4 color(1.0f); // white

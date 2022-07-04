@@ -5,6 +5,9 @@
 *.filters
 *.user
 
+# Optick
+*.opt
+
 # Binaries
 Binaries-Int/
 Binaries/

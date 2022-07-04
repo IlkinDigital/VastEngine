@@ -27,6 +27,7 @@
 #include <Vast/AssetManager/AssetImporter.h>
 #include <Vast/AssetManager/SceneAsset.h>
 #include <Vast/AssetManager/BoardFlipbookAsset.h>
+#include <optick.h>
 
 namespace Vast {
 
@@ -94,6 +95,8 @@ namespace Vast {
 
 	void EditorLayer::OnUpdate(Timestep ts)
 	{
+		OPTICK_EVENT();
+
 		s_FrameTime.Update(ts);
 
 		m_SubwindowManager.OnUpdate(ts);

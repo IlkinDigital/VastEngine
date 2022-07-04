@@ -7,7 +7,7 @@ namespace Vast {
 	class ProjectGenerator
 	{
 	public:
-		ProjectGenerator(const Ref<Project> project)
+		ProjectGenerator(const Ref<Project>& project)
 			: m_Project(project) {}
 		
 		void GenerateDirectories();

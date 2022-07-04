@@ -15,6 +15,8 @@ namespace Vast {
 
 	void SceneSerializer::Serialize(const Filepath& filepath)
 	{
+		OPTICK_EVENT();
+
 		YAML::Emitter out;
 
 		out << YAML::BeginMap;
@@ -42,6 +44,8 @@ namespace Vast {
 
 	bool SceneSerializer::Deserialize(const Filepath& filepath)
 	{
+		OPTICK_EVENT();
+
 		std::ifstream fs(filepath);
 		StringStream strStream;
 		strStream << fs.rdbuf();
@@ -155,6 +159,8 @@ namespace Vast {
 
 	String SceneSerializer::Serialize()
 	{
+		OPTICK_EVENT();
+
 		YAML::Emitter out;
 
 		out << YAML::BeginMap;
@@ -181,6 +187,8 @@ namespace Vast {
 
 	bool SceneSerializer::Deserialize(const String& source)
 	{
+		OPTICK_EVENT();
+
 		YAML::Node data = YAML::Load(source);
 		if (!data["Scene"])
 			return false;
@@ -290,6 +298,8 @@ namespace Vast {
 
 	void SceneSerializer::SerializeEntity(YAML::Emitter& out, Entity entity)
 	{
+		OPTICK_EVENT();
+
 		out << YAML::BeginMap;
 		out << YAML::Key << "Entity";
 		out << YAML::Value << entity.GetComponent<IDComponent>().ID; // UUID goes here

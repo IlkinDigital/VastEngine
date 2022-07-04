@@ -22,6 +22,8 @@ namespace Vast {
 
 	Entity Scene::CreateEntity(UUID uuid, const String& label)
 	{
+		OPTICK_EVENT();
+
 		Entity entity(m_Registry.create(), this);
 		entity.AddComponent<IDComponent>(uuid);
 		entity.AddComponent<TransformComponent>();
@@ -32,11 +34,15 @@ namespace Vast {
 
 	void Scene::DestroyEntity(const Entity& entity)
 	{
+		OPTICK_EVENT();
+
 		m_Registry.destroy(entity.GetHandle());
 	}
 
 	Entity Scene::GetEntity(UUID id)
 	{
+		OPTICK_EVENT();
+
 		auto view = m_Registry.view<IDComponent>();
 
 		for (auto entityID : view)
@@ -51,6 +57,8 @@ namespace Vast {
 
 	void Scene::OnRuntimeUpdate(Timestep ts)
 	{
+		OPTICK_EVENT();
+
 		/**
 		* Call scripts
 		*/
@@ -117,6 +125,8 @@ namespace Vast {
 
 	void Scene::OnViewportResize(uint32 width, uint32 height)
 	{
+		OPTICK_EVENT();
+
 		auto group = m_Registry.view<TransformComponent, CameraComponent>();
 		for (auto entity : group)
 		{
@@ -152,6 +162,8 @@ namespace Vast {
 	template<typename Component>
 	static void CopyComponent(entt::registry& dst, entt::registry& src, const std::unordered_map<uint64, entt::entity>& enttMap)
 	{
+		OPTICK_EVENT();
+
 		auto view = src.view<Component>();
 		for (auto entity : view)
 		{
@@ -173,6 +185,8 @@ namespace Vast {
 
 	void Scene::DuplicateEntity(Entity entity)
 	{
+		OPTICK_EVENT();
+
 		Entity newEntity = CreateEntity(entity.GetName());
 
 		CopyComponentIfExists<TransformComponent>(newEntity, entity);
@@ -183,6 +197,8 @@ namespace Vast {
 
 	Ref<Scene> Scene::Clone(const Ref<Scene>& srcScene)
 	{
+		OPTICK_EVENT();
+
 		Ref<Scene> newScene = CreateRef<Scene>();
 
 		auto& srcRegistry = srcScene->m_Registry;
@@ -209,6 +225,8 @@ namespace Vast {
 
 	void Scene::RenderScene()
 	{
+		OPTICK_EVENT();
+
 		auto group = m_Registry.view<TransformComponent, RenderComponent>();
 		DArray<std::pair<TransformComponent, RenderComponent>> renderables;
 		for (auto entity : group)

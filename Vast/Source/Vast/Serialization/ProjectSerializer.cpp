@@ -9,6 +9,8 @@ namespace Vast {
 
 	void ProjectSerializer::Serialize(const Filepath& filepath)
 	{
+		OPTICK_EVENT();
+
 		YAML::Emitter out;
 
 		out << YAML::BeginMap;
@@ -24,6 +26,8 @@ namespace Vast {
 
 	bool ProjectSerializer::Deserialize(const Filepath& filepath)
 	{
+		OPTICK_EVENT();
+
 		std::ifstream fs(filepath / s_ProjectFile);
 		StringStream ss;
 		ss << fs.rdbuf();

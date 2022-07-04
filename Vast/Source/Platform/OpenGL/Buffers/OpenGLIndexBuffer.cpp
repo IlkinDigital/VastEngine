@@ -8,6 +8,8 @@ namespace Vast {
 	OpenGLIndexBuffer::OpenGLIndexBuffer(uint32* indices, uint32 count)
 		: m_IndexCount(count), m_RendererID(0)
 	{
+		OPTICK_EVENT();
+
 		glCreateBuffers(1, &m_RendererID);
 		VAST_ASSERT(m_RendererID, "Index buffer couldn't be created");
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererID);

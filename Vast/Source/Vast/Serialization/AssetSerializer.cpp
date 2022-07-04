@@ -17,6 +17,8 @@ namespace Vast {
 
 	void AssetSerializer::Serialize()
 	{
+		OPTICK_EVENT();
+
 		Package package;
 		package.First = SerializeHead();
 
@@ -45,6 +47,8 @@ namespace Vast {
 
 	bool AssetSerializer::Deserialize(const Filepath& path)
 	{
+		OPTICK_EVENT();
+
 		if (m_Package.First.empty())
 		{	
 			ReceivePackage(path);
@@ -69,6 +73,8 @@ namespace Vast {
 
 	AssetType AssetSerializer::SerializationType(const Filepath& path)
 	{
+		OPTICK_EVENT();
+
 		if (m_Asset)
 			return m_Asset->GetType();
 
@@ -80,6 +86,8 @@ namespace Vast {
 
 	void AssetSerializer::ReceivePackage(const Filepath& path)
 	{
+		OPTICK_EVENT();
+
 		Filepath fullPath = m_Project->GetContentFolderPath();
 		fullPath += path;
 
@@ -99,6 +107,8 @@ namespace Vast {
 
 	String AssetSerializer::SerializeHead()
 	{
+		OPTICK_EVENT();
+
 		YAML::Emitter out;
 
 		out << YAML::BeginMap;
@@ -119,6 +129,8 @@ namespace Vast {
 
 	void AssetSerializer::DeserializeHead(const String& source, const Filepath& assetPath)
 	{
+		OPTICK_EVENT();
+
 		YAML::Node head = YAML::Load(source);
 
 		UUID uuid(head["Asset"].as<uint64>());
@@ -145,12 +157,16 @@ namespace Vast {
 
 	String AssetSerializer::SerializeTexture()
 	{
+		OPTICK_EVENT();
+
 		const auto& data = RefCast<Texture2DAsset>(m_Asset)->GetFileData();
 		return String(data.begin(), data.end());
 	}
 
 	bool AssetSerializer::DeserializeTexture(const String& source)
 	{
+		OPTICK_EVENT();
+
 		Ref<Texture2DAsset> ta = RefCast<Texture2DAsset>(m_Asset);
 		ta->SetFileData(DArray<char>(source.begin(), source.end()));
 		ta->SetTexture(Texture2D::Create(ta));
@@ -160,6 +176,8 @@ namespace Vast {
 
 	String AssetSerializer::SerializeScene()
 	{
+		OPTICK_EVENT();
+
 		Ref<SceneAsset> sa = RefCast<SceneAsset>(m_Asset);
 		SceneSerializer ss(sa->GetScene(), m_Project);
 		return ss.Serialize();
@@ -167,6 +185,8 @@ namespace Vast {
 
 	bool AssetSerializer::DeserializeScene(const String& source)
 	{
+		OPTICK_EVENT();
+
 		Ref<SceneAsset> sa = RefCast<SceneAsset>(m_Asset);
 		sa->SetScene(CreateRef<Scene>());
 
@@ -176,6 +196,8 @@ namespace Vast {
 
 	String AssetSerializer::SerializeBoardFlipbook()
 	{
+		OPTICK_EVENT();
+
 		auto bfa = RefCast<BoardFlipbookAsset>(m_Asset);
 		const auto& fb = bfa->GetFlipbook();
 
@@ -205,6 +227,8 @@ namespace Vast {
 
 	bool AssetSerializer::DeserializeBoardFlipbook(const String& source)
 	{
+		OPTICK_EVENT();
+
 		YAML::Node data = YAML::Load(source);
 		
 		auto fb = CreateRef<Board2D::Flipbook>();

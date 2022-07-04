@@ -12,6 +12,8 @@ namespace Vast {
 
 	WindowsModule::WindowsModule(const Filepath& filepath)
 	{
+		OPTICK_EVENT();
+
 		Clear(); // TODO: Maybe remove
 		String path = filepath.string();
 		m_ModuleHandle = LoadLibraryA(path.c_str());
@@ -32,6 +34,8 @@ namespace Vast {
 
 	void WindowsModule::Clear()
 	{
+		OPTICK_EVENT();
+
 		LPWSTR filename = new WCHAR[128]{};
 		GetModuleFileName(m_ModuleHandle, filename, 127);
 		if (filename[0])
@@ -46,6 +50,8 @@ namespace Vast {
 
 	RuntimeModule::FnPtr WindowsModule::OpenFunction(const String& name)
 	{
+		OPTICK_EVENT();
+
 		auto impFunc = GetProcAddress(m_ModuleHandle, name.c_str());
 		VAST_CORE_ASSERT(impFunc, "Couldn't locate function");
 		return impFunc;

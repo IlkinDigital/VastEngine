@@ -5,6 +5,8 @@ namespace Vast {
 
     Filepath FileIO::Relative(const Filepath& path, const Filepath& relativeTo)
     {
+		OPTICK_EVENT();
+
 		Filepath relative;
 		auto starts = path.string().find(relativeTo.string());
 		if (starts < path.string().size())

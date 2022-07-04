@@ -30,6 +30,8 @@ namespace Vast {
 
 	bool WindowsWindow::Init()
 	{
+		OPTICK_EVENT();
+
 		if (!s_GLFWInitialized)
 		{
 			s_GLFWInitialized = glfwInit();
@@ -40,6 +42,8 @@ namespace Vast {
 
 	void WindowsWindow::Init(const WindowProps& props)
 	{
+		OPTICK_EVENT();
+
 		m_Data.Title = props.Title;
 		m_Data.Width = props.Width;
 		m_Data.Height = props.Height;

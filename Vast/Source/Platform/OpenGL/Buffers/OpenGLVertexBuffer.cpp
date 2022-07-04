@@ -7,6 +7,8 @@ namespace Vast {
 
 	OpenGLVertexBuffer::OpenGLVertexBuffer(float* vertices, uint32 size)
 	{
+		OPTICK_EVENT();
+
 		glCreateBuffers(1, &m_RendererID);
 		VAST_ASSERT(m_RendererID, "Vertex buffer couldn't be created");
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
@@ -15,6 +17,8 @@ namespace Vast {
 
 	OpenGLVertexBuffer::OpenGLVertexBuffer(uint32 size)
 	{
+		OPTICK_EVENT();
+
 		glCreateBuffers(1, &m_RendererID);
 		VAST_ASSERT(m_RendererID, "Vertex buffer couldn't be created");
 		glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);

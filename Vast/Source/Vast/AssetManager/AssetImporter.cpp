@@ -8,9 +8,11 @@ namespace Vast {
 
     Ref<Texture2DAsset> AssetImporter::ImportTexture(const Filepath& imagePath, const Filepath& toPath)
     {
+        OPTICK_EVENT();
+
         if (FileIO::IsImage(imagePath))
         {
-            auto ta = CreateRef<Texture2DAsset>(imagePath.filename().string(), toPath, UUID());
+            auto ta = CreateRef<Texture2DAsset>(imagePath.filename().stem().string(), toPath, UUID());
             std::ifstream fs(imagePath, std::ios::binary);
             if (fs.is_open())
             {
@@ -30,6 +32,8 @@ namespace Vast {
 
     void AssetImporter::ExportTexture(const Ref<Texture2DAsset>& asset, const Filepath& toPath)
     {
+        OPTICK_EVENT();
+
         std::ofstream fs(toPath, std::ios::binary);
         fs.write(asset->GetFileData().data(), asset->GetFileData().size());
     }

@@ -1,5 +1,9 @@
 #pragma once
 
+// ---- Debug -----------------------------
+#include <optick.h>
+// ----------------------------------------
+
 // ---- STL -------------------------------
 #include <initializer_list>
 #include <fstream>
@@ -22,3 +26,4 @@
 #include "Vast/Input/KeyCodes.h"
 #include "Vast/Input/MouseCodes.h"
 // ----------------------------------------
+
