@@ -6,10 +6,12 @@
 
 #include "Renderer/Renderer2D.h"
 
+#include <imgui_internal.h>
+
 namespace Vast {
 
 	FlipbookEditor::FlipbookEditor()
-		: Subwindow("FlipbookEditor"), m_Viewport("FlipbookViewport"), m_Properties("FlipbookProperties")
+		: Subwindow("FlipbookEditor"), m_Viewport("Viewport"), m_Properties("Properties")
 	{
 	}
 
@@ -36,7 +38,9 @@ namespace Vast {
 		m_Viewport.SetColorAttachment(m_SceneRenderer.GetFramebuffer()->GetColorAttachment());
 		m_Properties.Open();
 		m_Properties.SetContextEntity(CreateRef<Entity>(m_CurrentFrame));
-
+		m_Settings.Open();
+		m_Frames.Open();
+		m_Frames.SetFlipbook(m_Flipbook);
 	}
 
 	void FlipbookEditor::OnUpdate(Timestep ts)
@@ -71,11 +75,50 @@ namespace Vast {
 			return;
 		}
 		
+		// DockBuilder 
+		if (!m_InitializedDockspace)
+		{
+			ImGuiID dockspaceID = GetUUID();
+
+			ImGui::DockBuilderRemoveNode(dockspaceID);
+			ImGui::DockBuilderAddNode(dockspaceID, 
+				ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_PassthruCentralNode);
+			ImGui::DockBuilderSetNodeSize(dockspaceID, ImGui::GetMainViewport()->Size);
+
+			ImGuiID bottomID = -1;
+			auto topID = ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Up, 0.45f, nullptr, &bottomID);
+
+			ImGuiID viewID = -1;
+			auto propertiesID = ImGui::DockBuilderSplitNode(topID, ImGuiDir_Right, 0.31f, nullptr, &viewID);
+
+			ImGuiID framesID = -1;
+			auto settingsID = ImGui::DockBuilderSplitNode(bottomID, ImGuiDir_Left, 0.1f, nullptr, &framesID);
+
+			ImGui::DockBuilderDockWindow(m_Properties.GetName().c_str(), propertiesID);
+			ImGui::DockBuilderDockWindow(m_Viewport.GetName().c_str(), viewID);
+			ImGui::DockBuilderDockWindow(m_Frames.GetName().c_str(), framesID);
+			ImGui::DockBuilderDockWindow(m_Settings.GetName().c_str(), settingsID);
+
+			ImGui::DockBuilderFinish(dockspaceID);
+			m_InitializedDockspace = true;
+		}
+
 		/**
 		* Frames panel
 		*/
-		ImGui::Begin("Frames");
-		
+
+		m_Viewport.OnGUIRender();
+		m_Properties.OnGUIRender();
+		m_Settings.OnGUIRender();
+		m_Frames.OnGUIRender();
+
+		EditorLayout::EndWindow();
+	}
+
+	void FramesPanel::DrawPanel()
+	{
+		ImGui::Begin(m_Name.c_str());
+
 		WrapWidget::Begin();
 		for (const auto& frame : m_Flipbook->GetKeyFrames())
 		{
@@ -88,11 +131,12 @@ namespace Vast {
 		WrapWidget::End();
 
 		ImGui::End();
+	}
 
-		m_Viewport.OnGUIRender();
-		m_Properties.OnGUIRender();
-		
-		EditorLayout::EndWindow();
+	void FlipbookSettings::DrawPanel()
+	{
+		ImGui::Begin(m_Name.c_str());
+		ImGui::End();
 	}
 
 }

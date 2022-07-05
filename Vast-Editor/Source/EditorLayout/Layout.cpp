@@ -61,17 +61,21 @@ namespace Vast {
 		ImGui::End();
 	}
 
-	bool EditorLayout::BeginWindow(const Subwindow& subwindow, bool* open)
+	/// TODO: Current DockSpace usage will be unable to use .ini saved settings,
+	///		 due to random/unique id being used each time, add 'SavingToIni' functionality
+	bool EditorLayout::BeginWindow(const Subwindow& subwindow, bool* open) 
 	{
+		ImGui::PushID(subwindow.GetUUID());
 		bool res = ImGui::Begin(subwindow.GetName().c_str(), open);
 		if (!res)
 			return res;
-		ImGui::DockSpace(ImGui::GetID(subwindow.GetName().c_str()));
+		ImGui::DockSpace(subwindow.GetUUID());
 	}
 
 	void EditorLayout::EndWindow()
 	{
 		ImGui::End();
+		ImGui::PopID();
 	}
 
 }

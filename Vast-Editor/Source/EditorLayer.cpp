@@ -20,13 +20,14 @@
 
 #include "Clock/Clock.h"
 
-#include <imgui.h>
 #include <Vast/Serialization/AssetSerializer.h>
 #include <Vast/AssetManager/Texture2DAsset.h>
-#include <fstream>
 #include <Vast/AssetManager/AssetImporter.h>
 #include <Vast/AssetManager/SceneAsset.h>
 #include <Vast/AssetManager/BoardFlipbookAsset.h>
+
+#include <imgui.h>
+#include <fstream>
 #include <optick.h>
 
 namespace Vast {

@@ -12,7 +12,12 @@ namespace Vast {
 	public:
 		Panel() = default;
 		Panel(const String& name)
-			: m_Name(name) {}
+			: m_Name((String&&)(name + "##" + std::to_string(s_ID))) 
+		{
+			s_ID++;
+		}
+
+		const String& GetName() const { return m_Name; }
 
 		virtual void Open() { m_IsOpen = true; }
 		virtual void Close() { m_IsOpen = false; }
@@ -27,6 +32,8 @@ namespace Vast {
 	protected:
 		String m_Name = "Panel";
 		bool m_IsOpen = false;
+	private:
+		inline static uint16 s_ID = 0;
 	};
 
 	/**
