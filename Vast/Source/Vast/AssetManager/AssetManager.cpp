@@ -1,11 +1,12 @@
 #include "vastpch.h"
 #include "AssetManager.h"
 
-#include "Utils/FileIO/FileIO.h"
+#include "AssetQueue.h"
 
 #include "Project/Project.h"
 #include "Serialization/AssetSerializer.h"
 
+#include "Utils/FileIO/FileIO.h"
 #include "Clock/Clock.h"
 
 namespace Vast {
@@ -40,49 +41,46 @@ namespace Vast {
 
 		m_AssetMap.clear();
 
-		/// Scenes must be deserialized last because they may reference
+		/// Assets must be deserialized in order because they may reference
 		/// not yet created assets
-		DArray<Ref<Asset>> sceneAssets;
+		AssetQueue assetQueue;
 
-		IterateAndAddAssets(m_Project->GetContentFolderPath(), sceneAssets);
+		IterateAndAddAssets(m_Project->GetContentFolderPath(), assetQueue);
 
-		for (const auto& asset : sceneAssets)
 		{
-			AssetSerializer as(m_Project, asset);
-			as.Deserialize(asset->GetPath());
-			AddAsset(as.GetAsset());
+			OPTICK_EVENT("AddAssetsToRegistry");
+
+			for (const auto& asset : assetQueue)
+			{
+				AssetSerializer as(m_Project, asset);
+				as.Deserialize(asset->GetPath());
+				AddAsset(as.GetAsset());
+			}
 		}
 	}
 
-	void AssetManager::IterateAndAddAssets(const Filepath& start, DArray<Ref<Asset>>& sceneAssets)
+	void AssetManager::IterateAndAddAssets(const Filepath& start, AssetQueue& queue)
 	{
 		for (auto& p : std::filesystem::directory_iterator(start))
 		{
 			if (p.is_directory())
 			{
-				IterateAndAddAssets(p, sceneAssets);
+				IterateAndAddAssets(p, queue);
 			}
 			else if (p.path().filename().extension() == ".asset")
 			{
-				OPTICK_EVENT("OnExtension  == .asset");
+				OPTICK_EVENT("ReadHeadAndEnqueueAsset");
 
 				Filepath path = FileIO::Relative(p.path(), m_Project->GetContentFolderPath());
 				Ref<Asset> asset; 
 				AssetSerializer as(m_Project, asset);
-				
-				// TODO: This check requires asset to be deserialized twice, fix it
 
-				if (as.SerializationType(path) == AssetType::Scene)
+				if (as.SerializationType(path) != AssetType::None)
 				{
-					sceneAssets.push_back(as.GetAsset());
-					continue;
+					queue.Enqueue(as.GetAsset());
 				}
 
-				as.Deserialize(path);
-				asset = as.GetAsset();
-				AddAsset(asset);
-
-				VAST_CORE_TRACE("{0}", asset->GetName());
+				VAST_CORE_TRACE("{0}", as.GetAsset()->GetName());
 			}
 		}
 	}

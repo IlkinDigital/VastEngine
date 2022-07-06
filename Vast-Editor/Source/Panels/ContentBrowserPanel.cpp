@@ -113,7 +113,6 @@ namespace Vast {
 					switch (asset->GetType())
 					{
 					case AssetType::BoardFlipbook:
-						VAST_TRACE("Opening Flipbook Editor...");
 						EditorLayer::Get()->OpenFlipbookEditor(RefCast<BoardFlipbookAsset>(asset));
 						break;
 					}

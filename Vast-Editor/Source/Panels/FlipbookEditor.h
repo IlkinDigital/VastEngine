@@ -20,7 +20,11 @@ namespace Vast {
 		FlipbookSettings()
 			: Panel("Settings") {}
 
+		void SetFlipbook(const Ref<Board2D::Flipbook>& flipbook) { m_Flipbook = flipbook; }
+
 		virtual void DrawPanel();
+	private:
+		Ref<Board2D::Flipbook> m_Flipbook;
 	};
 
 	class FramesPanel : public Panel
@@ -48,6 +52,7 @@ namespace Vast {
 		{ 
 			m_Flipbook = flipbook; 
 			m_Frames.SetFlipbook(m_Flipbook->GetFlipbook()); 
+			m_Settings.SetFlipbook(m_Flipbook->GetFlipbook());
 		}
 
 		virtual void DrawPanel() override;
@@ -57,14 +62,19 @@ namespace Vast {
 		FlipbookSettings m_Settings;
 		FramesPanel m_Frames;
 
+		bool m_InitializedDockspace = false;
+
+		/**
+		* For editor visualiazation purposes only,
+		* doesn't contain meaningful data
+		*/
+
 		SceneRenderer m_SceneRenderer;
 		EditorCamera m_EditorCamera;
 
 		Ref<Scene> m_Scene;
 		Ref<BoardFlipbookAsset> m_Flipbook;
 		Entity m_CurrentFrame;
-		
-		bool m_InitializedDockspace = false;
 	};
 
 	

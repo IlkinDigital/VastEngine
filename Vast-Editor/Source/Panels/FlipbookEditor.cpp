@@ -75,7 +75,6 @@ namespace Vast {
 			return;
 		}
 
-		
 		// DockBuilder 
 		if (!m_InitializedDockspace)
 		{
@@ -106,10 +105,6 @@ namespace Vast {
 			m_InitializedDockspace = true;
 		}
 
-		/**
-		* Frames panel
-		*/
-
 		m_Viewport.OnGUIRender();
 		m_Properties.OnGUIRender();
 		m_Settings.OnGUIRender();
@@ -139,6 +134,11 @@ namespace Vast {
 	void FlipbookSettings::DrawPanel()
 	{
 		ImGui::Begin(m_Name.c_str());
+
+		float fps = m_Flipbook->GetFPS();
+		if (ImGui::DragFloat("Animation FPS", &fps, 0.5f, 1.0f, 256.0f, "%.1f"))
+			m_Flipbook->SetFPS(fps);
+
 		ImGui::End();
 	}
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Asset.h"
+#include "AssetQueue.h"
 
 namespace Vast {
 
@@ -27,7 +28,7 @@ namespace Vast {
 		static void Set(const Ref<AssetManager>& instance) { s_Instance = instance; }
 		static const Ref<AssetManager>& Get() { return s_Instance; }
 	private:
-		void IterateAndAddAssets(const Filepath& start, DArray<Ref<Asset>>& sceneAssets);
+		void IterateAndAddAssets(const Filepath& start, AssetQueue& sceneAssets);
 	private:
 		static Ref<AssetManager> s_Instance;
 

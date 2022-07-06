@@ -77,22 +77,22 @@ namespace Vast {
 		m_Project->GetAssetManager()->SetProject(m_Project);
 		m_Project->GetAssetManager()->Init();
 
-		tex1 = RefCast<Texture2DAsset>((AssetManager::Get()->GetAsset("/Assets/Textures/DownIdle")))->GetTexture();
-		tex2 = RefCast<Texture2DAsset>((AssetManager::Get()->GetAsset("/Assets/Textures/RightIdle")))->GetTexture();
-		tex3 = RefCast<Texture2DAsset>((AssetManager::Get()->GetAsset("/Assets/Textures/UpIdle")))->GetTexture();
-		tex4 = RefCast<Texture2DAsset>((AssetManager::Get()->GetAsset("/Assets/Textures/LeftIdle")))->GetTexture();
+		//tex1 = RefCast<Texture2DAsset>((AssetManager::Get()->GetAsset("/Assets/Textures/DownIdle")))->GetTexture();
+		//tex2 = RefCast<Texture2DAsset>((AssetManager::Get()->GetAsset("/Assets/Textures/RightIdle")))->GetTexture();
+		//tex3 = RefCast<Texture2DAsset>((AssetManager::Get()->GetAsset("/Assets/Textures/UpIdle")))->GetTexture();
+		//tex4 = RefCast<Texture2DAsset>((AssetManager::Get()->GetAsset("/Assets/Textures/LeftIdle")))->GetTexture();
 
-		s_FB->PushKeyFrame({ tex1 });
-		s_FB->PushKeyFrame({ tex2 });
-		s_FB->PushKeyFrame({ tex3 });
-		s_FB->PushKeyFrame({ tex4 });
+		//s_FB->PushKeyFrame({ tex1 });
+		//s_FB->PushKeyFrame({ tex2 });
+		//s_FB->PushKeyFrame({ tex3 });
+		//s_FB->PushKeyFrame({ tex4 });
 
-		auto asset = CreateRef<BoardFlipbookAsset>("SpinAnimation", "/Assets/Animations/SpinAnimation.asset", UUID());
-		asset->SetFlipbook(s_FB);
-		AssetSerializer as(m_Project, asset);
-		as.Serialize();
+		//auto asset = CreateRef<BoardFlipbookAsset>("SpinAnimation", "/Assets/Animations/SpinAnimation.asset", UUID());
+		//asset->SetFlipbook(s_FB);
+		//AssetSerializer as(m_Project, asset);
+		//as.Serialize();
 
-		m_Project->GetAssetManager()->Init();
+		//m_Project->GetAssetManager()->Init();
 	}
 
 
@@ -267,10 +267,6 @@ namespace Vast {
 		
 		ImGui::Text("%d FPS", s_FrameTime.GetFPS());
 		ImGui::Text("Frame Time: %.4f ms", s_FrameTime.GetFrameTime());
-
-		float val = s_FB->GetFPS();
-		if (ImGui::DragFloat("Flipbook FPS: %.1f", &val, 1.0f, 1, 1000))
-			s_FB->SetFPS(val);
 		
 		ImGui::End();
 
