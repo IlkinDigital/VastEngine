@@ -19,17 +19,24 @@ namespace Vast {
 	{
 	public:
 		EditorLayer(const String& name)
-			: Layer(name) {}
+			: Layer(name) 
+		{
+			s_Instance = this;
+		}
 
-		void OnAttach() override;
+		virtual void OnAttach() override;
 
-		void OnUpdate(Timestep ts) override;
+		virtual void OnUpdate(Timestep ts) override;
 
-		void OnGUIRender() override;
+		virtual void OnGUIRender() override;
 
-		void OnDetach() override;
+		virtual void OnDetach() override;
 
-		void OnEvent(Event& event) override;
+		virtual void OnEvent(Event& event) override;
+
+		static EditorLayer* Get() { return s_Instance; }
+
+		void OpenFlipbookEditor(const Ref<BoardFlipbookAsset>& bfa);
 	private:
 		void ResizeViewport();
 
@@ -87,6 +94,8 @@ namespace Vast {
 		};
 
 		SceneState m_SceneState = SceneState::Edit;
+
+		static EditorLayer* s_Instance;
 	};
 
 }

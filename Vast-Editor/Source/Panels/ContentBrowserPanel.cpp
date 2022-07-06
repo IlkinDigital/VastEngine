@@ -3,11 +3,13 @@
 #include "GUI/FontManager.h"
 
 #include "AssetManager/Texture2DAsset.h"
+#include "AssetManager/BoardFlipbookAsset.h"
+#include "AssetManager/AssetImporter.h"
 #include "Utils/FileIO/FileIO.h"
 #include "Utils/FileIO/FileDialogs.h"
 
+#include "EditorLayer.h"
 #include <imgui.h>
-#include <Vast/AssetManager/AssetImporter.h>
 
 namespace Vast {
 
@@ -88,6 +90,7 @@ namespace Vast {
 			else if (p.path().extension() == ".asset")
 			{
 				ImGui::PushID(path.c_str());
+
 				Filepath relative = FileIO::Relative(p.path(), m_Project->GetContentFolderPath());
 				Ref<Asset> asset = m_Project->GetAssetManager()->GetAsset(relative);
 				
@@ -104,11 +107,25 @@ namespace Vast {
 						{ thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 				}
 
+				// If .asset file is double clicked
+				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+				{
+					switch (asset->GetType())
+					{
+					case AssetType::BoardFlipbook:
+						VAST_TRACE("Opening Flipbook Editor...");
+						EditorLayer::Get()->OpenFlipbookEditor(RefCast<BoardFlipbookAsset>(asset));
+						break;
+					}
+				}
+
+				// Drag and Drop payload
 				if (ImGui::BeginDragDropSource())
 				{
 					ImGui::SetDragDropPayload(asset->GetTypeName(), asset.get(), sizeof(*asset.get()));
 					ImGui::EndDragDropSource();
 				}
+
 				ImGui::PopID();
 
 				drawName = true;

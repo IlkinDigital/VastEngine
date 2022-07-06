@@ -35,6 +35,8 @@ namespace Vast {
 // Returns relative filepath through project's directory
 #define PROJDIR(path) (m_Project->GetProjectPath() / path)
 
+	EditorLayer* EditorLayer::s_Instance = nullptr;
+
 	static FrameTime s_FrameTime(100);
 
 	typedef void(*InitScriptsFn)();
@@ -172,12 +174,7 @@ namespace Vast {
 					m_Properties.Open();
 				if (ImGui::MenuItem("Content Browser"))
 					m_ContentBrowser.Open();
-				if (ImGui::MenuItem("Flipbook Editor"))
-				{
-					auto fbe = CreateRef<FlipbookEditor>();
-					fbe->SetFlipbook(s_FB);
-					m_SubwindowManager.PushSubwindow(fbe);
-				}
+
 				ImGui::EndMenu();
 			}
 
@@ -303,6 +300,19 @@ namespace Vast {
 		dispatcher.Dispatch<FilesDropEvent>(VAST_BIND_EVENT(OnFilesDrop));
 
 		m_ActiveScene->OnEvent(event);
+	}
+
+	void EditorLayer::OpenFlipbookEditor(const Ref<BoardFlipbookAsset>& bfa)
+	{
+		if (m_SubwindowManager.HasStorageWithUUID(bfa->GetUUID()))
+		{
+			VAST_ERROR("Couldn't open {0} flipbook, it's already open", bfa->GetName());
+			return;
+		}
+
+		auto fbe = CreateRef<FlipbookEditor>();
+		fbe->SetFlipbook(bfa);
+		m_SubwindowManager.PushSubwindow(fbe, bfa->GetUUID());
 	}
 
 	void EditorLayer::ResizeViewport()

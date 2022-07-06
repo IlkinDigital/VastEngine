@@ -8,6 +8,8 @@
 #include "Panels/PropertiesPanel.h"
 #include "Renderer/SceneRenderer.h"
 
+#include "AssetManager/BoardFlipbookAsset.h"
+
 #include "ApplicationCore/Layer/Layer.h"
 
 namespace Vast {
@@ -42,7 +44,11 @@ namespace Vast {
 		virtual void OnAttach() override;
 		virtual void OnUpdate(Timestep ts) override;
 
-		void SetFlipbook(const Ref<Board2D::Flipbook>& flipbook) { m_Flipbook = flipbook; m_Frames.SetFlipbook(m_Flipbook); }
+		void SetFlipbook(const Ref<BoardFlipbookAsset>& flipbook) 
+		{ 
+			m_Flipbook = flipbook; 
+			m_Frames.SetFlipbook(m_Flipbook->GetFlipbook()); 
+		}
 
 		virtual void DrawPanel() override;
 	private:
@@ -55,7 +61,7 @@ namespace Vast {
 		EditorCamera m_EditorCamera;
 
 		Ref<Scene> m_Scene;
-		Ref<Board2D::Flipbook> m_Flipbook;
+		Ref<BoardFlipbookAsset> m_Flipbook;
 		Entity m_CurrentFrame;
 		
 		bool m_InitializedDockspace = false;

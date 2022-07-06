@@ -3,6 +3,8 @@
 #include "ApplicationCore/Layer/Layer.h"
 #include "Core/UUID.h"
 
+#include "Math/Math.h"
+
 #include <imgui.h>
 
 namespace Vast {
@@ -42,9 +44,13 @@ namespace Vast {
 	class Subwindow : public Layer
 	{
 	public:
-		Subwindow() = default;
+		Subwindow()
+			: Subwindow("Subwindow") {}
 		Subwindow(const String& name)
-			: Layer(name) {}
+			: Layer(name + "##" + std::to_string(s_ID))
+		{
+			s_ID++;
+		}
 
 		UUID GetUUID() const { return m_UUID; }
 
@@ -63,9 +69,11 @@ namespace Vast {
 			}
 		}
 	protected:
+		Vector2 m_DefaultSize = { 1080.0f, 720.0f };
 		bool m_IsOpen = false;
 	private:
 		UUID m_UUID;
+		inline static uint16 s_ID = 0;
 	};
 
 }

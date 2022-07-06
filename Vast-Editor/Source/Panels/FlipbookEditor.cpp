@@ -40,13 +40,13 @@ namespace Vast {
 		m_Properties.SetContextEntity(CreateRef<Entity>(m_CurrentFrame));
 		m_Settings.Open();
 		m_Frames.Open();
-		m_Frames.SetFlipbook(m_Flipbook);
+		m_Frames.SetFlipbook(m_Flipbook->GetFlipbook());
 	}
 
 	void FlipbookEditor::OnUpdate(Timestep ts)
 	{
-		m_Flipbook->Update(ts);
-		m_CurrentFrame.GetComponent<RenderComponent>().Texture = m_Flipbook->GetCurrentTexture();
+		m_Flipbook->GetFlipbook()->Update(ts);
+		m_CurrentFrame.GetComponent<RenderComponent>().Texture = m_Flipbook->GetFlipbook()->GetCurrentTexture();
 
 		auto spec = m_SceneRenderer.GetFramebuffer()->GetSpecification();
 		if (spec.Width != m_Viewport.GetWidth() || spec.Height != m_Viewport.GetHeight())
@@ -74,10 +74,13 @@ namespace Vast {
 			EditorLayout::EndWindow();
 			return;
 		}
+
 		
 		// DockBuilder 
 		if (!m_InitializedDockspace)
 		{
+			ImGui::SetWindowSize({ m_DefaultSize.x, m_DefaultSize.y });
+
 			ImGuiID dockspaceID = GetUUID();
 
 			ImGui::DockBuilderRemoveNode(dockspaceID);

@@ -65,7 +65,6 @@ namespace Vast {
 	///		 due to random/unique id being used each time, add 'SavingToIni' functionality
 	bool EditorLayout::BeginWindow(const Subwindow& subwindow, bool* open) 
 	{
-		ImGui::PushID(subwindow.GetUUID());
 		bool res = ImGui::Begin(subwindow.GetName().c_str(), open);
 		if (!res)
 			return res;
@@ -75,7 +74,6 @@ namespace Vast {
 	void EditorLayout::EndWindow()
 	{
 		ImGui::End();
-		ImGui::PopID();
 	}
 
 }

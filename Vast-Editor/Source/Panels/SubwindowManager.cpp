@@ -4,18 +4,23 @@ namespace Vast {
 
 	void SubwindowManager::PushSubwindow(const Ref<Subwindow>& sw)
 	{
+		PushSubwindow(sw, UUID());
+	}
+
+	void SubwindowManager::PushSubwindow(const Ref<Subwindow>& sw, UUID uuid)
+	{
 		sw->Open();
-		m_SubwindowStack.emplace_back(sw);
+		m_SubwindowStack.emplace_back(Storage({ sw, uuid }));
 	}
 
 	void SubwindowManager::RemoveSubwindow(const Ref<Subwindow>& sw)
 	{
 		for (auto it = m_SubwindowStack.begin(); it != m_SubwindowStack.end();)
 		{
-			if ((*it)->GetUUID() == sw->GetUUID())
+			if ((*it).Subwindow->GetUUID() == sw->GetUUID())
 			{
-				(*it)->Close();
-				VAST_CORE_INFO("Removed '{0}' subwindow", (*it)->GetName());
+				(*it).Subwindow->Close();
+				VAST_CORE_INFO("Removed '{0}' subwindow", (*it).Subwindow->GetName());
 				it = m_SubwindowStack.erase(it);
 			}
 			else
@@ -23,20 +28,31 @@ namespace Vast {
 		}
 	}
 
+	bool SubwindowManager::HasStorageWithUUID(UUID uuid)
+	{
+		for (const auto& storage : m_SubwindowStack)
+		{
+			if (storage.ID == uuid)
+				return true;
+		}
+
+		return false;
+	}
+
 	void SubwindowManager::OnUpdate(Timestep ts)
 	{
 		for (auto& sw : m_SubwindowStack)
-			sw->OnUpdate(ts);
+			sw.Subwindow->OnUpdate(ts);
 	}
 
 	void SubwindowManager::OnGUIRender()
 	{
-		for (const auto& sw : m_SubwindowStack)
+		for (auto& sw : m_SubwindowStack)
 		{
-			if (!sw->IsOpen())
-				RemoveSubwindow(sw);
+			if (!sw.Subwindow->IsOpen())
+				RemoveSubwindow(sw.Subwindow);
 			else
-				sw->OnGUIRender();
+				sw.Subwindow->OnGUIRender();
 		}
 	}
 
