@@ -1,17 +1,20 @@
 #include "FlipbookEditor.h"
 
-#include "Widgets/WrapWidget.h"
+#include "Renderer/Renderer2D.h"
+#include "GUI/FontManager.h"
 
+#include "Widgets/WrapWidget.h"
 #include "EditorLayout/Layout.h"
 
-#include "Renderer/Renderer2D.h"
+#include "AssetManager/Texture2DAsset.h"
+#include "Serialization/AssetSerializer.h"
 
 #include <imgui_internal.h>
 
 namespace Vast {
 
 	FlipbookEditor::FlipbookEditor()
-		: Subwindow("FlipbookEditor"), m_Viewport("Viewport"), m_Properties("Properties")
+		: Subwindow("Flipbook Editor"), m_Viewport("Viewport"), m_Properties("Properties")
 	{
 	}
 
@@ -45,8 +48,15 @@ namespace Vast {
 
 	void FlipbookEditor::OnUpdate(Timestep ts)
 	{
-		m_Flipbook->GetFlipbook()->Update(ts);
-		m_CurrentFrame.GetComponent<RenderComponent>().Texture = m_Flipbook->GetFlipbook()->GetCurrentTexture();
+		if (m_Flipbook->GetFlipbook()->IsValid())
+		{
+			m_Flipbook->GetFlipbook()->Update(ts);
+			m_CurrentFrame.AddOrReplaceComponent<RenderComponent>().Texture = m_Flipbook->GetFlipbook()->GetCurrentTexture();
+		}
+		else
+		{
+			m_CurrentFrame.RemoveComponent<RenderComponent>();
+		}
 
 		auto spec = m_SceneRenderer.GetFramebuffer()->GetSpecification();
 		if (spec.Width != m_Viewport.GetWidth() || spec.Height != m_Viewport.GetHeight())
@@ -105,6 +115,25 @@ namespace Vast {
 			m_InitializedDockspace = true;
 		}
 
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("Save", "Ctrl + S"))
+				{
+					AssetSerializer as(AssetManager::Get()->GetProject(), m_Flipbook);
+					as.Serialize();
+					AssetManager::Get()->Init();
+				}
+
+				ImGui::EndMenu();
+			}
+
+			ImGui::Text("%s", m_Flipbook->GetName().c_str());
+
+			ImGui::EndMenuBar();
+		}
+
 		m_Viewport.OnGUIRender();
 		m_Properties.OnGUIRender();
 		m_Settings.OnGUIRender();
@@ -117,27 +146,97 @@ namespace Vast {
 	{
 		ImGui::Begin(m_Name.c_str());
 
-		WrapWidget::Begin();
+		//WrapWidget::Begin();
+
+		//uint32 i = 1;
+		//ImGui::PushFont(FontManager::GetFont(FontManager::WeightType::Bold));
+		//for (const auto& frame : m_Flipbook->GetKeyFrames())
+		//{
+		//	float accumWidth = 0.0f;
+		//	WrapWidget::PushItem([&](const Vector2& size)
+		//		{
+		//			ImGui::SetCursorPosX(size.x / 2.0f);
+		//			ImGui::Text("%d", i);
+		//			ImGui::Image((ImTextureID)frame.Texture->GetRendererID(),
+		//				{ size.x, size.y }, { 0, 1 }, { 1, 0 });
+		//		});
+		//	i++;
+		//}
+		//ImGui::PopFont();
+
+		//WrapWidget::End();
+
+		Vector2 size = { 64.0f, 64.0f };
+
+		uint32 i = 1;
+		auto style = ImGui::GetStyle();
+		float accumWidth = style.WindowPadding.x;
+
+		ImGui::PushFont(FontManager::GetFont(FontManager::WeightType::Bold));
 		for (const auto& frame : m_Flipbook->GetKeyFrames())
 		{
-			WrapWidget::PushItem([&frame](const Vector2& size)
-				{
-					ImGui::ImageButton((ImTextureID)frame.Texture->GetRendererID(),
-						{ size.x, size.y }, { 0, 1 }, { 1, 0 });
-				});
+			ImGui::BeginGroup();
+
+			ImVec2 textSize = ImGui::CalcTextSize(std::to_string(i).c_str());
+			ImGui::SetCursorPosX(accumWidth + size.x * 0.5f - (textSize.x * 0.5f));
+			accumWidth += size.x + style.ItemSpacing.x * 2.0f;
+			ImGui::Text("%d", i);
+
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.7f, 0.7f, 0.7f, 0.4f });
+			ImGui::PushStyleColor(ImGuiCol_Button, { 1.0f, 1.0f, 1.0f, 0.0f });
+			ImGui::ImageButton((ImTextureID)frame.Texture->GetRendererID(),
+				{ size.x, size.y }, { 0, 1 }, { 1, 0 });
+			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+			{
+				m_Flipbook->RemoveKeyFrame(--i);
+			}
+			ImGui::PopStyleColor(2);
+
+			ImGui::EndGroup();
+
+			ImGui::SameLine();
+			i++;
 		}
-		WrapWidget::End();
+		ImGui::PopFont();
+
+		ImGui::BeginGroup();
+		ImGui::Text("");
+		ImGui::InvisibleButton("DRAG_AND_DROP_BUTTON", { size.x, size.y });
+		ImGui::EndGroup();
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(Texture2DAsset::GetStaticTypeName()))
+			{
+				Texture2DAsset* asset = (Texture2DAsset*)payload->Data;
+				if (asset && asset->GetTexture())
+				{
+					Ref<Texture2DAsset> ta = RefCast<Texture2DAsset>(AssetManager::Get()->GetAsset(asset->GetPath()));
+					m_Flipbook->PushKeyFrame({ ta->GetTexture()});
+				}
+				else
+				{
+					VAST_ERROR("Invalid Texture2DAsset payload");
+				}
+			}
+			ImGui::EndDragDropTarget();
+		}
 
 		ImGui::End();
+
 	}
 
 	void FlipbookSettings::DrawPanel()
 	{
 		ImGui::Begin(m_Name.c_str());
 
+		ImGui::Text("Animation FPS");
+		ImGui::SameLine();
+		ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 		float fps = m_Flipbook->GetFPS();
-		if (ImGui::DragFloat("Animation FPS", &fps, 0.5f, 1.0f, 256.0f, "%.1f"))
+		if (ImGui::DragFloat("##", &fps, 0.5f, 1.0f, 256.0f, "%.1f"))
 			m_Flipbook->SetFPS(fps);
+		ImGui::PopItemWidth();
 
 		ImGui::End();
 	}

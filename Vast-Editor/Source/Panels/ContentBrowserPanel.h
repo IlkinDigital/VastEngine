@@ -22,6 +22,10 @@ namespace Vast {
 
 		Ref<Texture2D> m_FolderIcon;
 		Ref<Texture2D> m_FileIcon;
+
+		bool m_DialogOpen = false;
+		String m_CurrentName;
+		Filepath m_RenamePath;
 	};
 
 }

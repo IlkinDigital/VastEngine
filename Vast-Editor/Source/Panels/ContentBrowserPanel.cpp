@@ -5,6 +5,7 @@
 #include "AssetManager/Texture2DAsset.h"
 #include "AssetManager/BoardFlipbookAsset.h"
 #include "AssetManager/AssetImporter.h"
+#include "Serialization/AssetSerializer.h"
 #include "Utils/FileIO/FileIO.h"
 #include "Utils/FileIO/FileDialogs.h"
 
@@ -72,6 +73,8 @@ namespace Vast {
 		{
 			String path = p.path().string();
 			String filename = p.path().stem().filename().string();
+			if (!m_DialogOpen)
+				m_CurrentName = filename;
 
 			bool drawName = false;
 
@@ -129,7 +132,39 @@ namespace Vast {
 
 				drawName = true;
 			}
+			
 			ImGui::PopStyleColor(2);
+
+			bool openRenameDialog = false;
+
+			if (ImGui::BeginPopupContextItem(filename.c_str()))
+			{
+				if (ImGui::MenuItem("Rename"))
+				{
+					openRenameDialog = true;
+					m_RenamePath = p.path();
+					
+				}
+				if (ImGui::MenuItem("Delete"))
+				{
+					auto& assetManager = m_Project->GetAssetManager();
+					auto asset = assetManager->GetAsset(
+						FileIO::Relative(p.path(), m_Project->GetContentFolderPath()).replace_extension("")
+					);
+					if (asset->GetType() != AssetType::None)
+						assetManager->RemoveAsset(asset);
+
+					std::filesystem::remove(p.path());
+				}
+
+				ImGui::EndPopup();
+			}
+			
+			if (openRenameDialog)
+			{
+				ImGui::OpenPopup("RenameDialog");
+				m_DialogOpen = true;
+			}
 
 			if (drawName)
 			{
@@ -138,7 +173,65 @@ namespace Vast {
 			}
 		}
 
+		if (ImGui::BeginPopupModal("RenameDialog", NULL, ImGuiWindowFlags_Modal))
+		{
+			char buffer[64];
+			strcpy(buffer, m_CurrentName.c_str());
+			if (ImGui::InputText("##Rename", buffer, sizeof(buffer)))
+				m_CurrentName = buffer;
+
+			if (ImGui::Button("Done"))
+			{
+				auto& assetManager = m_Project->GetAssetManager();
+				auto asset = assetManager->GetAsset(
+					FileIO::Relative(m_RenamePath, m_Project->GetContentFolderPath()).replace_extension("")
+				);
+
+				if (asset->GetType() != AssetType::None)
+				{
+					asset->SetName(m_CurrentName);
+					asset->SetPath(FileIO::Relative(m_CurrentPath, m_Project->GetContentFolderPath()) / (m_CurrentName + ".asset"));
+				}
+
+				std::filesystem::remove(m_RenamePath);
+
+				AssetSerializer as(m_Project, asset);
+				as.Serialize();
+				assetManager->Init();
+
+				ImGui::CloseCurrentPopup();
+				m_DialogOpen = false;
+			}
+
+			ImGui::EndPopup();
+		}
+
 		ImGui::Columns(1);
+
+		if (ImGui::BeginPopupContextWindow(0, 1, false))
+		{
+			if (ImGui::BeginMenu("Board2D"))
+			{
+				if (ImGui::MenuItem("Flipbook"))
+				{
+					Filepath path = FileIO::Relative(m_CurrentPath / "NewFlipbook.asset", m_Project->GetContentFolderPath());
+					Ref<BoardFlipbookAsset> bfa = CreateRef<BoardFlipbookAsset>("NewFlipbook", path, UUID());
+					bfa->SetFlipbook(CreateRef<Board2D::Flipbook>());
+					AssetSerializer as(m_Project, bfa);
+					as.Serialize();
+					AssetManager::Get()->Init();
+				}
+
+				ImGui::EndMenu();
+			}
+
+			if (ImGui::MenuItem("New Folder"))
+			{
+				std::filesystem::create_directory(m_CurrentPath / "NewFolder");
+			}
+
+			ImGui::EndPopup();
+		}
 
 		ImGui::End();
 	}

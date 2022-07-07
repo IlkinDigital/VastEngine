@@ -32,7 +32,7 @@ namespace Vast {
 
 	Ref<Asset> AssetManager::GetAsset(const Filepath& path)
 	{
-		return m_AssetMap[path.stem()];
+		return m_AssetMap.at(path.stem());
 	}
 
 	void AssetManager::Init()

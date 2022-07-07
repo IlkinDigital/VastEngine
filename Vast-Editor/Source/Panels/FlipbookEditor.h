@@ -38,6 +38,7 @@ namespace Vast {
 		virtual void DrawPanel();
 	private:
 		Ref<Board2D::Flipbook> m_Flipbook;
+		bool m_IsDragDropTarget = false;
 	};
 
 	class FlipbookEditor : public Subwindow

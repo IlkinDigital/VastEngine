@@ -17,6 +17,9 @@ namespace Vast {
 		virtual const char* GetTypeName() const { return "None"; }
 		virtual const String& GetName() const { return m_Name; }
 		virtual const Filepath& GetPath() const { return m_Path; }
+		
+		virtual void SetName(const String& name) { m_Name = name; }
+		virtual void SetPath(const Filepath& path) { m_Path = path; }
 	protected:
 		UUID m_UUID;
 		AssetType m_AssetType;
