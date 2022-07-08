@@ -2,8 +2,7 @@
 
 #include "GUI/FontManager.h"
 
-#include "AssetManager/Texture2DAsset.h"
-#include "AssetManager/BoardFlipbookAsset.h"
+#include "AssetManager/AssetTypes.h"
 #include "AssetManager/AssetImporter.h"
 #include "Serialization/AssetSerializer.h"
 #include "Utils/FileIO/FileIO.h"
@@ -95,6 +94,7 @@ namespace Vast {
 				ImGui::PushID(path.c_str());
 
 				Filepath relative = FileIO::Relative(p.path(), m_Project->GetContentFolderPath());
+				relative.replace_extension("");
 				Ref<Asset> asset = m_Project->GetAssetManager()->GetAsset(relative);
 				
 				if (asset->GetType() == AssetType::Texture2D)

@@ -1,7 +1,7 @@
 #include "vastpch.h"
 #include "OpenGLTexture2D.h"
 
-#include "AssetManager/Texture2DAsset.h"
+#include "AssetManager/AssetTypes.h"
 
 #include <stb_image.h>
 

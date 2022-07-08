@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Asset.h"
+#include "AssetManager/Asset.h"
 #include "Board2D/BoardFlipbook.h"
 
 namespace Vast {
@@ -10,6 +10,8 @@ namespace Vast {
 	public:
 		BoardFlipbookAsset(const String& name, const Filepath& path, UUID uuid)
 			: Asset(AssetType::BoardFlipbook, name, path, uuid) {}
+
+		virtual Ref<Asset> Clone() const override;
 
 		const Ref<Board2D::Flipbook>& GetFlipbook() const { return m_Flipbook; }
 		void SetFlipbook(const Ref<Board2D::Flipbook>& flipbook) { m_Flipbook = flipbook; }

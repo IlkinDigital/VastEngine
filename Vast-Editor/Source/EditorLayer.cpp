@@ -20,11 +20,9 @@
 
 #include "Clock/Clock.h"
 
-#include <Vast/Serialization/AssetSerializer.h>
-#include <Vast/AssetManager/Texture2DAsset.h>
-#include <Vast/AssetManager/AssetImporter.h>
-#include <Vast/AssetManager/SceneAsset.h>
-#include <Vast/AssetManager/BoardFlipbookAsset.h>
+#include "AssetManager/AssetTypes.h"
+#include "AssetManager/AssetImporter.h"
+#include "Serialization/AssetSerializer.h"
 
 #include <imgui.h>
 #include <fstream>
@@ -74,25 +72,10 @@ namespace Vast {
 
 		OpenProject("D:/Lester_Files/dev/VastProjects/WackoDuel");
 
-		m_Project->GetAssetManager()->SetProject(m_Project);
-		m_Project->GetAssetManager()->Init();
+		const auto& assetManager = m_Project->GetAssetManager();
 
-		//tex1 = RefCast<Texture2DAsset>((AssetManager::Get()->GetAsset("/Assets/Textures/DownIdle")))->GetTexture();
-		//tex2 = RefCast<Texture2DAsset>((AssetManager::Get()->GetAsset("/Assets/Textures/RightIdle")))->GetTexture();
-		//tex3 = RefCast<Texture2DAsset>((AssetManager::Get()->GetAsset("/Assets/Textures/UpIdle")))->GetTexture();
-		//tex4 = RefCast<Texture2DAsset>((AssetManager::Get()->GetAsset("/Assets/Textures/LeftIdle")))->GetTexture();
-
-		//s_FB->PushKeyFrame({ tex1 });
-		//s_FB->PushKeyFrame({ tex2 });
-		//s_FB->PushKeyFrame({ tex3 });
-		//s_FB->PushKeyFrame({ tex4 });
-
-		//auto asset = CreateRef<BoardFlipbookAsset>("SpinAnimation", "/Assets/Animations/SpinAnimation.asset", UUID());
-		//asset->SetFlipbook(s_FB);
-		//AssetSerializer as(m_Project, asset);
-		//as.Serialize();
-
-		//m_Project->GetAssetManager()->Init();
+		assetManager->SetProject(m_Project);
+		assetManager->Init();
 	}
 
 
@@ -353,7 +336,7 @@ namespace Vast {
 	void EditorLayer::OpenScene(const Filepath& path)
 	{
 		Filepath fullPath = m_Project->GetContentFolderPath();
-		fullPath += path;
+		fullPath += path.string() + ".asset";
 		if (std::filesystem::exists(fullPath))
 		{
 			if (m_SceneState == SceneState::Play)

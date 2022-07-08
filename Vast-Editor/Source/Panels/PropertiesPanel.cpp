@@ -5,7 +5,7 @@
 #include "Scene/Components.h"
 #include "Scripting/ScriptBuffer.h"
 
-#include "AssetManager/Texture2DAsset.h"
+#include "AssetManager/AssetTypes.h"
 
 namespace Vast {
 
@@ -49,6 +49,12 @@ namespace Vast {
 			if (ImGui::MenuItem("Render Component"))
 			{
 				entity.AddComponent<RenderComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
+			if (ImGui::MenuItem("Sprite Component"))
+			{
+				entity.AddComponent<SpriteComponent>();
 				ImGui::CloseCurrentPopup();
 			}
 
@@ -97,12 +103,12 @@ namespace Vast {
 					float width = component.Texture->GetWidth();
 					float tot = height + width;
 					float thumbnailSize = 256.0f;
-					ImGui::Text("Texture: %s", component.Texture->GetFilepath().filename().string().c_str());
+					ImGui::Text("Texture: %s", component.Texture->GetFilepath().filename().stem().string().c_str());
 					ImGui::ImageButton((ImTextureID)component.Texture->GetRendererID(),
 						{ (width / tot) * thumbnailSize, (height / tot) * thumbnailSize }, { 0, 1 }, { 1, 0 });
 				}
 				else
-					ImGui::Button("Texture");
+					ImGui::Button("Drop Texture");
 
 				if (ImGui::BeginDragDropTarget())
 				{
@@ -110,6 +116,31 @@ namespace Vast {
 					{
 						Asset* ta = (Asset*)payload->Data;
 						component.Texture = RefCast<Texture2DAsset>(AssetManager::Get()->GetAsset(ta->GetPath()))->GetTexture();
+					}
+					ImGui::EndDragDropTarget();
+				}
+			});
+
+		EditorControl::DrawComponent<SpriteComponent>("Sprite Component", entity, [](SpriteComponent& component)
+			{
+				if (component.Flipbook)
+				{
+					float height = component.Flipbook->GetFlipbook()->GetCurrentTexture()->GetHeight();
+					float width = component.Flipbook->GetFlipbook()->GetCurrentTexture()->GetWidth();
+					float tot = height + width;
+					float thumbnailSize = 256.0f;
+					ImGui::ImageButton((ImTextureID)component.Flipbook->GetFlipbook()->GetCurrentTexture()->GetRendererID(),
+						{ (width / tot) * thumbnailSize, (height / tot) * thumbnailSize }, { 0, 1 }, { 1, 0 });
+				}
+				else
+					ImGui::Button("Drop Flipbook");
+
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(BoardFlipbookAsset::GetStaticTypeName()))
+					{
+						Asset* ta = (Asset*)payload->Data;
+						component.Flipbook = RefCast<BoardFlipbookAsset>(AssetManager::Get()->GetAsset(ta->GetPath()));
 					}
 					ImGui::EndDragDropTarget();
 				}

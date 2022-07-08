@@ -4,9 +4,7 @@
 #include "SceneSerializer.h"
 #include "SerializationCore.h"
 
-#include "AssetManager/Texture2DAsset.h"
-#include "AssetManager/BoardFlipbookAsset.h"
-#include "AssetManager/SceneAsset.h"
+#include "AssetManager/AssetTypes.h"
 
 namespace Vast {
 
@@ -39,7 +37,7 @@ namespace Vast {
 		}
 
 		Filepath fullPath = m_Project->GetContentFolderPath();
-		fullPath += m_Asset->GetPath();
+		fullPath += m_Asset->GetPath().string() + ".asset";
 
 		std::ofstream fs(fullPath, std::ios::binary);
 		fs << FilePackager::Pack(package);
@@ -74,12 +72,18 @@ namespace Vast {
 	AssetType AssetSerializer::SerializationType(const Filepath& path)
 	{
 		OPTICK_EVENT();
-
+		
 		if (m_Asset)
 			return m_Asset->GetType();
+		
+		// Invalidated path
+		Filepath invalPath = path;
 
-		ReceivePackage(path);
-		DeserializeHead(m_Package.First, path);
+		if (path.extension() == ".asset")
+			invalPath.replace_extension("");
+
+		ReceivePackage(invalPath);
+		DeserializeHead(m_Package.First, invalPath);
 
 		return m_Asset->GetType();
 	}
@@ -89,11 +93,11 @@ namespace Vast {
 		OPTICK_EVENT();
 
 		Filepath fullPath = m_Project->GetContentFolderPath();
-		fullPath += path;
+		fullPath += path.string() + ".asset";
 
 		if (!std::filesystem::is_regular_file(fullPath))
 		{
-			VAST_CORE_ERROR("Can't deserialize asset, '{0}' path is invalid", path.string());
+			VAST_CORE_ERROR("Can't deserialize asset, '{0}' path is invalid", fullPath.string());
 			return;
 		}
 

@@ -2,6 +2,7 @@
 
 #include "Scene/Entity.h"
 #include "AssetManager/Asset.h"
+#include "AssetManager/AssetTypes.h"
 #include "Project/Project.h"
 
 #define REG_CLASS(uclass)
@@ -30,7 +31,12 @@ namespace Vast {
 
 		void DestroySelf();
 
-		Ref<Asset> LoadAsset(const Filepath& path);
+		template<typename Ty>
+		Ref<Ty> LoadAsset(const Filepath& path)
+		{
+			VAST_CORE_ASSERT(m_Project->GetAssetManager(), "AssetManager is null");
+			return RefCast<Ty>(RefCast<Ty>(m_Project->GetAssetManager()->GetAsset(path))->Clone());
+		}
 
 	protected:
 		virtual void OnCreate() {}

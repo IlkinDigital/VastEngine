@@ -10,7 +10,10 @@ namespace Vast {
 	{
 		friend class AssetSerializer;
 	public:
+		Asset() = default;
 		Asset(AssetType assetType, const String& name, const Filepath& path, UUID uuid);
+
+		virtual Ref<Asset> Clone() const;
 
 		virtual UUID GetUUID() const { return m_UUID; }
 		virtual AssetType GetType() const { return m_AssetType; }
@@ -21,8 +24,8 @@ namespace Vast {
 		virtual void SetName(const String& name) { m_Name = name; }
 		virtual void SetPath(const Filepath& path) { m_Path = path; }
 	protected:
-		UUID m_UUID;
-		AssetType m_AssetType;
+		UUID m_UUID = 0;
+		AssetType m_AssetType = AssetType::None;
 		String m_Name;
 		Filepath m_Path; // Relative to the Content folder
 	};

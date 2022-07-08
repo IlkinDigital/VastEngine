@@ -3,6 +3,7 @@
 
 #include "Project/Project.h"
 #include "AssetManager/AssetManager.h"
+#include "AssetManager/AssetTypes.h"
 
 namespace Vast {
 
@@ -37,11 +38,5 @@ namespace Vast {
         OnDestroy();
         m_Entity.m_Scene->DestroyEntity(m_Entity);
         m_Destroyed = true;
-    }
-
-    Ref<Asset> NativeScript::LoadAsset(const Filepath& path)
-    {
-        VAST_CORE_ASSERT(m_Project->GetAssetManager(), "AssetManager is null");
-        return m_Project->GetAssetManager()->GetAsset(path);
     }
 }

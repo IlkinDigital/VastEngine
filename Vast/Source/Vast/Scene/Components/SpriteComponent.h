@@ -1,16 +1,19 @@
 #pragma once
 
-#include "Board2D/BoardFlipbook.h"
+#include "RenderComponent.h"
+#include "AssetManager/AssetTypes/BoardFlipbookAsset.h"
+#include "AssetManager/AssetManager.h"
 
 namespace Vast {
 
-	struct SpriteComponent
+	struct SpriteComponent : public RenderComponent
 	{
-		Ref<Board2D::Flipbook> Flipbook;
+		Ref<BoardFlipbookAsset> Flipbook;
 
 		SpriteComponent() = default;
-		SpriteComponent(const SpriteComponent&) = default;
-		SpriteComponent(const Ref<Board2D::Flipbook>& flipbook)
+		SpriteComponent(const SpriteComponent& other)
+			: Flipbook(RefCast<BoardFlipbookAsset>(AssetManager::Get()->GetAsset(other.Flipbook->GetPath())->Clone())) {}
+		SpriteComponent(const Ref<BoardFlipbookAsset>& flipbook)
 			: Flipbook(flipbook) {}
 	};
 

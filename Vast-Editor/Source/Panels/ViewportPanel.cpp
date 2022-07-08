@@ -1,6 +1,6 @@
 #include "ViewportPanel.h"
 
-#include "AssetManager/SceneAsset.h"
+#include "AssetManager/AssetTypes.h"
 
 #include <imgui.h>
 #include <ImGuizmo.h>

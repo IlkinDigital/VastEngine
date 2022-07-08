@@ -14,6 +14,7 @@ namespace Vast::Board2D {
 	{
 	public:
 		Flipbook();
+		Flipbook(const Flipbook& other);
 
 		void Update(Timestep ts);
 

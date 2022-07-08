@@ -8,4 +8,12 @@ namespace Vast {
 	{
 	}
 
+	Ref<Asset> Texture2DAsset::Clone() const
+	{
+		auto ta = CreateRef<Texture2DAsset>(m_Name, m_Path, m_UUID);
+		ta->SetFileData(m_FileData);
+		ta->SetTexture(m_Texture);
+		return ta;
+	}
+
 }

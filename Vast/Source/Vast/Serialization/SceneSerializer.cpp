@@ -9,7 +9,7 @@
 
 #include "Utils/FileIO/FileIO.h"
 
-#include "AssetManager/Texture2DAsset.h"
+#include "AssetManager/AssetTypes.h"
 
 namespace Vast {
 
@@ -273,8 +273,27 @@ namespace Vast {
 						}
 						else
 						{
-							rc.Texture = RefCast<Texture2DAsset>(AssetManager::Get()->GetAsset(path))->GetTexture();
+							const auto& asset = AssetManager::Get()->GetAsset(path);
+							if (asset->GetType() == AssetType::Texture2D)
+								rc.Texture = RefCast<Texture2DAsset>(asset)->GetTexture();
 						}
+					}
+				}
+
+				/**
+				* Sprite Component
+				*/
+				auto spriteComponent = entity["SpriteComponent"];
+				if (spriteComponent)
+				{
+					auto& sc = deserializedEntity.AddComponent<SpriteComponent>();
+
+					sc.Color = spriteComponent["Color"].as<Vector4>();
+
+					Filepath path = spriteComponent["Flipbook"].as<String>();
+					if (path != "")
+					{
+						sc.Flipbook = RefCast<BoardFlipbookAsset>(AssetManager::Get()->GetAsset(path)->Clone());
 					}
 				}
 
@@ -340,10 +359,23 @@ namespace Vast {
 				out << YAML::Key << "Color" << YAML::Value << rc.Color;
 				if (rc.Texture)
 				{
-					out << YAML::Key << "Texture" << YAML::Value << rc.Texture->GetFilepath().stem().string();
+					Filepath path = rc.Texture->GetFilepath();
+					path.replace_extension("");
+					out << YAML::Key << "Texture" << YAML::Value << path.string();
 				}
 				else
 					out << YAML::Key << "Texture" << YAML::Value << "";
+			});
+
+		SerializeComponent<SpriteComponent>(out, "SpriteComponent", entity, [&](SpriteComponent& sc)
+			{
+				out << YAML::Key << "Color" << YAML::Value << sc.Color;
+				if (sc.Flipbook)
+				{
+					out << YAML::Key << "Flipbook" << YAML::Value << sc.Flipbook->GetPath().string();
+				}
+				else
+					out << YAML::Key << "Flipbook" << YAML::Value << "";
 			});
 
 		SerializeComponent<NativeScriptComponent>(out, "NativeScriptComponent", entity, [&](NativeScriptComponent& nsc)

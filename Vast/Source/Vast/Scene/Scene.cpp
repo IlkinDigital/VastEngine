@@ -55,13 +55,26 @@ namespace Vast {
 		return Entity();
 	}
 
+	void Scene::OnBoard2DUpdate(Timestep ts)
+	{
+		m_Registry.view<SpriteComponent>().each([&](auto entityID, SpriteComponent& sc)
+			{
+				if (sc.Flipbook)
+				{
+					sc.Flipbook->GetFlipbook()->Update(ts);
+					if (sc.Flipbook->GetFlipbook()->IsValid())
+						sc.Texture = sc.Flipbook->GetFlipbook()->GetCurrentTexture();
+				}
+			});
+	}
+
 	void Scene::OnRuntimeUpdate(Timestep ts)
 	{
 		OPTICK_EVENT();
 
 		/**
-		* Call scripts
-		*/
+		 * Call scripts
+		 */
 
 		m_Registry.view<NativeScriptComponent>().each([=](auto entityID, NativeScriptComponent& nsc)
 			{
@@ -86,8 +99,14 @@ namespace Vast {
 			});
 
 		/**
-		* Render RenderComponents
-		*/
+		 * Board2D Components
+		 */
+
+		OnBoard2DUpdate(ts);
+
+		/**
+		 * Render RenderComponents
+		 */
 
 		Camera* mainCamera = nullptr;
 		Mat4 cameraTransform;
@@ -116,6 +135,8 @@ namespace Vast {
 
 	void Scene::OnUpdate(Timestep ts, const EditorCamera& camera)
 	{
+		OnBoard2DUpdate(ts);
+
 		Renderer2D::BeginScene(camera);
 
 		RenderScene();
@@ -193,6 +214,7 @@ namespace Vast {
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
 		CopyComponentIfExists<RenderComponent>(newEntity, entity);
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
+		CopyComponentIfExists<SpriteComponent>(newEntity, entity);
 	}
 
 	Ref<Scene> Scene::Clone(const Ref<Scene>& srcScene)
@@ -219,34 +241,49 @@ namespace Vast {
 		CopyComponent<CameraComponent>(dstRegistry, srcRegistry, enttMap);
 		CopyComponent<RenderComponent>(dstRegistry, srcRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstRegistry, srcRegistry, enttMap);
+		CopyComponent<SpriteComponent>(dstRegistry, srcRegistry, enttMap);
 
 		return newScene;
 	}
+
+	struct RenderableEntity
+	{
+		TransformComponent TC;
+		RenderComponent RC;
+	};
 
 	void Scene::RenderScene()
 	{
 		OPTICK_EVENT();
 
 		auto group = m_Registry.view<TransformComponent, RenderComponent>();
-		DArray<std::pair<TransformComponent, RenderComponent>> renderables;
+		DArray<RenderableEntity> renderables;
 		for (auto entity : group)
 		{
 			auto& transform = group.get<TransformComponent>(entity);
 			auto& renderable = group.get<RenderComponent>(entity);
-			renderables.emplace_back(std::pair(transform, renderable));
+			renderables.emplace_back(RenderableEntity({ transform, renderable }));
 		}
 
-		std::sort(renderables.begin(), renderables.end(), [&](std::pair<TransformComponent, RenderComponent>& p1, std::pair<TransformComponent, RenderComponent>& p2)
+		auto sprites = m_Registry.view<TransformComponent, SpriteComponent>();
+		for (auto entity : sprites)
+		{
+			auto& transform = sprites.get<TransformComponent>(entity);
+			auto& sprite = m_Registry.get<SpriteComponent>(entity);
+			renderables.emplace_back(RenderableEntity({ transform, (RenderComponent)sprite }));
+		}
+
+		std::sort(renderables.begin(), renderables.end(), [&](RenderableEntity& p1, RenderableEntity& p2)
 			{
-				return p1.first.Translation.z < p2.first.Translation.z;
+				return p1.TC.Translation.z < p2.TC.Translation.z;
 			});
 
 		for (auto& item : renderables)
 		{
-			if (item.second.Texture)
-				Renderer2D::DrawQuad(item.first.Transform(), item.second.Texture);
+			if (item.RC.Texture)
+				Renderer2D::DrawQuad(item.TC.Transform(), item.RC.Texture);
 			else
-				Renderer2D::DrawQuad(item.first.Transform(), item.second.Color);
+				Renderer2D::DrawQuad(item.TC.Transform(), item.RC.Color);
 		}
 	}
 }

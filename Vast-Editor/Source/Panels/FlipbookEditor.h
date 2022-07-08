@@ -8,7 +8,7 @@
 #include "Panels/PropertiesPanel.h"
 #include "Renderer/SceneRenderer.h"
 
-#include "AssetManager/BoardFlipbookAsset.h"
+#include "AssetManager/AssetTypes.h"
 
 #include "ApplicationCore/Layer/Layer.h"
 

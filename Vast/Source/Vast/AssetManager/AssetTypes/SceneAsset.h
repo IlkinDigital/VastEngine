@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Asset.h"
+#include "AssetManager/Asset.h"
 #include "Scene/Scene.h"
 
 namespace Vast {
@@ -10,6 +10,8 @@ namespace Vast {
 	public:
 		SceneAsset(const String& name, const Filepath& path, UUID uuid)
 			: Asset(AssetType::Scene, name, path, uuid) {}
+
+		virtual Ref<Asset> Clone() const override;
 
 		const Ref<Scene>& GetScene() const { return m_Scene; }
 		void SetScene(const Ref<Scene>& scene) { m_Scene = scene; }

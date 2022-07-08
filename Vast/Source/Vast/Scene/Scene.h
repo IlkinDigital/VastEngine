@@ -28,6 +28,8 @@ namespace Vast {
 
 		void OnRuntimeUpdate(Timestep ts);
 		void OnUpdate(Timestep ts, const EditorCamera& camera);
+		void OnBoard2DUpdate(Timestep ts);
+
 		void OnViewportResize(uint32 width, uint32 height);
 
 		void OnEvent(Event& event);

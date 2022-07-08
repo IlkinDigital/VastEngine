@@ -6,7 +6,7 @@
 #include "Widgets/WrapWidget.h"
 #include "EditorLayout/Layout.h"
 
-#include "AssetManager/Texture2DAsset.h"
+#include "AssetManager/AssetTypes.h"
 #include "Serialization/AssetSerializer.h"
 
 #include <imgui_internal.h>

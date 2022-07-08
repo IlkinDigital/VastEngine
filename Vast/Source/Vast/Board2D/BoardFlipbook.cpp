@@ -7,6 +7,12 @@ namespace Vast::Board2D {
 	{
 	}
 
+	Flipbook::Flipbook(const Flipbook& other)
+		: m_Timer(0.0f), m_CurrentKeyIndex(0),
+		  m_FPS(other.m_FPS), m_KeyFrames(DArray<Board2D::KeyFrame>(other.m_KeyFrames.begin(), other.m_KeyFrames.end()))
+	{
+	}
+
 	void Flipbook::PushKeyFrame(const KeyFrame& key)
 	{
 		m_KeyFrames.emplace_back(key);
