@@ -9,14 +9,15 @@ namespace Vast {
 	public:
 		OpenGLInterface() = default;
 
-		void Init() override;
+		virtual void Init() override;
 
-		void SetViewport(int32 x, int32 y, uint32 width, uint32 height) override;
+		virtual void SetViewport(int32 x, int32 y, uint32 width, uint32 height) override;
 		
-		void SetClearColor(const Vector4& color) override;
-		Vector4 GetClearColor() const override;
+		virtual void SetClearColor(const Vector4& color) override;
+		virtual Vector4 GetClearColor() const override;
 		
-		void Clear() override;
-		void DrawIndexed(uint32 indexCount) const override;
+		virtual void Clear() override;
+		virtual void DrawIndexed(uint32 indexCount) const override;
+		virtual void DrawLines(uint32 vertexCount) const override;
 	};
 }

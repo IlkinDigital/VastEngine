@@ -141,6 +141,8 @@ namespace Vast {
 
 		RenderScene();
 
+		Renderer2D::DrawLine({ 0.0f, 1.0f, -1.0f }, { 3.0f, -1.0f, 3.0f });
+
 		Renderer2D::EndScene();
 	}
 

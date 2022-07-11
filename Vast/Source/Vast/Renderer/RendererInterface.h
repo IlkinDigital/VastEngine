@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Renderer/RendererCore.h"
+#include "Renderer/VertexArray.h"
 #include "Core/Math/Math.h"
 
 namespace Vast {
@@ -17,6 +18,7 @@ namespace Vast {
 
 		virtual void Clear() = 0;
 		virtual void DrawIndexed(uint32 indexCount) const = 0;
+		virtual void DrawLines(uint32 vertexCount) const = 0;
 
 		static RendererAPI GetRendererAPI();
 	private:

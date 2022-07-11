@@ -17,6 +17,8 @@ namespace Vast {
 
 		static void DrawQuad(const Mat4& transform, const Vector4& color);
 		static void DrawQuad(const Mat4& transform, const Ref<Texture2D>& texture);
+
+		static void DrawLine(const Vector3& pt1, const Vector3& pt2, const Vector4& color = { 0.2235f, 1.0f, 0.0784f, 1.0f });
 	};
 
 }

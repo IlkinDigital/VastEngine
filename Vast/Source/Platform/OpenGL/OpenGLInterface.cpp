@@ -13,6 +13,8 @@ namespace Vast {
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		glLineWidth(3.0f);
 	}
 
 	void OpenGLInterface::Clear()
@@ -50,6 +52,14 @@ namespace Vast {
 		OPTICK_EVENT();
 
 		glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
+	}
+
+	void OpenGLInterface::DrawLines(uint32 vertexCount) const
+	{
+		OPTICK_EVENT();
+
+		glDrawArrays(GL_LINES, 0, vertexCount);
+
 	}
 
 }

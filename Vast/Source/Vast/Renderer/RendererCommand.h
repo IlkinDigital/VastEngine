@@ -31,6 +31,11 @@ namespace Vast {
 		{
 			s_Interface->DrawIndexed(indexCount);
 		}
+
+		static void DrawLines(uint32 vertexCount)
+		{
+			s_Interface->DrawLines(vertexCount);
+		}
 	private:
 		static RendererInterface* s_Interface;
 	};

@@ -73,7 +73,7 @@ namespace Vast {
 			String path = p.path().string();
 			String filename = p.path().stem().filename().string();
 			if (!m_DialogOpen)
-				m_CurrentName = filename;
+				m_CurrentName = p.path().filename().replace_extension("").string();
 
 			bool drawName = false;
 
@@ -190,7 +190,7 @@ namespace Vast {
 				if (asset->GetType() != AssetType::None)
 				{
 					asset->SetName(m_CurrentName);
-					asset->SetPath(FileIO::Relative(m_CurrentPath, m_Project->GetContentFolderPath()) / (m_CurrentName + ".asset"));
+					asset->SetPath(FileIO::Relative(m_CurrentPath, m_Project->GetContentFolderPath()) / (m_CurrentName));
 				}
 
 				std::filesystem::remove(m_RenamePath);

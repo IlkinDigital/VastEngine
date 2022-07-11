@@ -17,23 +17,33 @@ namespace Vast {
 		float TextureIndex = 0.0f;
 	};
 
+	struct LineVertex
+	{
+		Vector3 Position;
+		Vector4 Color;
+	};
+
 	struct RendererData
 	{
 		static const uint32 MaxTextureSlots = 32;
 
+		Ref<VertexBuffer> LineVertexBuffer;
+		Ref<VertexArray> LineVertexArray;
+		Ref<Shader> LineShader;
+
+		LineVertex LineVertices[2];
+
 		Ref<VertexBuffer> QuadVertexBuffer;
 		Ref<VertexArray> QuadVertexArray;
-
 		Ref<Shader> QuadShader;
 
 		QuadVertex QuadVertices[4];
+		Vector4 QuadVertexPositions[4];
 
 		Ref<Texture2D> WhiteTexture;
 
 		SArray<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
 		uint32 TextureSlotIndex = 1; // 0 => white texture
-
-		Vector4 QuadVertexPositions[4];
 	};
 
 	static RendererData s_Data;
@@ -42,32 +52,56 @@ namespace Vast {
 	{
 		OPTICK_EVENT();
 
-		uint32 indices[]
+		/**
+		* Quads
+		*/
 		{
-			0, 1, 2,
-			0, 2, 3
-		};
+			OPTICK_EVENT("QuadInit");
 
-		s_Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
-		s_Data.QuadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
-		s_Data.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
-		s_Data.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
+			uint32 indices[]
+			{
+				0, 1, 2,
+				0, 2, 3
+			};
 
-		s_Data.QuadVertexArray = VertexArray::Create();
+			s_Data.QuadVertexPositions[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
+			s_Data.QuadVertexPositions[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
+			s_Data.QuadVertexPositions[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
+			s_Data.QuadVertexPositions[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 
-		s_Data.QuadVertexBuffer = VertexBuffer::Create(4 * sizeof(QuadVertex));
+			s_Data.QuadVertexArray = VertexArray::Create();
+
+			s_Data.QuadVertexBuffer = VertexBuffer::Create(4 * sizeof(QuadVertex));
 		
-		s_Data.QuadVertexBuffer->SetLayout({
-			{ ShaderDataType::Float3, "a_Pos" },
-			{ ShaderDataType::Float4, "a_Color" },
-			{ ShaderDataType::Float2, "a_TextureCoords" },
-			{ ShaderDataType::Float, "a_TextureIndex" }
-		});
+			s_Data.QuadVertexBuffer->SetLayout({
+				{ ShaderDataType::Float3, "a_Pos" },
+				{ ShaderDataType::Float4, "a_Color" },
+				{ ShaderDataType::Float2, "a_TextureCoords" },
+				{ ShaderDataType::Float, "a_TextureIndex" }
+			});
 
-		s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
+			s_Data.QuadVertexArray->AddVertexBuffer(s_Data.QuadVertexBuffer);
 
-		s_Data.QuadVertexArray->SetIndexBuffer(IndexBuffer::Create(indices, 6));
+			s_Data.QuadVertexArray->SetIndexBuffer(IndexBuffer::Create(indices, 6));
+		}
 
+		/**
+		* Lines
+		*/
+		{
+			OPTICK_EVENT("LineInit");
+
+			s_Data.LineVertexArray = VertexArray::Create();
+			s_Data.LineVertexBuffer = VertexBuffer::Create(2 * sizeof(LineVertex));
+			s_Data.LineVertexBuffer->SetLayout({
+				{ ShaderDataType::Float3, "a_Pos"},
+				{ ShaderDataType::Float4, "a_Color" }
+			});
+
+			s_Data.LineVertexArray->AddVertexBuffer(s_Data.LineVertexBuffer);
+		
+		}
+		
 		int32 samplers[s_Data.MaxTextureSlots]{};
 
 		for (int32 i = 0; i < s_Data.MaxTextureSlots; i++)
@@ -77,9 +111,8 @@ namespace Vast {
 		s_Data.WhiteTexture = Texture2D::Create(1, 1);
 		s_Data.WhiteTexture->SetData(&whitePixel, sizeof(whitePixel));
 
-		s_Data.QuadShader = Shader::Create("Assets/Shaders/Sprite2D.glsl");
-		s_Data.QuadShader->Bind();
-		s_Data.QuadShader->UploadIntArray("u_Textures", samplers, s_Data.MaxTextureSlots);
+		s_Data.QuadShader = Shader::Create("Resources/Shaders/Renderer2D-Quad.glsl");
+		s_Data.LineShader = Shader::Create("Resources/Shaders/Renderer2D-Line.glsl");
 	}
 
 	void Renderer2D::BeginScene(const Camera& camera, const Mat4& transform)
@@ -97,8 +130,9 @@ namespace Vast {
 		OPTICK_EVENT();
 
 		s_Data.QuadShader->Bind();
-
 		s_Data.QuadShader->UploadMat4("u_ViewProjection", camera.GetViewProjection());
+		s_Data.LineShader->Bind();
+		s_Data.LineShader->UploadMat4("u_ViewProjection", camera.GetViewProjection());
 	}
 
 	void Renderer2D::EndScene()
@@ -129,6 +163,7 @@ namespace Vast {
 
 		s_Data.QuadVertexBuffer->SetVertexData(s_Data.QuadVertices, 4 * sizeof(QuadVertex));
 
+		s_Data.QuadShader->Bind();
 		s_Data.QuadVertexArray->Bind();
 		RendererCommand::DrawIndexed(s_Data.QuadVertexArray->GetIndexBuffer()->GetIndexCount());
 	}
@@ -159,8 +194,26 @@ namespace Vast {
 
 		s_Data.QuadVertexBuffer->SetVertexData(s_Data.QuadVertices, 4 * sizeof(QuadVertex));
 
+		s_Data.QuadShader->Bind();
 		s_Data.QuadVertexArray->Bind();
 		RendererCommand::DrawIndexed(s_Data.QuadVertexArray->GetIndexBuffer()->GetIndexCount());
+	}
+
+	void Renderer2D::DrawLine(const Vector3& pt1, const Vector3& pt2, const Vector4& color)
+	{
+		OPTICK_EVENT();
+
+		s_Data.LineVertices[0].Position = pt1;
+		s_Data.LineVertices[0].Color = color;
+
+		s_Data.LineVertices[1].Position = pt2;
+		s_Data.LineVertices[1].Color = color;
+
+		s_Data.LineVertexBuffer->SetVertexData(s_Data.LineVertices, 2 * sizeof(LineVertex));
+		
+		s_Data.LineShader->Bind();
+		s_Data.LineVertexArray->Bind();
+		RendererCommand::DrawLines(2);
 	}
 
 
