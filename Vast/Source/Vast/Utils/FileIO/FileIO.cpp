@@ -27,11 +27,17 @@ namespace Vast {
 
 	Filepath FileIO::Normalize(const Filepath& path)
 	{
-		return std::filesystem::canonical(path);
+		OPTICK_EVENT();
+
+		auto strPath = path.native();
+		std::transform(strPath.begin(), strPath.end(), strPath.begin(), ::tolower);
+		return strPath;
 	}
 
 	bool FileIO::IsImage(const Filepath& path)
 	{
+		OPTICK_EVENT();
+
 		if (path.has_extension() && path.extension() == ".png")
 			return true;
 		return false;

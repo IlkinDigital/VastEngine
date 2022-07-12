@@ -13,6 +13,26 @@
 
 namespace Vast {
 
+	void ContentBrowserPanel::RenameAsset(const Filepath& path, const String& newName)
+	{
+		auto& assetManager = m_Project->GetAssetManager();
+		auto asset = assetManager->GetAsset(path);
+
+		if (asset->GetType() != AssetType::None)
+		{
+			asset->SetName(m_CurrentName);
+			asset->SetPath(path.parent_path() / newName);
+		}
+
+		Filepath absolute = m_Project->GetContentFolderPath();
+		absolute += (path.string() + ".asset");
+		std::filesystem::remove(absolute);
+
+		AssetSerializer as(m_Project, asset);
+		as.Serialize();
+		assetManager->Init();
+	}
+
 	ContentBrowserPanel::ContentBrowserPanel()
 		: Panel("Content Browser")
 	{
@@ -142,7 +162,7 @@ namespace Vast {
 				if (ImGui::MenuItem("Rename"))
 				{
 					openRenameDialog = true;
-					m_RenamePath = p.path();
+					m_RenamePath = FileIO::Relative(p.path(), m_Project->GetContentFolderPath()).replace_extension("");
 					
 				}
 				if (ImGui::MenuItem("Delete"))
@@ -173,32 +193,50 @@ namespace Vast {
 			}
 		}
 
-		if (ImGui::BeginPopupModal("RenameDialog", NULL, ImGuiWindowFlags_Modal))
+		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+		if (ImGui::BeginPopupModal("RenameDialog", NULL, ImGuiWindowFlags_Modal | ImGuiWindowFlags_NoMove))
 		{
 			char buffer[64];
 			strcpy(buffer, m_CurrentName.c_str());
 			if (ImGui::InputText("##Rename", buffer, sizeof(buffer)))
 				m_CurrentName = buffer;
 
-			if (ImGui::Button("Done"))
+			if (ImGui::Button("Rename"))
 			{
-				auto& assetManager = m_Project->GetAssetManager();
-				auto asset = assetManager->GetAsset(
-					FileIO::Relative(m_RenamePath, m_Project->GetContentFolderPath()).replace_extension("")
-				);
+				Filepath original = m_Project->GetContentFolderPath();
+				original += m_RenamePath;
 
-				if (asset->GetType() != AssetType::None)
+				if (std::filesystem::is_directory(original)) // Folder renaming
 				{
-					asset->SetName(m_CurrentName);
-					asset->SetPath(FileIO::Relative(m_CurrentPath, m_Project->GetContentFolderPath()) / (m_CurrentName));
+					Filepath newPath = original;
+					newPath.replace_filename(m_CurrentName);
+
+					if (!std::filesystem::exists(newPath))
+					{
+						std::filesystem::rename(original, newPath);
+
+						ImGui::CloseCurrentPopup();
+						m_DialogOpen = false;
+					}
 				}
+				else // File renaming
+				{
+					Filepath newPath = m_RenamePath;
+					newPath.replace_filename(m_CurrentName);
+					if (!m_Project->GetAssetManager()->Exists(newPath) || FileIO::Normalize(m_RenamePath) == FileIO::Normalize(newPath))
+					{
+						RenameAsset(m_RenamePath, m_CurrentName);
 
-				std::filesystem::remove(m_RenamePath);
-
-				AssetSerializer as(m_Project, asset);
-				as.Serialize();
-				assetManager->Init();
-
+						ImGui::CloseCurrentPopup();
+						m_DialogOpen = false;
+					}
+				}
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel"))
+			{
 				ImGui::CloseCurrentPopup();
 				m_DialogOpen = false;
 			}

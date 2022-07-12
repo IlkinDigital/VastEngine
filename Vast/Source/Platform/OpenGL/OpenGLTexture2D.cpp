@@ -44,7 +44,11 @@ namespace Vast {
 
 		stbi_uc* bitmap = nullptr;
 		const char* data = asset->GetFileData().data();
-		bitmap = stbi_load_from_memory(reinterpret_cast<const stbi_uc*>(data), asset->GetFileData().size(), &width, &height, &channels, 0);
+		{
+			OPTICK_EVENT("stbi_load_from_memory");
+
+			bitmap = stbi_load_from_memory(reinterpret_cast<const stbi_uc*>(data), asset->GetFileData().size(), &width, &height, &channels, 0);
+		}
 		m_Width = width;
 		m_Height = height;
 

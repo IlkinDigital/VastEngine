@@ -21,7 +21,7 @@ namespace Vast {
 
 	void AssetManager::AddAsset(const Ref<Asset>& asset)
 	{
-		const auto& path = asset->GetPath();
+		Filepath path = FileIO::Normalize(asset->GetPath());
 		if (m_AssetMap.find(path) == m_AssetMap.end())
 			m_AssetMap.insert({ path, asset});
 	}
@@ -32,10 +32,16 @@ namespace Vast {
 
 	Ref<Asset> AssetManager::GetAsset(const Filepath& path)
 	{
-		if (m_AssetMap.find(path) == m_AssetMap.end())
+		Filepath normPath = FileIO::Normalize(path);
+		if (m_AssetMap.find(normPath) == m_AssetMap.end())
 			return CreateRef<Asset>();
 
-		return m_AssetMap.at(path);
+		return m_AssetMap.at(normPath);
+	}
+
+	bool AssetManager::Exists(const Filepath& path) const
+	{
+		return m_AssetMap.find(FileIO::Normalize(path)) != m_AssetMap.end();
 	}
 
 	void AssetManager::Init()

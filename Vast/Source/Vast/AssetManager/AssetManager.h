@@ -23,6 +23,8 @@ namespace Vast {
 
 		Ref<Asset> GetAsset(const Filepath& path);
 
+		bool Exists(const Filepath& path) const;
+
 		void Init();
 
 		static void Set(const Ref<AssetManager>& instance) { s_Instance = instance; }

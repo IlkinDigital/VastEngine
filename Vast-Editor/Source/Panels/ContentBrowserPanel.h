@@ -17,6 +17,8 @@ namespace Vast {
 
 		virtual void DrawPanel() override;
 	private:
+		void RenameAsset(const Filepath& path, const String& newName);
+	private:
 		Ref<Project> m_Project;
 		Filepath m_CurrentPath;
 

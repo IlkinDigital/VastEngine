@@ -35,7 +35,7 @@ namespace Vast {
 		Ref<Ty> LoadAsset(const Filepath& path)
 		{
 			VAST_CORE_ASSERT(m_Project->GetAssetManager(), "AssetManager is null");
-			return RefCast<Ty>(RefCast<Ty>(m_Project->GetAssetManager()->GetAsset(path))->Clone());
+			return RefCast<Ty>(m_Project->GetAssetManager()->GetAsset(path)->Clone());
 		}
 
 	protected:
