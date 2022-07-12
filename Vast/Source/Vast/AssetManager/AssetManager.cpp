@@ -21,6 +21,8 @@ namespace Vast {
 
 	void AssetManager::AddAsset(const Ref<Asset>& asset)
 	{
+		OPTICK_EVENT();
+
 		Filepath path = FileIO::Normalize(asset->GetPath());
 		if (m_AssetMap.find(path) == m_AssetMap.end())
 			m_AssetMap.insert({ path, asset});
@@ -32,11 +34,30 @@ namespace Vast {
 
 	Ref<Asset> AssetManager::GetAsset(const Filepath& path)
 	{
+		OPTICK_EVENT();
+
 		Filepath normPath = FileIO::Normalize(path);
 		if (m_AssetMap.find(normPath) == m_AssetMap.end())
 			return CreateRef<Asset>();
 
 		return m_AssetMap.at(normPath);
+	}
+
+	bool AssetManager::ReplaceAsset(const Filepath& ref, const Ref<Asset>& asset)
+	{
+		OPTICK_EVENT();
+
+		Filepath normRef = FileIO::Normalize(ref);
+		if (m_AssetMap.find(normRef) == m_AssetMap.end())
+		{
+			VAST_CORE_ERROR("Asset ref '{0}' doesn't exist, can't replace asset", ref.string());
+			return false;
+		}
+
+		m_AssetMap.erase(normRef);
+		AddAsset(asset);
+
+		return true;
 	}
 
 	bool AssetManager::Exists(const Filepath& path) const
@@ -88,8 +109,6 @@ namespace Vast {
 				{
 					queue.Enqueue(as.GetAsset());
 				}
-
-				VAST_CORE_TRACE("{0}", as.GetAsset()->GetName());
 			}
 		}
 	}

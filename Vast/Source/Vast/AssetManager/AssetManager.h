@@ -22,6 +22,7 @@ namespace Vast {
 		void RemoveAsset(const Ref<Asset>& asset);
 
 		Ref<Asset> GetAsset(const Filepath& path);
+		bool ReplaceAsset(const Filepath& ref, const Ref<Asset>& asset);
 
 		bool Exists(const Filepath& path) const;
 

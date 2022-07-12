@@ -1,100 +1,20 @@
 #include "CodeGenerator.h"
 
+#include "Utils/FileIO/FileIO.h"
 #include <fstream>
 
 namespace Vast {
 
-    static void IterateAndAddHeaders(const Filepath& start, DArray<Filepath>& array)
+    static void IterateAndAddHeaders(const Filepath& start, DArray<Filepath>& arr)
     {
         for (auto& path : std::filesystem::directory_iterator(start))
         {
             if (path.is_directory() && path != start / "Generated")
-                IterateAndAddHeaders(path, array);
+                IterateAndAddHeaders(path, arr);
             else if (path.path().filename().extension() == ".h" && path.path().filename() != "enginepch.h")
-                array.emplace_back(path.path());
+                arr.emplace_back(path.path());
         }
     }
-
-	void CodeGenerator::GeneratePremakeFile()
-	{
-        StringStream ss;
-        ss
-            << "workspace '" << m_Project->GetName() << "'"
-            << R"(
-    architecture 'x64'
-    configurations{'Debug', 'Release', 'Distribution'}
-
-outputdir = '%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}'
-EnginePath = 'D:/Lester_Files/dev/Projects/VastEngine' 
-)" // TODO: Remove hardcoded path to engine
-<< "project '" << m_Project->GetName() << "'"
-<< R"(
-    kind 'SharedLib'
-    language 'C++'
-    cppdialect 'C++20'
-    staticruntime 'on'
-
-    targetdir('Binaries/' ..outputdir .. '/%{prj.name}')
-    objdir('Binaries-Int/' ..outputdir .. '/%{prj.name}')
-
-    files {'Source/**.h', 'Source/**.cpp'}
-
-    pchheader "enginepch.h"
-    pchsource "Source/enginepch.cpp"
-
-    includedirs
-    {
-        'Source',
-        '%{EnginePath}/Vast/Source',
-        '%{EnginePath}/Vast/Source/Vast',
-        '%{EnginePath}/Vast/Source/Vast/Core',
-        '%{EnginePath}/Vast/Vendor/spdlog/include',
-        '%{EnginePath}/Vast/Vendor/entt',
-        '%{EnginePath}/Vast/Vendor/glm'
-    }
-
-    defines
-    {
-        '_CRT_SECURE_NO_WARNINGS',
-        'VAST_SCRIPT_DLL'
-    }
-
-    links
-    {
-        'Engine/Vast.lib',
-        'Engine/GLFW.lib',
-        'Engine/ImGui.lib',
-        'Engine/Glad.lib'
-    }
-
-    filter 'system:windows'
-        systemversion 'latest'
-
-    defines
-    {
-        'VAST_PLATFORM_WINDOWS'
-    }
-
-    filter 'configurations:Debug'
-        defines 'VAST_CONFIG_DEBUG'
-        runtime 'Debug'
-        symbols 'on'
-
-    filter 'configurations:Release'
-        defines 'VAST_CONFIG_RELEASE'
-        runtime 'Release'
-        optimize 'on'
-
-    filter 'configurations:Distribution'
-        defines 'VAST_CONFIG_DISTRIBUTION'
-        runtime 'Release'
-        optimize 'on'
-)";
-
-        std::ofstream fs(m_Project->GetProjectPath() / "premake5.lua");
-        fs << ss.str();
-        fs.close();
-	}
 
     void CodeGenerator::GeneratePCH()
     {
@@ -197,7 +117,10 @@ R"(#include "enginepch.h"
         // Add includes
         for (auto& file : userFiles)
         {
-            genCpp << "#include \"" << file.filename().string() << "\"\n";
+            String path = FileIO::Relative(file, m_Project->GetProjectPath() / "Source").string();
+            if (path[0] == '\\')
+                path.erase(path.begin());
+            genCpp << "#include \"" << path << "\"\n";
         }
 
         genCpp << 

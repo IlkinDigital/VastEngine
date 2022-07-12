@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 
 	Vast::Application* app = Vast::CreateApplication();
 
-	app->Get().GetWindow().SetVSync(false);
+	app->Get().GetWindow().SetVSync(true);
 
 	app->Run();
 

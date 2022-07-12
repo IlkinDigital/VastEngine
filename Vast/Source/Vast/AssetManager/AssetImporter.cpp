@@ -22,8 +22,9 @@ namespace Vast {
 
                 AssetSerializer as(m_Project, ta);
                 as.Serialize();
+                as.Deserialize(ta->GetPath());
 
-                return ta;
+                return RefCast<Texture2DAsset>(as.GetAsset());
             }
         }
 

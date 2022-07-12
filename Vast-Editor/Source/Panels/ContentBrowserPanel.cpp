@@ -10,11 +10,14 @@
 
 #include "EditorLayer.h"
 #include <imgui.h>
+#include <optick.h>
 
 namespace Vast {
 
 	void ContentBrowserPanel::RenameAsset(const Filepath& path, const String& newName)
 	{
+		OPTICK_EVENT();
+
 		auto& assetManager = m_Project->GetAssetManager();
 		auto asset = assetManager->GetAsset(path);
 
@@ -31,6 +34,7 @@ namespace Vast {
 		AssetSerializer as(m_Project, asset);
 		as.Serialize();
 		assetManager->Init();
+		//assetManager->ReplaceAsset(path, asset);
 	}
 
 	ContentBrowserPanel::ContentBrowserPanel()
@@ -73,9 +77,8 @@ namespace Vast {
 			VAST_TRACE("New path: {0}", rel.string());
 
 			AssetImporter importer(m_Project);
-			Ref<Asset> asset = importer.ImportTexture(origin, rel);
-			const auto& am = m_Project->GetAssetManager();
-			am->Init();
+			Ref<Texture2DAsset> asset = importer.ImportTexture(origin, rel);
+			m_Project->GetAssetManager()->AddAsset(asset);
 		}
 
 		static float padding = 10.0f;

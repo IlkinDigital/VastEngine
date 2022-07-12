@@ -12,7 +12,6 @@ namespace Vast {
 		CodeGenerator(const Ref<Project>& project)
 			: m_Project(project) {}
 
-		void GeneratePremakeFile();
 		void GeneratePCH();
 		void GenerateExportFiles();
 	private:
