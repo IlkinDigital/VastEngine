@@ -11,7 +11,9 @@ namespace Vast {
 	public:
 		Entity() = default;
 		Entity(EntityID handle, Scene* scene);
-		
+
+		Scene& GetScene() { return *m_Scene; }
+		 
 		template<typename Ty, typename... Args>
 		Ty& AddComponent(Args&&... args);
 

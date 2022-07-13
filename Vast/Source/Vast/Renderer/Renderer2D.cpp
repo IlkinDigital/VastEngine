@@ -119,10 +119,11 @@ namespace Vast {
 	{
 		OPTICK_EVENT();
 
-		s_Data.QuadShader->Bind();
 		Mat4 viewProj = camera.GetProjection() * Math::Inverse(transform);
-
+		s_Data.QuadShader->Bind();
 		s_Data.QuadShader->UploadMat4("u_ViewProjection", viewProj);
+		s_Data.LineShader->Bind();
+		s_Data.LineShader->UploadMat4("u_ViewProjection", viewProj);
 	}
 
 	void Renderer2D::BeginScene(const EditorCamera& camera)

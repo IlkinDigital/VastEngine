@@ -5,6 +5,7 @@
 #include "Core/UUID.h"
 
 #include "Camera/EditorCamera.h"
+#include "Engine/DebugRenderer.h"
 
 #include "Events/Event.h"
 
@@ -37,9 +38,12 @@ namespace Vast {
 		Entity GetPrimaryCamera();
 		EntityRegistry& GetRegistry() { return m_Registry; }
 	private:
-		void RenderScene();
+		void RenderScene(Timestep ts);
 	private:
 		EntityRegistry m_Registry;
+		DebugRenderer m_DebugRenderer;
+
+		friend class DebugRenderer;
 	};
 
 }

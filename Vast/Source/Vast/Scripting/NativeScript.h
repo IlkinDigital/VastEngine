@@ -15,13 +15,15 @@ namespace Vast {
 	public:
 		virtual ~NativeScript() = default;
 
+		Entity GetSelf() const { return m_Entity; }
+
 		template<typename Ty>
 		Ty& GetComponent()
 		{
 			return m_Entity.GetComponent<Ty>();
 		}
 
-		Entity GetEntity(UUID id)
+		Entity GetEntityByUUID(UUID id)
 		{
 			return m_Entity.m_Scene->GetEntity(id);
 		}

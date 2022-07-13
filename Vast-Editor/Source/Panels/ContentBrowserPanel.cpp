@@ -33,8 +33,7 @@ namespace Vast {
 
 		AssetSerializer as(m_Project, asset);
 		as.Serialize();
-		assetManager->Init();
-		//assetManager->ReplaceAsset(path, asset);
+		assetManager->ReplaceAsset(path, asset);
 	}
 
 	ContentBrowserPanel::ContentBrowserPanel()

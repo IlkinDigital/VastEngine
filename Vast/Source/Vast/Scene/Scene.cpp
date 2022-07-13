@@ -9,6 +9,8 @@
 #include "Renderer/Renderer2D.h"
 #include "Scripting/ScriptBuffer.h"
 
+#include "Engine/DebugRenderer.h"
+
 namespace Vast {
 
 	Scene::Scene()
@@ -127,7 +129,7 @@ namespace Vast {
 		{
 			Renderer2D::BeginScene(*mainCamera, cameraTransform);
 
-			RenderScene();
+			RenderScene(ts);
 
 			Renderer2D::EndScene();
 		}
@@ -139,7 +141,7 @@ namespace Vast {
 
 		Renderer2D::BeginScene(camera);
 
-		RenderScene();
+		RenderScene(ts);
 
 		Renderer2D::EndScene();
 	}
@@ -252,7 +254,7 @@ namespace Vast {
 		RenderComponent RC;
 	};
 
-	void Scene::RenderScene()
+	void Scene::RenderScene(Timestep ts)
 	{
 		OPTICK_EVENT();
 
@@ -285,5 +287,11 @@ namespace Vast {
 			else
 				Renderer2D::DrawQuad(item.TC.Transform(), item.RC.Color);
 		}
+
+		/**
+		* Debug Renderer
+		*/
+
+		m_DebugRenderer.OnUpdate(ts);
 	}
 }

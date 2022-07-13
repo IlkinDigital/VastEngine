@@ -27,6 +27,7 @@
 #include <imgui.h>
 #include <fstream>
 #include <optick.h>
+#include <Vast/Engine/DebugRenderer.h>
 
 namespace Vast {
 
