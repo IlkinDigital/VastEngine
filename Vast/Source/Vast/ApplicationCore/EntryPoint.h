@@ -21,4 +21,6 @@ int main(int argc, char** argv)
 	OPTICK_SHUTDOWN();
 
 	delete app;
+
+	VAST_CORE_INFO("Not freed total: {0}", s_Tracker.CurrentUsage());
 }

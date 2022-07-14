@@ -12,6 +12,7 @@
 
 #include "Renderer/SceneRenderer.h"
 #include "AssetManager/AssetManager.h"
+#include "Scripting/ScriptEngine.h"
 
 namespace Vast {
 
@@ -39,8 +40,6 @@ namespace Vast {
 		void OpenFlipbookEditor(const Ref<BoardFlipbookAsset>& bfa);
 	private:
 		void ResizeViewport();
-
-		void UpdateScriptModule();
 
 		void NewScene();
 		void OpenScene(const Filepath& filepath);
@@ -76,7 +75,7 @@ namespace Vast {
 		Filepath m_SceneFilepath;
 
 		Ref<Project> m_Project;
-		Ref<RuntimeModule> m_ScriptModule;
+		ScriptEngine m_ScriptEngine;
 
 		ImVec4* m_Colors = ImGui::GetStyle().Colors;
 

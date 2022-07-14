@@ -38,20 +38,6 @@ namespace Vast {
 
 	static FrameTime s_FrameTime(100);
 
-	typedef void(*InitScriptsFn)();
-	typedef void(*InitModuleFn)(Application*);
-	typedef const DArray<NativeScriptComponent>&(*GetScriptsFn)();
-
-	static InitModuleFn InitModule;
-	static InitScriptsFn InitScripts;
-	static GetScriptsFn GetScripts;
-
-	static Ref<Board2D::Flipbook> s_FB = CreateScope<Board2D::Flipbook>();
-	static Ref<Texture2D> tex1;
-	static Ref<Texture2D> tex2;
-	static Ref<Texture2D> tex3;
-	static Ref<Texture2D> tex4;
-
 	void EditorLayer::OnAttach()
 	{
 		m_SceneRenderer.Init(0, 0);
@@ -307,22 +293,6 @@ namespace Vast {
 		}
 	}
 
-	void EditorLayer::UpdateScriptModule()
-	{
-		m_ScriptModule = RuntimeModule::Create(m_Project->GetScriptModulePath());
-
-		if (m_ScriptModule->IsLoaded())
-		{
-			InitModule = m_ScriptModule->LoadFunction<InitModuleFn>("InitModule");
-			InitScripts = m_ScriptModule->LoadFunction<InitScriptsFn>("InitScripts");
-			GetScripts = m_ScriptModule->LoadFunction<GetScriptsFn>("GetScripts");
-
-			InitModule(Application::GetPointer());
-			InitScripts();
-			ScriptBuffer::Get().SetBuffer(GetScripts());
-		}
-	}
-
 	void EditorLayer::NewScene()
 	{
 		if (m_SceneState == SceneState::Play)
@@ -388,10 +358,9 @@ namespace Vast {
 
 		if (name != m_Project->GetName())
 		{
-			if (m_ScriptModule)
-				m_ScriptModule->Clear();
-			ScriptBuffer::Get().ClearBuffer();
-			UpdateScriptModule();
+			m_ScriptEngine.Shutdown();
+			m_ScriptEngine.SetProject(m_Project);
+			m_ScriptEngine.LoadModule();
 		}
 
 		// TODO: Open last opened scene registered by .ini
@@ -416,7 +385,7 @@ namespace Vast {
 		RunPremake();
 
 		m_ContentBrowser.SetProject(m_Project);
-		m_ScriptModule->Clear();
+		m_ScriptEngine.Shutdown();
 		ScriptBuffer::Get().ClearBuffer();
 	}
 
@@ -424,15 +393,12 @@ namespace Vast {
 	{
 		if (m_SceneState == SceneState::Play)
 			OnSceneStop();
-
-		CodeGenerator gen(m_Project);
-		gen.GenerateExportFiles();
 		
 		if (std::filesystem::exists(m_Project->GetScriptModulePath().root_directory()))
 		{
-			m_ScriptModule->Clear();
-			m_Project->Build();
-			UpdateScriptModule();
+			m_ScriptEngine.Shutdown();
+			m_ScriptEngine.BuildModule();
+			m_ScriptEngine.LoadModule();
 		}
 		else
 		{

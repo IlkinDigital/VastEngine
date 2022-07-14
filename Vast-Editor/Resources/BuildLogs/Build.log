@@ -1,0 +1,4 @@
+D:\Lester_Files\dev\Projects\VastEngine\Vast\Source\Vast\Core\CoreMinimal.h(28,14): warning C4595: 'operator new': non-member operator new or delete functions may not be declared inline [D:\Lester_Files\dev\VastProjects\WackoDuel\WackoDuel.vcxproj]
+D:\Lester_Files\dev\Projects\VastEngine\Vast\Source\Vast\Core\CoreMinimal.h(30,30): warning C4267: '+=': conversion from 'size_t' to 'Vast::uint32', possible loss of data [D:\Lester_Files\dev\VastProjects\WackoDuel\WackoDuel.vcxproj]
+D:\Lester_Files\dev\Projects\VastEngine\Vast\Source\Vast\Core\CoreMinimal.h(34,13): warning C4595: 'operator delete': non-member operator new or delete functions may not be declared inline [D:\Lester_Files\dev\VastProjects\WackoDuel\WackoDuel.vcxproj]
+D:\Lester_Files\dev\Projects\VastEngine\Vast\Source\Vast\Core\CoreMinimal.h(36,26): warning C4267: '+=': conversion from 'size_t' to 'Vast::uint32', possible loss of data [D:\Lester_Files\dev\VastProjects\WackoDuel\WackoDuel.vcxproj]

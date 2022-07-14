@@ -8,14 +8,15 @@
 
 namespace Vast {
 
-	void System::RunCommand(const Filepath& directory, const String& command)
+	void System::RunCommand(const Filepath& directory, const String& command, bool show)
 	{
 		OPTICK_EVENT();
 
 		WString fullCommand = L"/c ";
 		fullCommand.append(command.begin(), command.end());
+
 		ShellExecute(NULL, L"open", L"cmd", fullCommand.c_str(),
-			directory.wstring().c_str(), SW_HIDE);
+			directory.wstring().c_str(), show);
 	}
 
 }

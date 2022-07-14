@@ -7,8 +7,7 @@ namespace Vast {
 
     ScriptBuffer::ScriptBuffer()
     {
-        if (!s_Instance)
-            s_Instance = Scope<ScriptBuffer>(this);
+        s_Instance = Scope<ScriptBuffer>(this);
     }
 
     Scope<NativeScriptComponent> ScriptBuffer::FindByName(const String& name)

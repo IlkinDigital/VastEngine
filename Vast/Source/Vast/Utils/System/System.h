@@ -7,7 +7,7 @@ namespace Vast {
 	class System
 	{
 	public:
-		static void RunCommand(const Filepath& directory, const String& command);
+		static void RunCommand(const Filepath& directory, const String& command, bool show = false);
 	};
 
 }
