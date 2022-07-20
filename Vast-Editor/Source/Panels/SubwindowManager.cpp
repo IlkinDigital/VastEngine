@@ -42,8 +42,20 @@ namespace Vast {
 
 	void SubwindowManager::OnUpdate(Timestep ts)
 	{
-		for (auto& sw : m_SubwindowStack)
-			sw.Subwindow->OnUpdate(ts);
+		for (auto it = m_SubwindowStack.begin(); it != m_SubwindowStack.end();)
+		{
+			auto& sw = *it;
+			if (!sw.Subwindow->IsOpen())
+			{
+				sw.Subwindow->Close();
+				it = m_SubwindowStack.erase(it);
+			}
+			else
+			{
+				sw.Subwindow->OnUpdate(ts);
+				it++;
+			}
+		}
 	}
 
 	void SubwindowManager::OnGUIRender()
