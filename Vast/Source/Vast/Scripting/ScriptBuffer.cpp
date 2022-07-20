@@ -3,23 +3,18 @@
 
 namespace Vast {
 
-    Scope<ScriptBuffer> ScriptBuffer::s_Instance = CreateScope<ScriptBuffer>();
-
-    ScriptBuffer::ScriptBuffer()
-    {
-        s_Instance = Scope<ScriptBuffer>(this);
-    }
-
-    Scope<NativeScriptComponent> ScriptBuffer::FindByName(const String& name)
+    const NativeScriptComponent& ScriptBuffer::FindByName(const String& name) const
     {
         for (auto& nsc : m_Buffer)
         {
             if (nsc.Name == name)
-                return CreateScope<NativeScriptComponent>(nsc);
+                return nsc;
         }
         
         VAST_CORE_ERROR("Script with name '{0}' doesn't exist", name);
-        return nullptr;
+        
+        NativeScriptComponent null;
+        return null;
     }
 
 }

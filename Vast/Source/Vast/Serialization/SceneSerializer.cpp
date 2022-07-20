@@ -5,7 +5,7 @@
 
 #include "Scene/Entity.h"
 #include "Scene/Components.h"
-#include "Scripting/ScriptBuffer.h"
+#include "Scripting/ScriptEngine.h"
 
 #include "Utils/FileIO/FileIO.h"
 
@@ -145,10 +145,10 @@ namespace Vast {
 				auto nscriptComponent = entity["NativeScriptComponent"];
 				if (nscriptComponent)
 				{
-					auto nsc = ScriptBuffer::Get().FindByName(nscriptComponent["Name"].as<String>());
-					if (nsc)
+					auto nsc = ScriptEngine::Get()->GetScriptBuffer().FindByName(nscriptComponent["Name"].as<String>());
+					if (nsc.Instance)
 					{
-						deserializedEntity.AddComponent<NativeScriptComponent>(*nsc);
+						deserializedEntity.AddComponent<NativeScriptComponent>(nsc);
 					}
 				}
 			}
@@ -303,11 +303,8 @@ namespace Vast {
 				auto nscriptComponent = entity["NativeScriptComponent"];
 				if (nscriptComponent)
 				{
-					auto nsc = ScriptBuffer::Get().FindByName(nscriptComponent["Name"].as<String>());
-					if (nsc)
-					{
-						deserializedEntity.AddComponent<NativeScriptComponent>(*nsc);
-					}
+					auto nsc = ScriptEngine::Get()->GetScriptBuffer().FindByName(nscriptComponent["Name"].as<String>());
+					deserializedEntity.AddComponent<NativeScriptComponent>(nsc);
 				}
 			}
 		}

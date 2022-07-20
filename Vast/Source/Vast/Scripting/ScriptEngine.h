@@ -10,14 +10,21 @@ namespace Vast {
 	class ScriptEngine
 	{
 	public:
-		ScriptEngine() = default;
+		ScriptEngine();
 		ScriptEngine(const Ref<Project>& project)
-			: m_Project(project) {}
+			: m_Project(project) { ScriptEngine(); }
+
+		static ScriptEngine* Get() { return s_Instance; }
 
 		void SetProject(const Ref<Project>& project) { m_Project = project; }
 
+		ScriptBuffer& GetScriptBuffer() { return m_ScriptBuffer; }
+
 		void Init();
 		void Shutdown();
+
+		void GenerateExportFiles();
+		
 		void LoadModule();
 		void BuildModule();
 	private:
@@ -39,6 +46,8 @@ namespace Vast {
 		InitModuleFn InitModuleFunc;
 		InitScriptsFn InitScriptsFunc;
 		GetScriptsFn GetScriptsFunc;
+	private:
+		inline static ScriptEngine* s_Instance = nullptr;
 	};
 
 }

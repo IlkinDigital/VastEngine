@@ -3,7 +3,7 @@
 #include "EditorCore/EditorControl.h"
 
 #include "Scene/Components.h"
-#include "Scripting/ScriptBuffer.h"
+#include "Scripting/ScriptEngine.h"
 
 #include "AssetManager/AssetTypes.h"
 
@@ -215,15 +215,15 @@ namespace Vast {
 
 				if (ImGui::BeginCombo("Script", preview))
 				{
-					for (uint16 i = 0; i < ScriptBuffer::Get().GetBuffer().size(); i++)
+					for (uint16 i = 0; i < ScriptEngine::Get()->GetScriptBuffer().GetBuffer().size(); i++)
 					{
 						bool isSelected = currScriptIndex == i;
 
-						if (ImGui::Selectable(ScriptBuffer::Get().GetBuffer()[i].Name.c_str(), false))
+						if (ImGui::Selectable(ScriptEngine::Get()->GetScriptBuffer().GetBuffer()[i].Name.c_str(), false))
 						{
 							currScriptIndex = i;
-							component = ScriptBuffer::Get().GetBuffer()[i];
-							preview = ScriptBuffer::Get().GetBuffer()[i].Name.c_str();
+							component = ScriptEngine::Get()->GetScriptBuffer().GetBuffer()[i];
+							preview = ScriptEngine::Get()->GetScriptBuffer().GetBuffer()[i].Name.c_str();
 						}
 					}
 					

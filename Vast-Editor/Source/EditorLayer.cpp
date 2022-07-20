@@ -7,7 +7,6 @@
 
 #include "EditorLayout/Layout.h"
 #include "EditorCore/EditorControl.h"
-#include "NativeScripting/CodeGenerator.h"
 
 #include "Serialization/ProjectSerializer.h"
 #include "Project/ProjectGenerator.h"
@@ -27,7 +26,6 @@
 #include <imgui.h>
 #include <fstream>
 #include <optick.h>
-#include <Vast/Engine/DebugRenderer.h>
 
 namespace Vast {
 
@@ -40,6 +38,8 @@ namespace Vast {
 
 	void EditorLayer::OnAttach()
 	{
+		OPTICK_EVENT();
+
 		m_SceneRenderer.Init(0, 0);
 
 		m_PlayIcon = Texture2D::Create("Resources/Icons/PlayIcon.png");
@@ -114,6 +114,8 @@ namespace Vast {
 
 	void EditorLayer::OnGUIRender()
 	{
+		OPTICK_EVENT();
+
 		EditorLayout::BeginDockspace("Editor Dockspace");
 
 		// Menu Bar
@@ -261,6 +263,8 @@ namespace Vast {
 
 	void EditorLayer::OnEvent(Event& event)
 	{
+		OPTICK_EVENT();
+
 		EventDispatcher dispatcher(event);
 		dispatcher.Dispatch<KeyPressedEvent>(VAST_BIND_EVENT(OnKeyPressed));
 		dispatcher.Dispatch<FilesDropEvent>(VAST_BIND_EVENT(OnFilesDrop));
@@ -270,6 +274,8 @@ namespace Vast {
 
 	void EditorLayer::OpenFlipbookEditor(const Ref<BoardFlipbookAsset>& bfa)
 	{
+		OPTICK_EVENT();
+
 		if (m_SubwindowManager.HasStorageWithUUID(bfa->GetUUID()))
 		{
 			VAST_ERROR("Couldn't open {0} flipbook, it's already open", bfa->GetName());
@@ -283,6 +289,8 @@ namespace Vast {
 
 	void EditorLayer::ResizeViewport()
 	{
+		OPTICK_EVENT();
+
 		if (m_Viewport.GetWidth() > 0 && m_Viewport.GetHeight() > 0)
 		{
 			m_SceneRenderer.GetFramebuffer()->Resize({m_Viewport.GetWidth(), m_Viewport.GetHeight()});
@@ -295,6 +303,8 @@ namespace Vast {
 
 	void EditorLayer::NewScene()
 	{
+		OPTICK_EVENT();
+
 		if (m_SceneState == SceneState::Play)
 			OnSceneStop();
 
@@ -306,6 +316,8 @@ namespace Vast {
 
 	void EditorLayer::OpenScene(const Filepath& path)
 	{
+		OPTICK_EVENT();
+
 		Filepath fullPath = m_Project->GetContentFolderPath();
 		fullPath += path.string() + ".asset";
 		if (std::filesystem::exists(fullPath))
@@ -333,6 +345,8 @@ namespace Vast {
 
 	void EditorLayer::SaveScene(const Filepath& path)
 	{
+		OPTICK_EVENT();
+
 		if (!path.empty())
 		{
 			Ref<SceneAsset> scene = CreateRef<SceneAsset>(path.filename().stem().string(), path, UUID());
@@ -344,6 +358,8 @@ namespace Vast {
 
 	void EditorLayer::OpenProject(const Filepath& filepath)
 	{
+		OPTICK_EVENT();
+
 		bool first = !(bool)m_Project;
 		String name;
 		if (!first)
@@ -369,6 +385,8 @@ namespace Vast {
 
 	void EditorLayer::NewProject(const String& name, const Filepath& filepath)
 	{
+		OPTICK_EVENT();
+
 		m_Project = CreateRef<Project>(name, filepath);
 		ProjectSerializer ps(m_Project);
 		ps.Serialize(filepath);
@@ -378,19 +396,20 @@ namespace Vast {
 		pg.GeneratePremakeFile();
 		pg.DownloadDependencies(PROJDIR("Engine"));
 
-		CodeGenerator gen(m_Project);
-		gen.GeneratePCH();
-		gen.GenerateExportFiles();
+		m_ScriptEngine.SetProject(m_Project);
+		m_ScriptEngine.GenerateExportFiles();
 
 		RunPremake();
 
 		m_ContentBrowser.SetProject(m_Project);
 		m_ScriptEngine.Shutdown();
-		ScriptBuffer::Get().ClearBuffer();
+		ScriptEngine::Get()->GetScriptBuffer().ClearBuffer();
 	}
 
 	void EditorLayer::BuildScripts()
 	{
+		OPTICK_EVENT();
+
 		if (m_SceneState == SceneState::Play)
 			OnSceneStop();
 		
@@ -414,6 +433,8 @@ namespace Vast {
 
 	void EditorLayer::OnScenePlay()
 	{
+		OPTICK_EVENT();
+
 		m_SceneState = SceneState::Play;
 
 		m_RuntimeScene = Scene::Clone(m_EditorScene);
@@ -426,6 +447,8 @@ namespace Vast {
 
 	void EditorLayer::OnSceneStop()
 	{
+		OPTICK_EVENT();
+
 		m_SceneState = SceneState::Edit;
 		
 		m_RuntimeScene = nullptr;

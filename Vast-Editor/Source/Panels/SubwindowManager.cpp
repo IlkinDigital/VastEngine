@@ -22,6 +22,7 @@ namespace Vast {
 				(*it).Subwindow->Close();
 				VAST_CORE_INFO("Removed '{0}' subwindow", (*it).Subwindow->GetName());
 				it = m_SubwindowStack.erase(it);
+				break;
 			}
 			else
 				it++;
@@ -49,10 +50,7 @@ namespace Vast {
 	{
 		for (auto& sw : m_SubwindowStack)
 		{
-			if (!sw.Subwindow->IsOpen())
-				RemoveSubwindow(sw.Subwindow);
-			else
-				sw.Subwindow->OnGUIRender();
+			sw.Subwindow->OnGUIRender();
 		}
 	}
 

@@ -7,20 +7,16 @@ namespace Vast {
 	class ScriptBuffer
 	{
 	public:
-		ScriptBuffer();
-
-		static ScriptBuffer& Get() { return *s_Instance; }
+		ScriptBuffer() = default;
 
 		void SetBuffer(const DArray<NativeScriptComponent>& buffer) { m_Buffer = buffer; }
-		const DArray<NativeScriptComponent>& GetBuffer() { return m_Buffer; }
+		const DArray<NativeScriptComponent>& GetBuffer() const { return m_Buffer; }
 
 		void ClearBuffer() { m_Buffer.clear(); }
 
-		Scope<NativeScriptComponent> FindByName(const String& name);
+		const NativeScriptComponent& FindByName(const String& name) const;
 	private:
 		DArray<NativeScriptComponent> m_Buffer;
-
-		static Scope<ScriptBuffer> s_Instance;
 	};
 
 }

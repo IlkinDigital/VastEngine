@@ -7,6 +7,11 @@
 
 namespace Vast {
 
+	ScriptEngine::ScriptEngine()
+	{
+		s_Instance = this;
+	}
+
 	void ScriptEngine::Init()
 	{
 	}
@@ -16,6 +21,14 @@ namespace Vast {
 		m_ScriptBuffer.ClearBuffer();
 		if (m_ScriptModule)
 			m_ScriptModule->Clear();
+	}
+
+	void ScriptEngine::GenerateExportFiles()
+	{
+		OPTICK_EVENT();
+
+		ScriptCodeGenerator gen(m_Project);
+		gen.GenerateExportFiles();
 	}
 
 	void ScriptEngine::LoadModule()
@@ -43,15 +56,13 @@ namespace Vast {
 	{
 		OPTICK_EVENT();
 
-		ScriptCodeGenerator gen(m_Project);
-		gen.GenerateExportFiles();
+		GenerateExportFiles();
 
 		m_ScriptModule->Clear();
 
 		StringStream ss;
 		ss << R"("C:/Program Files/Microsoft Visual Studio/2022/Community/Msbuild/Current/Bin/amd64/MSBuild.exe" )"
 			<< (m_Project->GetProjectPath() / (m_Project->GetName() + ".vcxproj")).string()
-			//<< " -flp2:logfile=Resources/BuildLogs/BuildErrors.log;errorsonly -flp3:logfile=Resources/BuildLogs/BuildWarnings.log;warningsonly"
 			<< " -flp:logFile=Resources/BuildLogs/Build.log;verbosity=quiet"
 			<< " -property:Configuration=Debug"
 			<< " -property:Platform=x64 "
