@@ -2,7 +2,7 @@
 
 #include "Scene/Entity.h"
 
-#include "Panels/Panel.h"
+#include "GUI/Panels/Panel.h"
 
 namespace Vast {
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Panel.h"
+#include "GUI/Panels/Panel.h"
 #include "ViewportPanel.h"
 
 #include "Board2D/BoardFlipbook.h"

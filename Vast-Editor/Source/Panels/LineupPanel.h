@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Scene/Entity.h"
-#include "Panel.h"
+#include "GUI/Panels/Panel.h"
 
 
 namespace Vast {

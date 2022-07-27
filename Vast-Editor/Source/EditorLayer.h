@@ -6,6 +6,7 @@
 #include "Panels/ContentBrowserPanel.h"
 #include "Panels/FlipbookEditor.h"
 #include "Panels/SubwindowManager.h"
+#include "GUI/Panels/LogPanel.h"
 
 #include "GUI/FontManager.h"
 #include "Project/Project.h"
@@ -63,6 +64,7 @@ namespace Vast {
 		LineupPanel m_Lineup;
 		PropertiesPanel m_Properties;
 		ContentBrowserPanel m_ContentBrowser;
+		LogPanel m_LogPanel;
 
 		SubwindowManager m_SubwindowManager;
 

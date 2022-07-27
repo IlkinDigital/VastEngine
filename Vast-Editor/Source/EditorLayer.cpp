@@ -56,6 +56,7 @@ namespace Vast {
 		m_Properties.Open();
 		m_Properties.SetContextEntity(m_Lineup.GetSelectedEntity());
 		m_ContentBrowser.Open();
+		m_LogPanel.Open();
 
 		OpenProject("D:/Lester_Files/dev/VastProjects/WackoDuel");
 
@@ -250,6 +251,7 @@ namespace Vast {
 		m_Lineup.OnGUIRender();
 		m_Properties.OnGUIRender();
 		m_ContentBrowser.OnGUIRender();
+		m_LogPanel.OnGUIRender();
 
 		ImGui::ShowDemoWindow((bool*)1);
 

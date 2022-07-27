@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Panel.h"
+#include "GUI/Panels/Panel.h"
 
 #include "Renderer/Texture2D.h"
 #include "Project/Project.h"

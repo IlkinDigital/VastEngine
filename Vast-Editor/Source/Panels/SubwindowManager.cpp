@@ -20,7 +20,6 @@ namespace Vast {
 			if ((*it).Subwindow->GetUUID() == sw->GetUUID())
 			{
 				(*it).Subwindow->Close();
-				VAST_CORE_INFO("Removed '{0}' subwindow", (*it).Subwindow->GetName());
 				it = m_SubwindowStack.erase(it);
 				break;
 			}
@@ -48,6 +47,7 @@ namespace Vast {
 			if (!sw.Subwindow->IsOpen())
 			{
 				sw.Subwindow->Close();
+				VAST_ERROR("Removed '{0}' subwindow", (*it).Subwindow->GetName());
 				it = m_SubwindowStack.erase(it);
 			}
 			else
