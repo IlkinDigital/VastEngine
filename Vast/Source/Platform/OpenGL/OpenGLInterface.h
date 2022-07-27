@@ -12,6 +12,8 @@ namespace Vast {
 		virtual void Init() override;
 
 		virtual void SetViewport(int32 x, int32 y, uint32 width, uint32 height) override;
+
+		virtual void SetDepthMask(bool flag) const override;
 		
 		virtual void SetClearColor(const Vector4& color) override;
 		virtual Vector4 GetClearColor() const override;

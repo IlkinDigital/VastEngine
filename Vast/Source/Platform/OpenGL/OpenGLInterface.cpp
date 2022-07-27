@@ -31,6 +31,13 @@ namespace Vast {
 		glViewport((GLint)x, (GLint)y, (GLsizei)width, (GLsizei)height);
 	}
 
+	void OpenGLInterface::SetDepthMask(bool flag) const
+	{
+		OPTICK_EVENT();
+
+		glDepthMask(flag);
+	}
+
 	void OpenGLInterface::SetClearColor(const Vector4& color)
 	{
 		OPTICK_EVENT();

@@ -9,6 +9,11 @@
 
 namespace Vast {
 
+	struct SkyboxVertex
+	{
+		Vector3 Position;
+	};
+
 	struct QuadVertex
 	{
 		Vector3 Position;
@@ -27,6 +32,13 @@ namespace Vast {
 	{
 		static const uint32 MaxTextureSlots = 32;
 
+		Ref<Shader> SkyboxShader;
+		Ref<VertexBuffer> SkyboxVertexBuffer;
+		Ref<VertexArray> SkyboxVertexArray;
+
+		SkyboxVertex SkyboxVertices[8];
+		Vector3 SkyboxVertexPositions[8];
+
 		Ref<VertexBuffer> LineVertexBuffer;
 		Ref<VertexArray> LineVertexArray;
 		Ref<Shader> LineShader;
@@ -44,6 +56,7 @@ namespace Vast {
 
 		SArray<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
 		uint32 TextureSlotIndex = 1; // 0 => white texture
+
 	};
 
 	static RendererData s_Data;
@@ -51,6 +64,51 @@ namespace Vast {
 	void Renderer2D::Init()
 	{
 		OPTICK_EVENT();
+
+		/**
+		* Syboxes
+		*/
+		{
+			uint32 indices[]
+			{
+				1, 2, 6,
+				6, 5, 1,
+
+				0, 4, 7,
+				7, 3, 0,
+
+				4, 5, 6,
+				6, 7, 4,
+				
+				0, 3, 2,
+				2, 1, 0,
+				
+				0, 1, 5,
+				5, 4, 0,
+				
+				3, 7, 6,
+				6, 2, 3
+			};
+
+			s_Data.SkyboxVertexPositions[0] = { -1.0f, -1.0f,  1.0f };
+			s_Data.SkyboxVertexPositions[1] = {  1.0f, -1.0f,  1.0f };
+			s_Data.SkyboxVertexPositions[2] = {  1.0f, -1.0f, -1.0f };
+			s_Data.SkyboxVertexPositions[3] = { -1.0f, -1.0f, -1.0f };
+			s_Data.SkyboxVertexPositions[4] = { -1.0f,  1.0f,  1.0f };
+			s_Data.SkyboxVertexPositions[5] = {  1.0f,  1.0f,  1.0f };
+			s_Data.SkyboxVertexPositions[6] = {  1.0f,  1.0f, -1.0f };
+			s_Data.SkyboxVertexPositions[7] = { -1.0f,  1.0f, -1.0f };
+
+			s_Data.SkyboxVertexArray = VertexArray::Create();
+			s_Data.SkyboxVertexBuffer = VertexBuffer::Create(8 * sizeof(SkyboxVertex));
+
+			s_Data.SkyboxVertexBuffer->SetLayout({
+				{ ShaderDataType::Float3, "a_Pos" }
+			});
+
+			s_Data.SkyboxVertexArray->AddVertexBuffer(s_Data.SkyboxVertexBuffer);
+			s_Data.SkyboxVertexArray->SetIndexBuffer(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32)));
+		}
 
 		/**
 		* Quads
@@ -113,6 +171,7 @@ namespace Vast {
 
 		s_Data.QuadShader = Shader::Create("Resources/Shaders/Renderer2D-Quad.glsl");
 		s_Data.LineShader = Shader::Create("Resources/Shaders/Renderer2D-Line.glsl");
+		s_Data.SkyboxShader = Shader::Create("Resources/Shaders/Skybox.glsl");
 	}
 
 	void Renderer2D::BeginScene(const Camera& camera, const Mat4& transform)
@@ -124,6 +183,8 @@ namespace Vast {
 		s_Data.QuadShader->UploadMat4("u_ViewProjection", viewProj);
 		s_Data.LineShader->Bind();
 		s_Data.LineShader->UploadMat4("u_ViewProjection", viewProj);
+		s_Data.SkyboxShader->Bind();
+		s_Data.SkyboxShader->UploadMat4("u_ViewProjection", viewProj);
 	}
 
 	void Renderer2D::BeginScene(const EditorCamera& camera)
@@ -132,12 +193,41 @@ namespace Vast {
 
 		s_Data.QuadShader->Bind();
 		s_Data.QuadShader->UploadMat4("u_ViewProjection", camera.GetViewProjection());
+
 		s_Data.LineShader->Bind();
 		s_Data.LineShader->UploadMat4("u_ViewProjection", camera.GetViewProjection());
+
+		s_Data.SkyboxShader->Bind();
+		Mat4 sbView = camera.GetViewMatrix();
+		Mat4 sbProj = camera.GetProjection();
+		sbView[3][0] = 0.0f;
+		sbView[3][1] = 0.0f;
+		sbView[3][2] = 0.0f;
+		s_Data.SkyboxShader->UploadMat4("u_ViewProjection", sbProj * sbView);
 	}
 
 	void Renderer2D::EndScene()
 	{
+	}
+
+	void Renderer2D::DrawSkybox(const Ref<Cubemap>& cubemap)
+	{
+		RendererCommand::SetDepthMask(false);
+
+		for (int i = 0; i < 8; i++)
+		{
+			s_Data.SkyboxVertices[i].Position = s_Data.SkyboxVertexPositions[i];
+		}
+
+		s_Data.SkyboxVertexBuffer->SetVertexData(s_Data.SkyboxVertices, 8 * sizeof(SkyboxVertex));
+
+		cubemap->Bind();
+
+		s_Data.SkyboxShader->Bind();
+		s_Data.SkyboxVertexArray->Bind();
+		RendererCommand::DrawIndexed(s_Data.SkyboxVertexArray->GetIndexBuffer()->GetIndexCount());
+		
+		RendererCommand::SetDepthMask(true);
 	}
 
 	void Renderer2D::DrawQuad(const Mat4& transform, const Vector4& color)

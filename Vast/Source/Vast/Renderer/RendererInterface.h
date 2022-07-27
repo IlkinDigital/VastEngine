@@ -13,6 +13,8 @@ namespace Vast {
 
 		virtual void SetViewport(int32 x, int32 y, uint32 width, uint32 height) = 0;
 
+		virtual void SetDepthMask(bool flag) const = 0;
+
 		virtual void SetClearColor(const Vector4& color) = 0;
 		virtual Vector4 GetClearColor() const = 0;
 

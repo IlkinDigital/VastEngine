@@ -3,6 +3,7 @@
 #include "Camera/Camera.h"
 #include "Camera/EditorCamera.h"
 #include "Texture2D.h"
+#include "Cubemap.h"
 
 namespace Vast {
 
@@ -14,6 +15,8 @@ namespace Vast {
 		static void BeginScene(const Camera& camera, const Mat4& transform);
 		static void BeginScene(const EditorCamera& camera);
 		static void EndScene();
+
+		static void DrawSkybox(const Ref<Cubemap>& cubemap);
 
 		static void DrawQuad(const Mat4& transform, const Vector4& color);
 		static void DrawQuad(const Mat4& transform, const Ref<Texture2D>& texture);

@@ -35,6 +35,7 @@ namespace Vast {
 	EditorLayer* EditorLayer::s_Instance = nullptr;
 
 	static FrameTime s_FrameTime(100);
+	static Ref<Cubemap> s_Skybox;
 
 	void EditorLayer::OnAttach()
 	{
@@ -64,6 +65,8 @@ namespace Vast {
 
 		assetManager->SetProject(m_Project);
 		assetManager->Init();
+		
+		s_Skybox = Cubemap::Create("Resources/Cubemap/right.png", "Resources/Cubemap/left.png", "Resources/Cubemap/top.png", "Resources/Cubemap/bottom.png", "Resources/Cubemap/front.png", "Resources/Cubemap/back.png");
 	}
 
 
@@ -82,6 +85,8 @@ namespace Vast {
 		}
 
 		m_SceneRenderer.Begin();
+
+		Renderer2D::DrawSkybox(s_Skybox);
 
 		switch (m_SceneState)
 		{

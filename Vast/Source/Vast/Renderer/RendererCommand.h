@@ -27,6 +27,11 @@ namespace Vast {
 			s_Interface->SetClearColor(color);
 		}
 
+		static void SetDepthMask(bool flag)
+		{
+			s_Interface->SetDepthMask(flag);
+		}
+
 		static void DrawIndexed(uint32 indexCount)
 		{
 			s_Interface->DrawIndexed(indexCount);
