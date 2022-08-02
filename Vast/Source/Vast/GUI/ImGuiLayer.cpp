@@ -33,7 +33,7 @@ namespace Vast {
 		FontManager::UploadFont("Assets/Fonts/Rubik/Rubik-Bold.ttf", FontWeight::Bold);
 		FontManager::UploadFont("Assets/Fonts/Rubik/Rubik-Light.ttf", FontWeight::Light);
 
-		FontManager::SetDefault(FontWeight::Regular);
+		FontManager::SetDefault(FontSize::Medium, FontWeight::Regular);
 
 		// Setup Dear ImGui style
 		//ImGui::StyleColorsDark();

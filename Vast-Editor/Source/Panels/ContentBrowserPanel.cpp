@@ -79,7 +79,7 @@ namespace Vast {
 
 		if (m_CurrentPath != m_Project->GetContentFolderPath())
 		{
-			ImGui::PushFont(FontManager::GetFont(FontWeight::Bold));
+			ImGui::PushFont(FontManager::GetFont(FontSize::Medium, FontWeight::Bold));
 			if (ImGui::Button("<--"))
 				m_CurrentPath = m_CurrentPath.parent_path();
 			ImGui::PopFont();
@@ -142,12 +142,15 @@ namespace Vast {
 					FileIO::Relative(p.path(), m_Project->GetContentFolderPath()).replace_extension("")
 				);
 
+				ImVec2 frameSize = { thumbnailSize, thumbnailSize * 0.6f };
+
 				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
 				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, 0.0f });
+				ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 10.0f);
 				
 				ImGui::PushID(path.c_str());
 
-				ImGui::BeginChild(assetButtonID++, { thumbnailSize, thumbnailSize + 100 }, true);
+				ImGui::BeginChild(assetButtonID++, { thumbnailSize, thumbnailSize + frameSize.y }, true);
 				ImVec2 buttonStart = ImGui::GetCursorPos();
 
 				Filepath relative = FileIO::Relative(p.path(), m_Project->GetContentFolderPath());
@@ -157,9 +160,7 @@ namespace Vast {
 				if (asset->GetType() == AssetType::Texture2D)
 				{
 					Ref<Texture2D> tex = RefCast<Texture2DAsset>(m_Project->GetAssetManager()->GetAsset(relative))->GetTexture();
-					float width = thumbnailSize;
-					float height = tex->GetHeight() * (thumbnailSize / tex->GetWidth());
-					ImGui::Image((ImTextureID)tex->GetRendererID(), { width, height }, { 0, 1 }, { 1, 0 });
+					ImGui::Image((ImTextureID)tex->GetRendererID(), { thumbnailSize, thumbnailSize}, { 0, 1 }, { 1, 0 });
 				}
 				else
 				{
@@ -170,34 +171,41 @@ namespace Vast {
 
 				// Frame
 				auto framePos = ImGui::GetCursorScreenPos();
-				ImGui::Dummy({20, 5});
+				ImGui::Dummy({ 20, 2.0f });
 				ImDrawList* drawList = ImGui::GetWindowDrawList();
-				drawList->AddRectFilled(framePos, ImVec2(framePos.x + thumbnailSize, framePos.y + 100), IM_COL32(75, 75, 75, 255), 0.1f);
+				drawList->AddRectFilled(framePos, 
+					ImVec2(framePos.x + frameSize.x, framePos.y + frameSize.y), IM_COL32(75, 75, 75, 255), 
+					19.0f, ImDrawFlags_RoundCornersBottom);
 
 				drawName = true;
+
+				auto spacing = ImGui::GetStyle().ItemSpacing;
+				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 4.0f, spacing.y });
 
 				ImGui::Dummy({ 0.0f, 0 });
 				ImGui::SameLine();
 				ImGui::Text(filename.c_str());
 
-				ImGui::Dummy({ 20, 40 });
+				ImGui::Dummy({ 20, frameSize.y - FontManager::ScalarSize(FontSize::Small) - FontManager::ScalarSize(FontSize::Medium) - 23.0f});
 
-				ImGui::PushFont(FontManager::GetFont(FontWeight::Bold));
+				ImGui::PushFont(FontManager::GetFont(FontSize::Small, FontWeight::Bold));
 				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 90));
 
 				ImGui::Dummy({ 0.0f, 0 });
 				ImGui::SameLine();
 				ImGui::Text(ToAssetName(asset->GetType()));
-
+				
 				ImGui::PopStyleColor();
 				ImGui::PopFont();
 
+				ImGui::PopStyleVar();
+
 				ImGui::PushStyleColor(ImGuiCol_Button, { 0.0f, 0.0f, 0.0f, 0.0f });
-				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.0f, 0.0f, 0.0f, 0.2f });
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.0f, 0.0f, 0.0f, 0.4f });
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 1.0f, 1.0f, 1.0f, 0.1f });
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 1.0f, 1.0f, 1.0f, 0.2f });
 				ImGui::SetCursorPos(buttonStart);
 				
-				ImGui::Button("##btn", { thumbnailSize, thumbnailSize + 100 });
+				ImGui::Button("##btn", { thumbnailSize, thumbnailSize + frameSize.y });
 				
 				ImGui::PopStyleColor(3);
 
@@ -220,7 +228,7 @@ namespace Vast {
 				}
 				
 				ImGui::EndChild();
-				ImGui::PopStyleVar(2);
+				ImGui::PopStyleVar(3);
 				ImGui::PopID();
 
 				ImGui::Dummy({ 0, padding * 3.0f });
