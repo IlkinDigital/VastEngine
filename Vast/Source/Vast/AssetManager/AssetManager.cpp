@@ -89,6 +89,25 @@ namespace Vast {
 		}
 	}
 
+	Ref<BoardSpriteAsset> AssetManager::FindAsset(const Ref<Board2D::Sprite>& sprite)
+	{
+		OPTICK_EVENT();
+
+		for (const auto& pair : m_AssetMap)
+		{
+			const Ref<Asset>& asset = pair.second;
+
+			if (asset->GetType() == AssetType::BoardSprite)
+			{
+				auto bsa = RefCast<BoardSpriteAsset>(asset);
+				if (bsa->GetSprite().get() == sprite.get())
+					return bsa;
+			}
+		}
+
+		return nullptr;
+	}
+
 	void AssetManager::IterateAndAddAssets(const Filepath& start, AssetQueue& queue)
 	{
 		for (auto& p : std::filesystem::directory_iterator(start))

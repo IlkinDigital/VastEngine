@@ -261,6 +261,11 @@ namespace Vast {
 
 	void Renderer2D::DrawQuad(const Mat4& transform, const Ref<Texture2D>& texture)
 	{
+		DrawQuad(transform, texture, {{ {0.0f, 0.0f}, {1.0f, 1.0f} }});
+	}
+
+	void Renderer2D::DrawQuad(const Mat4& transform, const Ref<Texture2D>& texture, const SArray<Vector2, 2>& uvCoords)
+	{
 		OPTICK_EVENT();
 
 		texture->Bind();
@@ -269,19 +274,19 @@ namespace Vast {
 
 		s_Data.QuadVertices[0].Position = transform * s_Data.QuadVertexPositions[0];
 		s_Data.QuadVertices[0].Color = color;
-		s_Data.QuadVertices[0].TextureCoords = { 0.0f, 0.0f };
+		s_Data.QuadVertices[0].TextureCoords = uvCoords[0];
 
 		s_Data.QuadVertices[1].Position = transform * s_Data.QuadVertexPositions[1];
 		s_Data.QuadVertices[1].Color = color;
-		s_Data.QuadVertices[1].TextureCoords = { 1.0f, 0.0f };
+		s_Data.QuadVertices[1].TextureCoords = { uvCoords[1].x, uvCoords[0].y };
 
 		s_Data.QuadVertices[2].Position = transform * s_Data.QuadVertexPositions[2];
 		s_Data.QuadVertices[2].Color = color;
-		s_Data.QuadVertices[2].TextureCoords = { 1.0f, 1.0f };
+		s_Data.QuadVertices[2].TextureCoords = uvCoords[1];
 
 		s_Data.QuadVertices[3].Position = transform * s_Data.QuadVertexPositions[3];
 		s_Data.QuadVertices[3].Color = color;
-		s_Data.QuadVertices[3].TextureCoords = { 0.0f, 1.0f };
+		s_Data.QuadVertices[3].TextureCoords = { uvCoords[0].x, uvCoords[1].y };
 
 		s_Data.QuadVertexBuffer->SetVertexData(s_Data.QuadVertices, 4 * sizeof(QuadVertex));
 

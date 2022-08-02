@@ -6,7 +6,7 @@
 
 namespace Vast {
 
-	struct SpriteComponent : public RenderComponent
+	struct SpriteComponent : public BoardRenderComponent
 	{
 		Ref<BoardFlipbookAsset> Flipbook;
 

@@ -65,7 +65,7 @@ namespace Vast {
 				{
 					sc.Flipbook->GetFlipbook()->Update(ts);
 					if (sc.Flipbook->GetFlipbook()->IsValid())
-						sc.Texture = sc.Flipbook->GetFlipbook()->GetCurrentTexture();
+						sc.Sprite = sc.Flipbook->GetFlipbook()->GetCurrentFrame();
 				}
 			});
 	}
@@ -215,6 +215,7 @@ namespace Vast {
 		CopyComponentIfExists<TransformComponent>(newEntity, entity);
 		CopyComponentIfExists<CameraComponent>(newEntity, entity);
 		CopyComponentIfExists<RenderComponent>(newEntity, entity);
+		CopyComponentIfExists<BoardRenderComponent>(newEntity, entity);
 		CopyComponentIfExists<NativeScriptComponent>(newEntity, entity);
 		CopyComponentIfExists<SpriteComponent>(newEntity, entity);
 	}
@@ -242,6 +243,7 @@ namespace Vast {
 		CopyComponent<TransformComponent>(dstRegistry, srcRegistry, enttMap);
 		CopyComponent<CameraComponent>(dstRegistry, srcRegistry, enttMap);
 		CopyComponent<RenderComponent>(dstRegistry, srcRegistry, enttMap);
+		CopyComponent<BoardRenderComponent>(dstRegistry, srcRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(dstRegistry, srcRegistry, enttMap);
 		CopyComponent<SpriteComponent>(dstRegistry, srcRegistry, enttMap);
 
@@ -251,20 +253,21 @@ namespace Vast {
 	struct RenderableEntity
 	{
 		TransformComponent TC;
-		RenderComponent RC;
+		RenderObject* RO;
 	};
 
 	void Scene::RenderScene(Timestep ts)
 	{
 		OPTICK_EVENT();
 
-		auto group = m_Registry.view<TransformComponent, RenderComponent>();
 		DArray<RenderableEntity> renderables;
+
+		auto group = m_Registry.view<TransformComponent, RenderComponent>();
 		for (auto entity : group)
 		{
 			auto& transform = group.get<TransformComponent>(entity);
 			auto& renderable = group.get<RenderComponent>(entity);
-			renderables.emplace_back(RenderableEntity({ transform, renderable }));
+			renderables.emplace_back(RenderableEntity({ transform, &renderable }));
 		}
 
 		auto sprites = m_Registry.view<TransformComponent, SpriteComponent>();
@@ -272,7 +275,16 @@ namespace Vast {
 		{
 			auto& transform = sprites.get<TransformComponent>(entity);
 			auto& sprite = m_Registry.get<SpriteComponent>(entity);
-			renderables.emplace_back(RenderableEntity({ transform, (RenderComponent)sprite }));
+			renderables.emplace_back(RenderableEntity({ transform, &sprite }));
+		}
+
+		auto boardSprites = m_Registry.view<TransformComponent, BoardRenderComponent>();
+		for (auto entity : boardSprites)
+		{
+			auto& transform = boardSprites.get<TransformComponent>(entity);
+			auto& sprite = boardSprites.get<BoardRenderComponent>(entity);
+			if (sprite.Sprite)
+				renderables.emplace_back(RenderableEntity({ transform, &sprite }));
 		}
 
 		std::sort(renderables.begin(), renderables.end(), [&](RenderableEntity& p1, RenderableEntity& p2)
@@ -282,10 +294,11 @@ namespace Vast {
 
 		for (auto& item : renderables)
 		{
-			if (item.RC.Texture)
-				Renderer2D::DrawQuad(item.TC.Transform(), item.RC.Texture);
+			auto texture = item.RO->GetTexture();
+			if (texture)
+				Renderer2D::DrawQuad(item.TC.Transform(), texture, item.RO->GetTextureCoords());
 			else
-				Renderer2D::DrawQuad(item.TC.Transform(), item.RC.Color);
+				Renderer2D::DrawQuad(item.TC.Transform(), item.RO->GetColor());
 		}
 
 		/**

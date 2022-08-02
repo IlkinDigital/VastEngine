@@ -15,146 +15,18 @@ namespace Vast {
 
 	void SceneSerializer::Serialize(const Filepath& filepath)
 	{
-		OPTICK_EVENT();
-
-		YAML::Emitter out;
-
-		out << YAML::BeginMap;
-		out << YAML::Key << "Scene" << YAML::Value << "Untitled";
-		out << YAML::Key << "Entities" << YAML::Value << YAML::BeginSeq;
-
-		m_Scene->GetRegistry().each([&](auto entityID)
-			{
-				Entity entity(entityID, m_Scene.get());
-				if (!entity.IsValid())
-				{
-					VAST_CORE_ASSERT(false, "Failed to serialize scene: Invalid entity");
-					return;
-				}
-
-				SerializeEntity(out, entity);
-			});
-
-		out << YAML::EndSeq;
-		out << YAML::EndMap;
-
 		std::ofstream fs(filepath);
-		fs << out.c_str();
+		fs << Serialize();
 	}
 
 	bool SceneSerializer::Deserialize(const Filepath& filepath)
 	{
-		OPTICK_EVENT();
-
 		std::ifstream fs(filepath);
-		StringStream strStream;
-		strStream << fs.rdbuf();
+		fs.open(filepath);
+		StringStream ss;
+		ss << fs.rdbuf();
 
-		YAML::Node data = YAML::Load(strStream.str());
-		if (!data["Scene"])
-			return false;
-
-		String sceneName = data["Scene"].as<String>();
-		VAST_CORE_TRACE("Deserializing scene: {0}", sceneName);
-
-		auto entities = data["Entities"];
-		if (entities)
-		{
-			for (auto entity : entities)
-			{
-				/**
-				* UUID Component
-				*/
-
-				UUID uuid(entity["Entity"].as<uint64>());
-
-				/**
-				* Tag Component
-				*/
-
-				String tag;
-				auto tagComponent = entity["TagComponent"];
-				if (tagComponent)
-					tag = tagComponent["Tag"].as<String>();
-
-				VAST_CORE_TRACE("Deserializing entity with UUID = {0}, Tag = {1}", uuid, tag);
-
-				Entity deserializedEntity = m_Scene->CreateEntity(uuid, tag);
-
-				/**
-				* Transform Component
-				*/
-				auto transformComponent = entity["TransformComponent"];
-				if (transformComponent)
-				{
-					auto& tc = deserializedEntity.GetComponent<TransformComponent>();
-					tc.Translation = transformComponent["Translation"].as<Vector3>();
-					tc.Rotation = transformComponent["Rotation"].as<Vector3>();
-					tc.Scale = transformComponent["Scale"].as<Vector3>();
-				}
-
-				/**
-				* Camera Component
-				*/
-				auto cameraComponent = entity["CameraComponent"];
-				if (cameraComponent)
-				{
-					auto& cc = deserializedEntity.AddComponent<CameraComponent>();
-					
-					auto cameraProps = cameraComponent["Camera"];
-					cc.Camera.SetProjectionType((SceneCamera::ProjectionType)cameraProps["ProjectionType"].as<int>());
-
-					cc.Camera.SetPerspectiveFOV(cameraProps["PerspectiveFOV"].as<float>());
-					cc.Camera.SetPerspectiveNearClip(cameraProps["PerspectiveNear"].as<float>());
-					cc.Camera.SetPerspectiveFarClip(cameraProps["PerspectiveFar"].as<float>());
-
-					cc.Camera.SetOrthographicSize(cameraProps["OrthographicSize"].as<float>());
-					cc.Camera.SetOrthographicNearClip(cameraProps["OrthographicNear"].as<float>());
-					cc.Camera.SetOrthographicFarClip(cameraProps["OrthographicFar"].as<float>());
-
-					cc.Primary = cameraComponent["Primary"].as<bool>();
-				}
-
-				/**
-				* Render Component
-				*/
-				auto renderComponent = entity["RenderComponent"];
-				if (renderComponent)
-				{
-					auto& rc = deserializedEntity.AddComponent<RenderComponent>();
-
-					rc.Color = renderComponent["Color"].as<Vector4>();
-					
-					Filepath path = renderComponent["Texture"].as<String>();
-					if (path != "")
-					{
-						if (path.is_absolute())
-						{
-							rc.Texture = Texture2D::Create(path);
-						}
-						else
-						{
-							rc.Texture = RefCast<Texture2DAsset>(AssetManager::Get()->GetAsset(path))->GetTexture();
-						}
-					}
-				}
-
-				/**
-				* Native Script Component
-				*/
-				auto nscriptComponent = entity["NativeScriptComponent"];
-				if (nscriptComponent)
-				{
-					auto nsc = ScriptEngine::Get()->GetScriptBuffer().FindByName(nscriptComponent["Name"].as<String>());
-					if (nsc.Instance)
-					{
-						deserializedEntity.AddComponent<NativeScriptComponent>(nsc);
-					}
-				}
-			}
-		}
-
-		return true;
+		return Deserialize(ss.str());
 	}
 
 	String SceneSerializer::Serialize()
@@ -281,6 +153,25 @@ namespace Vast {
 				}
 
 				/**
+				* Board Render Component
+				*/
+				auto boardRenderComponent = entity["BoardRenderComponent"];
+				if (boardRenderComponent)
+				{
+					auto& brc = deserializedEntity.AddComponent<BoardRenderComponent>();
+
+					brc.Color = boardRenderComponent["Color"].as<Vector4>();
+
+					Filepath path = boardRenderComponent["Sprite"].as<String>();
+					if (path != "")
+					{
+						const auto& asset = AssetManager::Get()->GetAsset(path);
+						if (asset->GetType() == AssetType::BoardSprite)
+							brc.Sprite = RefCast<BoardSpriteAsset>(asset)->GetSprite();
+					}
+				}
+
+				/**
 				* Sprite Component
 				*/
 				auto spriteComponent = entity["SpriteComponent"];
@@ -363,6 +254,17 @@ namespace Vast {
 				else
 					out << YAML::Key << "Texture" << YAML::Value << "";
 			});
+
+		SerializeComponent<BoardRenderComponent>(out, "BoardRenderComponent", entity, [&](BoardRenderComponent& brc)
+			{
+				out << YAML::Key << "Color" << YAML::Value << brc.Color;
+				if (brc.Sprite)
+				{
+					out << YAML::Key << "Sprite" << YAML::Value << AssetManager::Get()->FindAsset(brc.Sprite)->GetPath().string();
+				}
+				else
+					out << YAML::Key << "Sprite" << YAML::Value << "";
+ 			});
 
 		SerializeComponent<SpriteComponent>(out, "SpriteComponent", entity, [&](SpriteComponent& sc)
 			{

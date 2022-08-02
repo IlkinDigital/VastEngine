@@ -11,6 +11,8 @@ namespace Vast {
 		AssetImporter(const Ref<Project>& project)
 			: m_Project(project) {}
 
+		Ref<BoardSpriteSheetAsset> CreateSpriteSheet(const Ref<Texture2DAsset>& texture, const Filepath& toPath);
+
 		Ref<Texture2DAsset> ImportTexture(const Filepath& imagePath, const Filepath& toPath);
 		void ExportTexture(const Ref<Texture2DAsset>& asset, const Filepath& toPath);
 	private:

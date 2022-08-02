@@ -27,7 +27,7 @@ namespace Vast {
 		m_EditorCamera.SetPitch(-0.2975f);
 
 		m_CurrentFrame = m_Scene->CreateEntity("Sprite");
-		m_CurrentFrame.AddComponent<RenderComponent>();
+		m_CurrentFrame.AddComponent<BoardRenderComponent>();
 		auto& ftc = m_CurrentFrame.GetComponent<TransformComponent>();
 		ftc.Translation.y = 0.5f;
 
@@ -51,11 +51,11 @@ namespace Vast {
 		if (m_Flipbook->GetFlipbook()->IsValid())
 		{
 			m_Flipbook->GetFlipbook()->Update(ts);
-			m_CurrentFrame.AddOrReplaceComponent<RenderComponent>().Texture = m_Flipbook->GetFlipbook()->GetCurrentTexture();
+			m_CurrentFrame.AddOrReplaceComponent<BoardRenderComponent>().Sprite = m_Flipbook->GetFlipbook()->GetCurrentFrame();
 		}
 		else
 		{
-			m_CurrentFrame.RemoveComponent<RenderComponent>();
+			m_CurrentFrame.RemoveComponent<BoardRenderComponent>();
 		}
 
 		auto spec = m_SceneRenderer.GetFramebuffer()->GetSpecification();
@@ -182,10 +182,14 @@ namespace Vast {
 			accumWidth += size.x + style.ItemSpacing.x * 2.0f;
 			ImGui::Text("%d", i);
 
+			auto uvs = frame.Sprite->GetUVCoords();
+			ImVec2 uv0 = { uvs[0].x, uvs[0].y };
+			ImVec2 uv1 = { uvs[1].x, uvs[1].y };
+
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.7f, 0.7f, 0.7f, 0.4f });
 			ImGui::PushStyleColor(ImGuiCol_Button, { 1.0f, 1.0f, 1.0f, 0.0f });
-			ImGui::ImageButton((ImTextureID)frame.Texture->GetRendererID(),
-				{ size.x, size.y }, { 0, 1 }, { 1, 0 });
+			ImGui::ImageButton((ImTextureID)frame.Sprite->GetTexture()->GetRendererID(),
+				{ size.x, size.y }, uv0, uv1);
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
 				m_Flipbook->RemoveKeyFrame(--i);
@@ -206,17 +210,16 @@ namespace Vast {
 
 		if (ImGui::BeginDragDropTarget())
 		{
-			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(Texture2DAsset::GetStaticTypeName()))
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(BoardSpriteAsset::GetStaticTypeName()))
 			{
-				Texture2DAsset* asset = (Texture2DAsset*)payload->Data;
-				if (asset && asset->GetTexture())
+				BoardSpriteAsset* asset = (BoardSpriteAsset*)payload->Data;
+				if (asset && asset->GetSprite())
 				{
-					Ref<Texture2DAsset> ta = RefCast<Texture2DAsset>(AssetManager::Get()->GetAsset(asset->GetPath()));
-					m_Flipbook->PushKeyFrame({ ta->GetTexture()});
+					m_Flipbook->PushKeyFrame({ asset->GetSprite() });
 				}
 				else
 				{
-					VAST_ERROR("Invalid Texture2DAsset payload");
+					VAST_ERROR("Invalid BoardSpriteAsset payload");
 				}
 			}
 			ImGui::EndDragDropTarget();

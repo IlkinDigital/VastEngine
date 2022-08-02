@@ -13,6 +13,30 @@
 
 namespace YAML {
 
+	// yaml-cpp's to Vector2 conversion
+	template<>
+	struct convert<Vast::Vector2>
+	{
+		static Node encode(const Vast::Vector2& rhs)
+		{
+			Node node;
+			node.push_back(rhs.x);
+			node.push_back(rhs.y);
+			return node;
+		}
+
+		static bool decode(const Node& node, Vast::Vector2& rhs)
+		{
+			if (!node.IsSequence() || node.size() != 2)
+				return false;
+
+			rhs.x = node[0].as<float>();
+			rhs.y = node[1].as<float>();
+
+			return true;
+		}
+	};
+
 	// yaml-cpp's to Vector3 conversion
 	template<>
 	struct convert<Vast::Vector3>
@@ -70,6 +94,8 @@ namespace YAML {
 }
 
 namespace Vast {
+
+	YAML::Emitter& operator << (YAML::Emitter& out, const Vector2& data);
 
 	YAML::Emitter& operator << (YAML::Emitter& out, const Vector3& data);
 	

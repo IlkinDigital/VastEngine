@@ -33,6 +33,12 @@ namespace Vast {
 		String SerializeScene();
 		bool DeserializeScene(const String& source);
 
+		String SerializeBoardSpriteSheet();
+		bool DeserializeBoardSpriteSheet(const String& source);
+
+		String SerializeBoardSprite();
+		bool DeserializeBoardSprite(const String& source);
+
 		String SerializeBoardFlipbook();
 		bool DeserializeBoardFlipbook(const String& source);
 	private:

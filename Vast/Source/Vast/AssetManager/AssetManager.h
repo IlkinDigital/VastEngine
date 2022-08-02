@@ -3,6 +3,8 @@
 #include "Asset.h"
 #include "AssetQueue.h"
 
+#include "AssetTypes.h"
+
 namespace Vast {
 
 	class Project;
@@ -27,6 +29,11 @@ namespace Vast {
 		bool Exists(const Filepath& path) const;
 
 		void Init();
+
+		/*
+		* Asset specific logic
+		*/
+		Ref<BoardSpriteAsset> FindAsset(const Ref<Board2D::Sprite>& sprite);
 
 		static void Set(const Ref<AssetManager>& instance) { s_Instance = instance; }
 		static const Ref<AssetManager>& Get() { return s_Instance; }

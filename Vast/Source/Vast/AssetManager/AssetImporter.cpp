@@ -6,6 +6,20 @@
 
 namespace Vast {
 
+    Ref<BoardSpriteSheetAsset> AssetImporter::CreateSpriteSheet(const Ref<Texture2DAsset>& texture, const Filepath& toPath)
+    {
+        auto newTexAsset = RefCast<Texture2DAsset>(texture->Clone());
+        auto bssa = CreateRef<BoardSpriteSheetAsset>(toPath.filename().stem().string(), toPath, UUID());
+        bssa->SetTextureAsset(newTexAsset);
+        bssa->SetSpriteSheet(CreateRef<Board2D::SpriteSheet>(newTexAsset->GetTexture()));
+
+        AssetSerializer as(m_Project, bssa);
+        as.Serialize();
+        as.Deserialize(bssa->GetPath());
+
+        return RefCast<BoardSpriteSheetAsset>(as.GetAsset());
+    }
+
     Ref<Texture2DAsset> AssetImporter::ImportTexture(const Filepath& imagePath, const Filepath& toPath)
     {
         OPTICK_EVENT();

@@ -14,6 +14,25 @@
 
 namespace Vast {
 
+	static const char* ToAssetName(AssetType type)
+	{
+		switch (type)
+		{
+		case AssetType::Texture2D:
+			return "Texture";
+		case AssetType::BoardSprite:
+			return "Board Sprite";
+		case AssetType::BoardSpriteSheet:
+			return "Board Sprite Sheet";
+		case AssetType::BoardFlipbook:
+			return "Board Flipbook";
+		case AssetType::Scene:
+			return "Scene";
+		}
+
+		return "None";
+	}
+
 	void ContentBrowserPanel::RenameAsset(const Filepath& path, const String& newName)
 	{
 		OPTICK_EVENT();
@@ -41,6 +60,7 @@ namespace Vast {
 	{
 		m_FolderIcon = Texture2D::Create("Resources/Icons/FolderIcon.png");
 		m_FileIcon = Texture2D::Create("Resources/Icons/FileIcon.png");
+		m_FrameIcon = Texture2D::Create("Resources/Icons/TestFrame.png");
 	}
 
 	ContentBrowserPanel::ContentBrowserPanel(const Ref<Project>& project)
@@ -49,6 +69,7 @@ namespace Vast {
 		m_CurrentPath = m_Project->GetContentFolderPath();
 		m_FolderIcon = Texture2D::Create("Resources/Icons/FolderIcon.png");
 		m_FileIcon = Texture2D::Create("Resources/Icons/FileIcon.png");
+		m_FrameIcon = Texture2D::Create("Resources/Icons/TestFrame.png");
 	}
 
 	void ContentBrowserPanel::DrawPanel()
@@ -80,8 +101,8 @@ namespace Vast {
 			m_Project->GetAssetManager()->AddAsset(asset);
 		}
 
-		static float padding = 10.0f;
-		static float thumbnailSize = 128.0f;
+		static float padding = 5.0f;
+		static float thumbnailSize = 155.0f;
 		float panelWidth = ImGui::GetContentRegionAvail().x;
 
 		int columnCount = panelWidth / (thumbnailSize + padding);
@@ -90,6 +111,8 @@ namespace Vast {
 
 		ImGui::Columns(columnCount, 0, false);
 
+		//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { ImGui::GetStyle().FramePadding.x, 100 });
+		int assetButtonID = 567;
 		for (auto& p : std::filesystem::directory_iterator(m_CurrentPath))
 		{
 			String path = p.path().string();
@@ -97,23 +120,38 @@ namespace Vast {
 			if (!m_DialogOpen)
 				m_CurrentName = p.path().filename().replace_extension("").string();
 
+			Ref<Asset> asset = CreateRef<Asset>(AssetType::None, "None", "None", 0);
+			auto assetManager = m_Project->GetAssetManager();
+
 			bool drawName = false;
 
 			ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.3, 0.3, 0.3, 1 });
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.3, 0.3, 0.3, 0.2 });
 			if (p.is_directory())
 			{
 				ImGui::ImageButton((ImTextureID)m_FolderIcon->GetRendererID(), { thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 				{
-					m_CurrentPath /= filename;
+					m_CurrentPath /= filename;	
 				}
 
 				drawName = true;
+				ImGui::Text(filename.c_str());
+				ImGui::NextColumn();
 			}
 			else if (p.path().extension() == ".asset")
 			{
+				asset = assetManager->GetAsset(
+					FileIO::Relative(p.path(), m_Project->GetContentFolderPath()).replace_extension("")
+				);
+
+				ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
+				ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { 0.0f, 0.0f });
+				
 				ImGui::PushID(path.c_str());
+
+				ImGui::BeginChild(assetButtonID++, { thumbnailSize, thumbnailSize + 100 }, true);
+				ImVec2 buttonStart = ImGui::GetCursorPos();
 
 				Filepath relative = FileIO::Relative(p.path(), m_Project->GetContentFolderPath());
 				relative.replace_extension("");
@@ -122,15 +160,49 @@ namespace Vast {
 				if (asset->GetType() == AssetType::Texture2D)
 				{
 					Ref<Texture2D> tex = RefCast<Texture2DAsset>(m_Project->GetAssetManager()->GetAsset(relative))->GetTexture();
-					float tot = tex->GetHeight() + tex->GetWidth();
-					ImGui::ImageButton((ImTextureID)tex->GetRendererID(),
-						{ ((float)tex->GetWidth() * 2 / tot) * thumbnailSize, ((float)tex->GetHeight() * 2 / tot) * thumbnailSize }, { 0, 1 }, { 1, 0 });
+					float width = thumbnailSize;
+					float height = tex->GetHeight() * (thumbnailSize / tex->GetWidth());
+					ImGui::Image((ImTextureID)tex->GetRendererID(), { width, height }, { 0, 1 }, { 1, 0 });
 				}
 				else
 				{
-					ImGui::ImageButton((ImTextureID)m_FileIcon->GetRendererID(), 
+					ImGui::Image((ImTextureID)m_FileIcon->GetRendererID(), 
 						{ thumbnailSize, thumbnailSize }, { 0, 1 }, { 1, 0 });
 				}
+
+
+				// Frame
+				auto framePos = ImGui::GetCursorScreenPos();
+				ImGui::Dummy({20, 5});
+				ImDrawList* drawList = ImGui::GetWindowDrawList();
+				drawList->AddRectFilled(framePos, ImVec2(framePos.x + thumbnailSize, framePos.y + 100), IM_COL32(75, 75, 75, 255), 0.1f);
+
+				drawName = true;
+
+				ImGui::Dummy({ 1, 0 });
+				ImGui::SameLine();
+				ImGui::Text(filename.c_str());
+
+				ImGui::Dummy({ 20, 40 });
+
+				ImGui::PushFont(FontManager::GetFont(FontManager::WeightType::Bold));
+				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 90));
+
+				ImGui::Dummy({ 1, 0 });
+				ImGui::SameLine();
+				ImGui::Text(ToAssetName(asset->GetType()));
+
+				ImGui::PopStyleColor();
+				ImGui::PopFont();
+
+				ImGui::PushStyleColor(ImGuiCol_Button, { 0.0f, 0.0f, 0.0f, 0.0f });
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.0f, 0.0f, 0.0f, 0.2f });
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.0f, 0.0f, 0.0f, 0.2f });
+				ImGui::SetCursorPos(buttonStart);
+				
+				ImGui::Button("##btn", { thumbnailSize, thumbnailSize + 100 });
+				
+				ImGui::PopStyleColor(3);
 
 				// If .asset file is double clicked
 				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
@@ -144,15 +216,18 @@ namespace Vast {
 				}
 
 				// Drag and Drop payload
-				if (ImGui::BeginDragDropSource())
+				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
 				{
 					ImGui::SetDragDropPayload(asset->GetTypeName(), asset.get(), sizeof(*asset.get()));
 					ImGui::EndDragDropSource();
 				}
-
+				
+				ImGui::EndChild();
+				ImGui::PopStyleVar(2);
 				ImGui::PopID();
 
-				drawName = true;
+				ImGui::Dummy({ 0, padding * 3.0f });
+				ImGui::NextColumn();
 			}
 			
 			ImGui::PopStyleColor(2);
@@ -169,15 +244,19 @@ namespace Vast {
 				}
 				if (ImGui::MenuItem("Delete"))
 				{
-					auto& assetManager = m_Project->GetAssetManager();
-					auto asset = assetManager->GetAsset(
-						FileIO::Relative(p.path(), m_Project->GetContentFolderPath()).replace_extension("")
-					);
 					if (asset->GetType() != AssetType::None)
 						assetManager->RemoveAsset(asset);
 
 					std::filesystem::remove(p.path());
 				}
+				if (asset->GetType() == AssetType::Texture2D && ImGui::MenuItem("Create Sprite Sheet"))
+				{
+					AssetImporter ai(m_Project);
+					Filepath ss = asset->GetPath();
+					ss.replace_filename("SpriteSheetYay");
+					m_Project->GetAssetManager()->AddAsset(ai.CreateSpriteSheet(RefCast<Texture2DAsset>(asset), ss));
+				}
+
 
 				ImGui::EndPopup();
 			}
@@ -188,12 +267,10 @@ namespace Vast {
 				m_DialogOpen = true;
 			}
 
-			if (drawName)
-			{
-				ImGui::Text(filename.c_str());
-				ImGui::NextColumn();
-			}
+
 		}
+
+		//ImGui::PopStyleVar(1);
 
 		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RendererCore.h"
+#include "Math/Math.h"
 
 namespace Vast {
 

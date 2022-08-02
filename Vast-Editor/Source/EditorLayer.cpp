@@ -16,6 +16,7 @@
 
 #include "Board2D/BoardFlipbook.h"
 #include "Board2D/BoardStateMachine.h"
+#include "Board2D/BoardSpriteSheet.h"
 
 #include "Clock/Clock.h"
 
@@ -36,6 +37,11 @@ namespace Vast {
 
 	static FrameTime s_FrameTime(100);
 	static Ref<Cubemap> s_Skybox;
+
+	static Ref<Board2D::SpriteSheet> s_SpriteSheet;
+	static Ref<Board2D::Sprite> s_Sprite;
+	static Vector3 s_SpritePos;
+	static Vector3 s_SpriteScale = { 1.0f, 1.0f, 1.0f };
 
 	void EditorLayer::OnAttach()
 	{
@@ -59,7 +65,7 @@ namespace Vast {
 		m_ContentBrowser.Open();
 		m_LogPanel.Open();
 
-		OpenProject("D:/Lester_Files/dev/VastProjects/WackoDuel");
+		OpenProject("C:/LesterFiles/dev/VastProjects/WackoDuel");
 
 		const auto& assetManager = m_Project->GetAssetManager();
 
@@ -67,6 +73,10 @@ namespace Vast {
 		assetManager->Init();
 		
 		s_Skybox = Cubemap::Create("Resources/Cubemap/right.png", "Resources/Cubemap/left.png", "Resources/Cubemap/top.png", "Resources/Cubemap/bottom.png", "Resources/Cubemap/front.png", "Resources/Cubemap/back.png");
+	
+		s_SpriteSheet = CreateRef<Board2D::SpriteSheet>(Texture2D::Create("Resources/Textures/CampfireSheet.png"));
+		s_SpriteSheet->SetStride({ 16.0f, 16.0f });
+		s_Sprite = s_SpriteSheet->ExtractSprite(1, 0);
 	}
 
 
@@ -87,6 +97,8 @@ namespace Vast {
 		m_SceneRenderer.Begin();
 
 		Renderer2D::DrawSkybox(s_Skybox);
+		auto coords = s_Sprite->GetUVCoords();
+		Renderer2D::DrawQuad(Math::Transform(s_SpritePos, { 0.0f, 0.0f, 0.0f }, s_SpriteScale), s_Sprite->GetTexture(), coords);
 
 		switch (m_SceneState)
 		{
@@ -205,6 +217,9 @@ namespace Vast {
 			float snapTS = m_Gizmo->GetSnapValues().x;
 			if (ImGui::DragFloat("Translation/Scale Snap", &snapTS))
 				m_Gizmo->SetTrScSnap(snapTS);
+
+			ImGui::DragFloat3("Sprite Translation", Math::MValuePointer(s_SpritePos), 0.1f);
+			ImGui::DragFloat3("Sprite Scale", Math::MValuePointer(s_SpriteScale), 0.1f);
 
 			ImGui::End();
 		}

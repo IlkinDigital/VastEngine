@@ -3,7 +3,14 @@
 
 namespace Vast {
 
-	YAML::Emitter& Vast::operator<<(YAML::Emitter& out, const Vector3& data)
+	YAML::Emitter& operator<<(YAML::Emitter& out, const Vector2& data)
+	{
+		out << YAML::Flow;
+		out << YAML::BeginSeq << data.x << data.y << YAML::EndSeq;
+		return out;
+	}
+
+	YAML::Emitter& operator<<(YAML::Emitter& out, const Vector3& data)
 	{
 		out << YAML::Flow;
 		out << YAML::BeginSeq << data.x << data.y << data.z << YAML::EndSeq;

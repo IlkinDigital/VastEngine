@@ -52,6 +52,12 @@ namespace Vast {
 				ImGui::CloseCurrentPopup();
 			}
 
+			if (ImGui::MenuItem("Board Render Component"))
+			{
+				entity.AddComponent<BoardRenderComponent>();
+				ImGui::CloseCurrentPopup();
+			}
+
 			if (ImGui::MenuItem("Sprite Component"))
 			{
 				entity.AddComponent<SpriteComponent>();
@@ -121,16 +127,39 @@ namespace Vast {
 				}
 			});
 
+		EditorControl::DrawComponent<BoardRenderComponent>("Board Render Component", entity, [](BoardRenderComponent& component)
+			{
+				if (component.Sprite)
+				{
+					float height = 1;
+					float width = 0;
+					float tot = height + width;
+					float thumbnailSize = 256.0f;
+					auto uvs = component.GetTextureCoords();
+					ImVec2 uv0 = { uvs[0].x, uvs[0].y };
+					ImVec2 uv1 = { uvs[1].x, uvs[1].y };
+					ImGui::ImageButton((ImTextureID)component.GetTexture()->GetRendererID(),
+						{ (width / tot) * thumbnailSize, (height / tot) * thumbnailSize }, uv0, uv1);
+				}
+				else
+					ImGui::Button("Drop Board Sprite");
+			});
+
+
 		EditorControl::DrawComponent<SpriteComponent>("Sprite Component", entity, [](SpriteComponent& component)
 			{
 				if (component.Flipbook)
 				{
-					float height = component.Flipbook->GetFlipbook()->GetCurrentTexture()->GetHeight();
-					float width = component.Flipbook->GetFlipbook()->GetCurrentTexture()->GetWidth();
+					const auto& frame = component.Flipbook->GetFlipbook()->GetCurrentFrame();
+					float height = frame->GetTexture()->GetHeight();
+					float width = frame->GetTexture()->GetWidth();
 					float tot = height + width;
 					float thumbnailSize = 256.0f;
-					ImGui::ImageButton((ImTextureID)component.Flipbook->GetFlipbook()->GetCurrentTexture()->GetRendererID(),
-						{ (width / tot) * thumbnailSize, (height / tot) * thumbnailSize }, { 0, 1 }, { 1, 0 });
+					auto textureCoords = frame->GetUVCoords();
+					ImVec2 uv0 = { textureCoords[0].x, textureCoords[0].y };
+					ImVec2 uv1 = { textureCoords[1].x, textureCoords[1].y };
+					ImGui::ImageButton((ImTextureID)frame->GetTexture()->GetRendererID(),
+						{ (width / tot) * thumbnailSize, (height / tot) * thumbnailSize }, uv0, uv1);
 				}
 				else
 					ImGui::Button("Drop Flipbook");
@@ -142,6 +171,7 @@ namespace Vast {
 						Asset* ta = (Asset*)payload->Data;
 						component.Flipbook = RefCast<BoardFlipbookAsset>(AssetManager::Get()->GetAsset(ta->GetPath()));
 					}
+
 					ImGui::EndDragDropTarget();
 				}
 			});

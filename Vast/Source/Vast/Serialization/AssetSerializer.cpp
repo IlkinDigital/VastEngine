@@ -25,6 +25,12 @@ namespace Vast {
 		case AssetType::Texture2D:
 			package.Second = SerializeTexture();
 			break;
+		case AssetType::BoardSpriteSheet:
+			package.Second = SerializeBoardSpriteSheet();
+			break;
+		case AssetType::BoardSprite:
+			package.Second = SerializeBoardSprite();
+			break;
 		case AssetType::BoardFlipbook:
 			package.Second = SerializeBoardFlipbook();
 			break;
@@ -57,6 +63,10 @@ namespace Vast {
 		{
 		case AssetType::Texture2D:
 			return DeserializeTexture(m_Package.Second);
+		case AssetType::BoardSpriteSheet:
+			return DeserializeBoardSpriteSheet(m_Package.Second);
+		case AssetType::BoardSprite:
+			return DeserializeBoardSprite(m_Package.Second);
 		case AssetType::BoardFlipbook:
 			return DeserializeBoardFlipbook(m_Package.Second);
 		case AssetType::Scene:
@@ -146,6 +156,12 @@ namespace Vast {
 		case AssetType::Texture2D:
 			m_Asset = CreateRef<Texture2DAsset>(name, assetPath, uuid);
 			break;
+		case AssetType::BoardSpriteSheet:
+			m_Asset = CreateRef<BoardSpriteSheetAsset>(name, assetPath, uuid);
+			break;
+		case AssetType::BoardSprite:
+			m_Asset = CreateRef<BoardSpriteAsset>(name, assetPath, uuid);
+			break;
 		case AssetType::BoardFlipbook:
 			m_Asset = CreateRef<BoardFlipbookAsset>(name, assetPath, uuid);
 			break;
@@ -198,6 +214,102 @@ namespace Vast {
 		return ss.Deserialize(source);
 	}
 
+	String AssetSerializer::SerializeBoardSpriteSheet()
+	{
+		auto bssa = RefCast<BoardSpriteSheetAsset>(m_Asset);
+
+		YAML::Emitter out;
+
+		out << YAML::BeginMap;
+
+		out << YAML::Key << "Stride" << YAML::Value << bssa->GetSpriteSheet()->GetStride();
+
+		out << YAML::EndMap;
+
+		AssetSerializer as(m_Project, bssa->GetTextureAsset());
+		String textureSource = as.SerializeTexture();
+
+		return FilePackager::Pack({ out.c_str(), textureSource });
+	}
+
+	bool AssetSerializer::DeserializeBoardSpriteSheet(const String& source)
+	{
+		Package pack = FilePackager::Unpack(source);
+
+		YAML::Node data = YAML::Load(pack.First);
+
+		auto stride = data["Stride"];
+		if (!stride)
+			return false;
+		Vector2 ssStride = stride.as<Vector2>();
+
+		Ref<Texture2DAsset> texAsset = CreateRef<Texture2DAsset>(m_Asset->GetName(), m_Asset->GetPath(), m_Asset->GetUUID());
+		AssetSerializer as(m_Project, texAsset);
+		as.DeserializeTexture(pack.Second);
+
+		auto asset = RefCast<BoardSpriteSheetAsset>(m_Asset);
+		auto ss = CreateRef<Board2D::SpriteSheet>(texAsset->GetTexture(), ssStride);
+		asset->SetSpriteSheet(ss);
+		asset->SetTextureAsset(RefCast<Texture2DAsset>(as.GetAsset()));
+			
+		return true;
+	}
+
+	String AssetSerializer::SerializeBoardSprite()
+	{
+		OPTICK_EVENT();
+
+		Ref<BoardSpriteAsset> bsa = RefCast<BoardSpriteAsset>(m_Asset);
+		const auto& sprite = bsa->GetSprite();
+
+		YAML::Emitter out;
+
+		out << YAML::BeginMap;
+
+		out << YAML::Key << "SpriteSheet" << YAML::Value << bsa->GetPath().string();
+
+		out << YAML::Key << "UVCoordinates" << YAML::Value << YAML::BeginSeq;
+
+		for (const auto& coord : sprite->GetUVCoords())
+		{
+			out << coord;
+		}
+
+		out << YAML::EndSeq;
+
+		out << YAML::EndMap;
+
+		return out.c_str();
+	}
+
+	bool AssetSerializer::DeserializeBoardSprite(const String& source)
+	{
+		Package pack = FilePackager::Unpack(source);
+
+		YAML::Node data = YAML::Load(pack.First);
+
+		auto spriteSheet = data["SpriteSheet"];
+		auto uvs = data["UVCoordinates"];
+		if (!spriteSheet || !uvs)
+			return false;
+
+		SArray<Vector2, 2> coords;
+		int i = 0;
+		for (const auto& uv : uvs)
+		{
+			coords[i] = uv.as<Vector2>();
+			i++;
+		}
+
+		auto asset = RefCast<BoardSpriteAsset>(m_Asset);
+		auto sprite = Board2D::Sprite::Create(
+			RefCast<BoardSpriteSheetAsset>(AssetManager::Get()->GetAsset(spriteSheet.as<String>()))->GetSpriteSheet(),
+			coords);
+		asset->SetSprite(sprite);
+
+		return true;
+	}
+
 	String AssetSerializer::SerializeBoardFlipbook()
 	{
 		OPTICK_EVENT();
@@ -216,7 +328,7 @@ namespace Vast {
 		{
 			out << YAML::BeginMap;
 
-			Filepath path = key.Texture->GetFilepath();
+			Filepath path = key.Sprite->GetTexture()->GetFilepath();
 			path.replace_extension("");
 			out << YAML::Key << "FrameSource" << YAML::Value << path.string();
 
@@ -248,8 +360,8 @@ namespace Vast {
 		for (auto frame : keyFrames)
 		{
 			Ref<Asset> raw = AssetManager::Get()->GetAsset(frame["FrameSource"].as<String>());
-			auto asset = RefCast<Texture2DAsset>(raw);
-			fb->PushKeyFrame({ asset->GetTexture() });
+			auto asset = RefCast<BoardSpriteAsset>(raw);
+			fb->PushKeyFrame({ asset->GetSprite() });
 		}
 
 		RefCast<BoardFlipbookAsset>(m_Asset)->SetFlipbook(fb);
