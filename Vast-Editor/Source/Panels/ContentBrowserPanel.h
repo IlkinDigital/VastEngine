@@ -24,7 +24,6 @@ namespace Vast {
 
 		Ref<Texture2D> m_FolderIcon;
 		Ref<Texture2D> m_FileIcon;
-		Ref<Texture2D> m_FrameIcon;
 
 		bool m_DialogOpen = false;
 		String m_CurrentName;

@@ -3,23 +3,20 @@
 
 namespace Vast {
 
-	float FontManager::m_FontSize = 17.0f;
-	SArray<ImFont*, 3> FontManager::m_Fonts = {};
-
-	void FontManager::UploadFont(const String& filepath, WeightType type)
+	void FontManager::UploadFont(const String& filepath, FontWeight type)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		m_Fonts[(int)type] = io.Fonts->AddFontFromFileTTF(filepath.c_str(), m_FontSize);
 		io.FontDefault = m_Fonts[(int)type];
 	}
 
-	void FontManager::SetDefault(WeightType type)
+	void FontManager::SetDefault(FontWeight type)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		io.FontDefault = m_Fonts[(int)type];
 	}
 
-	ImFont* FontManager::GetFont(WeightType type)
+	ImFont* FontManager::GetFont(FontWeight type)
 	{
 		return m_Fonts[(int)type];
 	}

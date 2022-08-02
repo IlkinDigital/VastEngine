@@ -65,7 +65,7 @@ namespace Vast {
 		m_ContentBrowser.Open();
 		m_LogPanel.Open();
 
-		OpenProject("C:/LesterFiles/dev/VastProjects/WackoDuel");
+		OpenProject("D:/Lester_Files/dev/VastProjects/WackoDuel");
 
 		const auto& assetManager = m_Project->GetAssetManager();
 

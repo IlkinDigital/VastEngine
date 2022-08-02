@@ -172,7 +172,7 @@ namespace Vast {
 		auto style = ImGui::GetStyle();
 		float accumWidth = style.WindowPadding.x;
 
-		ImGui::PushFont(FontManager::GetFont(FontManager::WeightType::Bold));
+		ImGui::PushFont(FontManager::GetFont(FontWeight::Bold));
 		for (const auto& frame : m_Flipbook->GetKeyFrames())
 		{
 			ImGui::BeginGroup();

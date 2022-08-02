@@ -29,11 +29,11 @@ namespace Vast {
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoTaskBarIcons;
 		//io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
 
-		FontManager::UploadFont("Assets/Fonts/Rubik/Rubik-Regular.ttf", FontManager::WeightType::Regular);
-		FontManager::UploadFont("Assets/Fonts/Rubik/Rubik-Bold.ttf", FontManager::WeightType::Bold);
-		FontManager::UploadFont("Assets/Fonts/Rubik/Rubik-Light.ttf", FontManager::WeightType::Light);
+		FontManager::UploadFont("Assets/Fonts/Rubik/Rubik-Regular.ttf", FontWeight::Regular);
+		FontManager::UploadFont("Assets/Fonts/Rubik/Rubik-Bold.ttf", FontWeight::Bold);
+		FontManager::UploadFont("Assets/Fonts/Rubik/Rubik-Light.ttf", FontWeight::Light);
 
-		FontManager::SetDefault(FontManager::WeightType::Regular);
+		FontManager::SetDefault(FontWeight::Regular);
 
 		// Setup Dear ImGui style
 		//ImGui::StyleColorsDark();

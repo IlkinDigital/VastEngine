@@ -11,7 +11,7 @@ namespace Vast {
 	{
 		ImGui::PushID(label.c_str());
 
-		auto bold = FontManager::GetFont(FontManager::WeightType::Bold);
+		auto bold = FontManager::GetFont(FontWeight::Bold);
 
 		ImGui::Columns(2);
 		ImGui::SetColumnWidth(0, columnWidth);

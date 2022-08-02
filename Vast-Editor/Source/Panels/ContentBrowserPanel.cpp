@@ -60,7 +60,6 @@ namespace Vast {
 	{
 		m_FolderIcon = Texture2D::Create("Resources/Icons/FolderIcon.png");
 		m_FileIcon = Texture2D::Create("Resources/Icons/FileIcon.png");
-		m_FrameIcon = Texture2D::Create("Resources/Icons/TestFrame.png");
 	}
 
 	ContentBrowserPanel::ContentBrowserPanel(const Ref<Project>& project)
@@ -69,7 +68,6 @@ namespace Vast {
 		m_CurrentPath = m_Project->GetContentFolderPath();
 		m_FolderIcon = Texture2D::Create("Resources/Icons/FolderIcon.png");
 		m_FileIcon = Texture2D::Create("Resources/Icons/FileIcon.png");
-		m_FrameIcon = Texture2D::Create("Resources/Icons/TestFrame.png");
 	}
 
 	void ContentBrowserPanel::DrawPanel()
@@ -81,7 +79,7 @@ namespace Vast {
 
 		if (m_CurrentPath != m_Project->GetContentFolderPath())
 		{
-			ImGui::PushFont(FontManager::GetFont(FontManager::WeightType::Bold));
+			ImGui::PushFont(FontManager::GetFont(FontWeight::Bold));
 			if (ImGui::Button("<--"))
 				m_CurrentPath = m_CurrentPath.parent_path();
 			ImGui::PopFont();
@@ -101,8 +99,8 @@ namespace Vast {
 			m_Project->GetAssetManager()->AddAsset(asset);
 		}
 
-		static float padding = 5.0f;
-		static float thumbnailSize = 155.0f;
+		static float padding = 3.0f;
+		static float thumbnailSize = 128.0f;
 		float panelWidth = ImGui::GetContentRegionAvail().x;
 
 		int columnCount = panelWidth / (thumbnailSize + padding);
@@ -111,7 +109,6 @@ namespace Vast {
 
 		ImGui::Columns(columnCount, 0, false);
 
-		//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, { ImGui::GetStyle().FramePadding.x, 100 });
 		int assetButtonID = 567;
 		for (auto& p : std::filesystem::directory_iterator(m_CurrentPath))
 		{
@@ -179,16 +176,16 @@ namespace Vast {
 
 				drawName = true;
 
-				ImGui::Dummy({ 1, 0 });
+				ImGui::Dummy({ 0.0f, 0 });
 				ImGui::SameLine();
 				ImGui::Text(filename.c_str());
 
 				ImGui::Dummy({ 20, 40 });
 
-				ImGui::PushFont(FontManager::GetFont(FontManager::WeightType::Bold));
+				ImGui::PushFont(FontManager::GetFont(FontWeight::Bold));
 				ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 90));
 
-				ImGui::Dummy({ 1, 0 });
+				ImGui::Dummy({ 0.0f, 0 });
 				ImGui::SameLine();
 				ImGui::Text(ToAssetName(asset->GetType()));
 
@@ -197,7 +194,7 @@ namespace Vast {
 
 				ImGui::PushStyleColor(ImGuiCol_Button, { 0.0f, 0.0f, 0.0f, 0.0f });
 				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.0f, 0.0f, 0.0f, 0.2f });
-				ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.0f, 0.0f, 0.0f, 0.2f });
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, { 0.0f, 0.0f, 0.0f, 0.4f });
 				ImGui::SetCursorPos(buttonStart);
 				
 				ImGui::Button("##btn", { thumbnailSize, thumbnailSize + 100 });
@@ -269,8 +266,6 @@ namespace Vast {
 
 
 		}
-
-		//ImGui::PopStyleVar(1);
 
 		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
@@ -349,6 +344,9 @@ namespace Vast {
 
 			ImGui::EndPopup();
 		}
+
+		// Asset frame size drag
+		ImGui::DragFloat("Frame size", &thumbnailSize, 1.0f, 25.0f, 256.0f);
 
 		ImGui::End();
 	}

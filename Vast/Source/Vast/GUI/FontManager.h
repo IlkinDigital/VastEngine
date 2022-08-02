@@ -6,17 +6,17 @@
 
 namespace Vast {
 
+	enum class FontWeight { Regular = 0, Light, Bold };
+
 	class FontManager
 	{
 	public:
-		enum class WeightType { Regular = 0, Light, Bold };
-	public:
-		static void UploadFont(const String& filepath, WeightType type);
-		static ImFont* GetFont(WeightType type);
-		static void SetDefault(WeightType type);
+		static void UploadFont(const String& filepath, FontWeight type);
+		static ImFont* GetFont(FontWeight type);
+		static void SetDefault(FontWeight type);
 	private:
-		static SArray<ImFont*, 3> m_Fonts;
-		static float m_FontSize;
+		inline static SArray<ImFont*, 3> m_Fonts = {};
+		inline static float m_FontSize = 15.0f;
 	};
 
 }
