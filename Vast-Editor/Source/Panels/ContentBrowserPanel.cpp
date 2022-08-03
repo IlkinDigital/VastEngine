@@ -120,7 +120,7 @@ namespace Vast {
 			Ref<Asset> asset = CreateRef<Asset>(AssetType::None, "None", "None", 0);
 			auto assetManager = m_Project->GetAssetManager();
 
-			bool drawName = false;
+			bool openRenameDialog = false;
 
 			ImGui::PushStyleColor(ImGuiCol_Button, { 0, 0, 0, 0 });
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.3, 0.3, 0.3, 0.2 });
@@ -132,7 +132,22 @@ namespace Vast {
 					m_CurrentPath /= filename;	
 				}
 
-				drawName = true;
+				if (ImGui::BeginPopupContextItem(filename.c_str()))
+				{
+					if (ImGui::MenuItem("Rename"))
+					{
+						openRenameDialog = true;
+						m_RenamePath = FileIO::Relative(p.path(), m_Project->GetContentFolderPath()).replace_extension("");
+
+					}
+					if (ImGui::MenuItem("Delete"))
+					{
+						std::filesystem::remove(p.path());
+					}
+
+					ImGui::EndPopup();
+				}
+
 				ImGui::Text(filename.c_str());
 				ImGui::NextColumn();
 			}
@@ -177,8 +192,6 @@ namespace Vast {
 					ImVec2(framePos.x + frameSize.x, framePos.y + frameSize.y), IM_COL32(75, 75, 75, 255), 
 					19.0f, ImDrawFlags_RoundCornersBottom);
 
-				drawName = true;
-
 				auto spacing = ImGui::GetStyle().ItemSpacing;
 				ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, { 4.0f, spacing.y });
 
@@ -208,6 +221,7 @@ namespace Vast {
 				ImGui::Button("##btn", { thumbnailSize, thumbnailSize + frameSize.y });
 				
 				ImGui::PopStyleColor(3);
+				ImGui::PopStyleVar(3);
 
 				// If .asset file is double clicked
 				if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
@@ -226,9 +240,36 @@ namespace Vast {
 					ImGui::SetDragDropPayload(asset->GetTypeName(), asset.get(), sizeof(*asset.get()));
 					ImGui::EndDragDropSource();
 				}
+
+				// Right click options
+				if (ImGui::BeginPopupContextItem(filename.c_str()))
+				{
+					if (ImGui::MenuItem("Rename"))
+					{
+						openRenameDialog = true;
+						m_RenamePath = FileIO::Relative(p.path(), m_Project->GetContentFolderPath()).replace_extension("");
+
+					}
+					if (ImGui::MenuItem("Delete"))
+					{
+						if (asset->GetType() != AssetType::None)
+							assetManager->RemoveAsset(asset);
+
+						std::filesystem::remove(p.path());
+					}
+					if (asset->GetType() == AssetType::Texture2D && ImGui::MenuItem("Create Sprite Sheet"))
+					{
+						AssetImporter ai(m_Project);
+						Filepath ss = asset->GetPath();
+						ss.replace_filename("SpriteSheetYay");
+						m_Project->GetAssetManager()->AddAsset(ai.CreateSpriteSheet(RefCast<Texture2DAsset>(asset), ss));
+					}
+
+
+					ImGui::EndPopup();
+				}
 				
 				ImGui::EndChild();
-				ImGui::PopStyleVar(3);
 				ImGui::PopID();
 
 				ImGui::Dummy({ 0, padding * 3.0f });
@@ -237,34 +278,6 @@ namespace Vast {
 			
 			ImGui::PopStyleColor(2);
 
-			bool openRenameDialog = false;
-
-			if (ImGui::BeginPopupContextItem(filename.c_str()))
-			{
-				if (ImGui::MenuItem("Rename"))
-				{
-					openRenameDialog = true;
-					m_RenamePath = FileIO::Relative(p.path(), m_Project->GetContentFolderPath()).replace_extension("");
-					
-				}
-				if (ImGui::MenuItem("Delete"))
-				{
-					if (asset->GetType() != AssetType::None)
-						assetManager->RemoveAsset(asset);
-
-					std::filesystem::remove(p.path());
-				}
-				if (asset->GetType() == AssetType::Texture2D && ImGui::MenuItem("Create Sprite Sheet"))
-				{
-					AssetImporter ai(m_Project);
-					Filepath ss = asset->GetPath();
-					ss.replace_filename("SpriteSheetYay");
-					m_Project->GetAssetManager()->AddAsset(ai.CreateSpriteSheet(RefCast<Texture2DAsset>(asset), ss));
-				}
-
-
-				ImGui::EndPopup();
-			}
 			
 			if (openRenameDialog)
 			{
