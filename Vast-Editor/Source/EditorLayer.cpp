@@ -86,7 +86,6 @@ namespace Vast {
 
 		s_FrameTime.Update(ts);
 
-		m_SubwindowManager.OnUpdate(ts);
 
 		auto spec = m_SceneRenderer.GetFramebuffer()->GetSpecification();
 		if (spec.Width != m_Viewport.GetWidth() || spec.Height != m_Viewport.GetHeight())
@@ -96,9 +95,13 @@ namespace Vast {
 
 		m_SceneRenderer.Begin();
 
+		Renderer2D::BeginScene(m_EditorCamera);
+
 		Renderer2D::DrawSkybox(s_Skybox);
 		auto coords = s_Sprite->GetUVCoords();
 		Renderer2D::DrawQuad(Math::Transform(s_SpritePos, { 0.0f, 0.0f, 0.0f }, s_SpriteScale), s_Sprite->GetTexture(), coords);
+
+		Renderer2D::EndScene();
 
 		switch (m_SceneState)
 		{
@@ -112,6 +115,8 @@ namespace Vast {
 		}
 
 		m_SceneRenderer.End();
+
+		m_SubwindowManager.OnUpdate(ts);
 	}
 
 	// For debug color palette purpose only
