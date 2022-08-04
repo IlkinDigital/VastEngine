@@ -66,7 +66,7 @@ namespace Vast {
 		{
 			if (path.path().extension() == ".dll")
 			{
-				dllFiles.push_back(path.path().filename().string());
+				dllFiles.emplace_back(path.path().filename().string());
 			}
 		}
 

@@ -79,7 +79,7 @@ namespace Vast {
             if (!isScript)
                 it = userFiles.erase(it);
             else
-                it++;
+                ++it;
         }
 
         /**

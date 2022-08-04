@@ -9,7 +9,7 @@ namespace Vast {
 
 	void DebugRenderer::DrawLine(Scene& scene, const Vector3& start, const Vector3& end, const Vector4& color, float lifetime)
 	{
-		scene.m_DebugRenderer.m_DebugLines.push_back(DebugLine(start, end, color, lifetime));
+		scene.m_DebugRenderer.m_DebugLines.emplace_back(DebugLine(start, end, color, lifetime));
 	}
 
 	void DebugRenderer::OnUpdate(Timestep ts)

@@ -13,8 +13,7 @@ namespace Vast {
         
         VAST_CORE_ERROR("Script with name '{0}' doesn't exist", name);
         
-        NativeScriptComponent null;
-        return null;
+        return NativeScriptComponent();
     }
 
 }

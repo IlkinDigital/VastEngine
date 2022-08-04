@@ -14,7 +14,7 @@ namespace Vast {
 		template<typename Fn>
 		void SetDragDropFn(Fn function) { m_DragDropFn = function; }
 
-		void SetColorAttachment(const RendererID& attachment) { m_ColorAttachment = attachment; }
+		void SetColorAttachment(RendererID attachment) { m_ColorAttachment = attachment; }
 		void SetGizmo(const Ref<Gizmo3D>& gizmo) { m_Gizmo = gizmo; }
 
 		uint32 GetWidth() const { return m_Width; }

@@ -48,10 +48,11 @@ namespace Vast {
 
 	void FlipbookEditor::OnUpdate(Timestep ts)
 	{
-		if (m_Flipbook->GetFlipbook()->IsValid())
+		auto& flipbook = m_Flipbook->GetFlipbook();
+		if (flipbook->IsValid())
 		{
-			m_Flipbook->GetFlipbook()->Update(ts);
-			m_CurrentFrame.AddOrReplaceComponent<BoardRenderComponent>().Sprite = m_Flipbook->GetFlipbook()->GetCurrentFrame();
+			flipbook->Update(ts);
+			m_CurrentFrame.AddOrReplaceComponent<BoardRenderComponent>().Sprite = flipbook->GetCurrentFrame();
 		}
 		else
 		{

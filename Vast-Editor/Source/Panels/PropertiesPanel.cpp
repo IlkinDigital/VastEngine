@@ -151,14 +151,15 @@ namespace Vast {
 				if (component.Flipbook)
 				{
 					const auto& frame = component.Flipbook->GetFlipbook()->GetCurrentFrame();
-					float height = frame->GetTexture()->GetHeight();
-					float width = frame->GetTexture()->GetWidth();
+					auto& texture = frame->GetTexture();
+					float height = texture->GetHeight();
+					float width = texture->GetWidth();
 					float tot = height + width;
 					float thumbnailSize = 256.0f;
 					auto textureCoords = frame->GetUVCoords();
 					ImVec2 uv0 = { textureCoords[0].x, textureCoords[0].y };
 					ImVec2 uv1 = { textureCoords[1].x, textureCoords[1].y };
-					ImGui::ImageButton((ImTextureID)frame->GetTexture()->GetRendererID(),
+					ImGui::ImageButton((ImTextureID)texture->GetRendererID(),
 						{ (width / tot) * thumbnailSize, (height / tot) * thumbnailSize }, uv0, uv1);
 				}
 				else
@@ -245,15 +246,16 @@ namespace Vast {
 
 				if (ImGui::BeginCombo("Script", preview))
 				{
-					for (uint16 i = 0; i < ScriptEngine::Get()->GetScriptBuffer().GetBuffer().size(); i++)
+					ScriptBuffer& scriptBuffer = ScriptEngine::Get()->GetScriptBuffer();
+					for (uint16 i = 0; i < scriptBuffer.GetBuffer().size(); i++)
 					{
 						bool isSelected = currScriptIndex == i;
 
-						if (ImGui::Selectable(ScriptEngine::Get()->GetScriptBuffer().GetBuffer()[i].Name.c_str(), false))
+						if (ImGui::Selectable(scriptBuffer.GetBuffer()[i].Name.c_str(), false))
 						{
 							currScriptIndex = i;
-							component = ScriptEngine::Get()->GetScriptBuffer().GetBuffer()[i];
-							preview = ScriptEngine::Get()->GetScriptBuffer().GetBuffer()[i].Name.c_str();
+							component = scriptBuffer.GetBuffer()[i];
+							preview = scriptBuffer.GetBuffer()[i].Name.c_str();
 						}
 					}
 					

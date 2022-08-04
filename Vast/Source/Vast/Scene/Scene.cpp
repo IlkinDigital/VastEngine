@@ -63,9 +63,10 @@ namespace Vast {
 			{
 				if (sc.Flipbook)
 				{
-					sc.Flipbook->GetFlipbook()->Update(ts);
-					if (sc.Flipbook->GetFlipbook()->IsValid())
-						sc.Sprite = sc.Flipbook->GetFlipbook()->GetCurrentFrame();
+					Ref<Board2D::Flipbook>& fb = sc.Flipbook->GetFlipbook();
+					fb->Update(ts);
+					if (fb->IsValid())
+						sc.Sprite = fb->GetCurrentFrame();
 				}
 			});
 	}

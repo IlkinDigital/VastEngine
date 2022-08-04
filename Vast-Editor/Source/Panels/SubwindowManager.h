@@ -22,8 +22,8 @@ namespace Vast {
 		void OnUpdate(Timestep ts);
 		void OnGUIRender();
 
-		DArray<Ref<Subwindow>>::iterator& begin() { m_SubwindowStack.begin(); }
-		DArray<Ref<Subwindow>>::iterator& end() { m_SubwindowStack.end(); }
+		const DArray<Storage>::iterator& begin() { return m_SubwindowStack.begin(); }
+		const DArray<Storage>::iterator& end() { return m_SubwindowStack.end(); }
 	private:
 		DArray<Storage> m_SubwindowStack;
 	};

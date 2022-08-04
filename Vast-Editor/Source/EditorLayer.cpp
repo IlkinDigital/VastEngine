@@ -31,7 +31,7 @@
 namespace Vast {
 
 // Returns relative filepath through project's directory
-#define PROJDIR(path) (m_Project->GetProjectPath() / path)
+#define PROJDIR(path) m_Project->GetProjectPath() / (path)
 
 	EditorLayer* EditorLayer::s_Instance = nullptr;
 

@@ -24,7 +24,7 @@ namespace Vast {
 				break;
 			}
 			else
-				it++;
+				++it;
 		}
 	}
 
@@ -53,7 +53,7 @@ namespace Vast {
 			else
 			{
 				sw.Subwindow->OnUpdate(ts);
-				it++;
+				++it;
 			}
 		}
 	}

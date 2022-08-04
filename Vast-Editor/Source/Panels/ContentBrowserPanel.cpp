@@ -109,6 +109,7 @@ namespace Vast {
 
 		ImGui::Columns(columnCount, 0, false);
 
+		Ref<Asset> noneAsset = CreateRef<Asset>(AssetType::None, "None", "None", 0);
 		int assetButtonID = 567;
 		for (auto& p : std::filesystem::directory_iterator(m_CurrentPath))
 		{
@@ -117,8 +118,8 @@ namespace Vast {
 			if (!m_DialogOpen)
 				m_CurrentName = p.path().filename().replace_extension("").string();
 
-			Ref<Asset> asset = CreateRef<Asset>(AssetType::None, "None", "None", 0);
-			auto assetManager = m_Project->GetAssetManager();
+			Ref<Asset> asset = noneAsset;
+			auto& assetManager = m_Project->GetAssetManager();
 
 			bool openRenameDialog = false;
 

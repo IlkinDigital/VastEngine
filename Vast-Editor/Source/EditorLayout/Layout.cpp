@@ -69,6 +69,7 @@ namespace Vast {
 		if (!res)
 			return res;
 		ImGui::DockSpace(subwindow.GetUUID());
+		return res;
 	}
 
 	void EditorLayout::EndWindow()
