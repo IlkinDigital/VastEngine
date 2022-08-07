@@ -22,7 +22,7 @@ namespace Vast {
 
 		void SetFlipbook(const Ref<Board2D::Flipbook>& flipbook) { m_Flipbook = flipbook; }
 
-		virtual void DrawPanel();
+		virtual void DrawPanel() override;
 	private:
 		Ref<Board2D::Flipbook> m_Flipbook;
 	};
