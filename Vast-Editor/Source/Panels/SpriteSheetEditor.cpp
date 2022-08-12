@@ -8,10 +8,41 @@ namespace Vast {
 
 	void SpriteSheetView::DrawPanel()
 	{
+		ImGui::Begin(m_Name.c_str());
+
+		const auto& sheet = m_SpriteSheet->GetSheet();
+		const Vector2& stride = m_SpriteSheet->GetStride();
+		const Vector2& size = { m_SpriteSheet->GetSheet()->GetWidth(), m_SpriteSheet->GetSheet()->GetHeight() };
+		ImVec2 displaySize = ImGui::GetContentRegionAvail();
+		ImVec2 displayStart = ImGui::GetCursorScreenPos();
+
+		ImGui::Image((ImTextureID)sheet->GetRendererID(), displaySize, { 0, 1 }, { 1, 0 });
+
+		ImDrawList* drawList = ImGui::GetWindowDrawList();
+		float pt0X = displayStart.x;
+		for (int i = 0; i < size.x / stride.x; i++)
+		{
+			drawList->AddLine({ pt0X, displayStart.y }, { pt0X, displayStart.y + displaySize.y }, 0x0f3f9fff);
+		}
+
+		ImGui::End();
 	}
 
 	void SpriteSheetSettings::DrawPanel()
 	{
+		ImGui::Begin(m_Name.c_str());
+
+		const Vector2& stride = m_SpriteSheet->GetSpriteSheet()->GetStride();
+
+		float strideX = stride.x;
+		float strideY = stride.y;
+
+		if (ImGui::DragFloat("Stride X", &strideX))
+			m_SpriteSheet->GetSpriteSheet()->SetStride({ strideX, strideY });
+		if (ImGui::DragFloat("Stride Y", &strideY))
+			m_SpriteSheet->GetSpriteSheet()->SetStride({ strideX, strideY });
+
+		ImGui::End();
 	}
 
 	/**
@@ -25,6 +56,7 @@ namespace Vast {
 
 	void SpriteSheetEditor::OnAttach()
 	{
+		m_View.Open();
 		m_Settings.Open();
 	}
 

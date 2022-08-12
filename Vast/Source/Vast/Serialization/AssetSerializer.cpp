@@ -223,34 +223,30 @@ namespace Vast {
 		out << YAML::BeginMap;
 
 		out << YAML::Key << "Stride" << YAML::Value << bssa->GetSpriteSheet()->GetStride();
+		out << YAML::Key << "SheetSource" << YAML::Value << bssa->GetSpriteSheet()->GetSheet()->GetFilepath().string();
 
 		out << YAML::EndMap;
 
-		AssetSerializer as(m_Project, bssa->GetTextureAsset());
-		String textureSource = as.SerializeTexture();
-
-		return FilePackager::Pack({ out.c_str(), textureSource });
+		return out.c_str();
 	}
 
 	bool AssetSerializer::DeserializeBoardSpriteSheet(const String& source)
 	{
-		Package pack = FilePackager::Unpack(source);
-
-		YAML::Node data = YAML::Load(pack.First);
+		YAML::Node data = YAML::Load(source);
 
 		auto stride = data["Stride"];
 		if (!stride)
 			return false;
-		Vector2 ssStride = stride.as<Vector2>();
 
-		Ref<Texture2DAsset> texAsset = CreateRef<Texture2DAsset>(m_Asset->GetName(), m_Asset->GetPath(), m_Asset->GetUUID());
-		AssetSerializer as(m_Project, texAsset);
-		as.DeserializeTexture(pack.Second);
+		auto sheet = data["SheetSource"];
+		if (!sheet)
+			return false;
+
+		Ref<Texture2DAsset> texAsset = RefCast<Texture2DAsset>(AssetManager::Get()->GetAsset(sheet.as<String>()));
 
 		auto asset = RefCast<BoardSpriteSheetAsset>(m_Asset);
-		auto ss = CreateRef<Board2D::SpriteSheet>(texAsset->GetTexture(), ssStride);
+		auto ss = CreateRef<Board2D::SpriteSheet>(texAsset->GetTexture(), stride.as<Vector2>());
 		asset->SetSpriteSheet(ss);
-		asset->SetTextureAsset(RefCast<Texture2DAsset>(as.GetAsset()));
 			
 		return true;
 	}

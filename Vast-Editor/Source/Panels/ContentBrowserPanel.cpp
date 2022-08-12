@@ -232,6 +232,8 @@ namespace Vast {
 					case AssetType::BoardFlipbook:
 						EditorLayer::Get()->OpenFlipbookEditor(RefCast<BoardFlipbookAsset>(asset));
 						break;
+					case AssetType::BoardSpriteSheet:
+						EditorLayer::Get()->OpenSpriteSheetEditor(RefCast<BoardSpriteSheetAsset>(asset));
 					}
 				}
 

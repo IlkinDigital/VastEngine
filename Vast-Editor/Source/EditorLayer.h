@@ -39,6 +39,7 @@ namespace Vast {
 		static EditorLayer* Get() { return s_Instance; }
 
 		void OpenFlipbookEditor(const Ref<BoardFlipbookAsset>& bfa);
+		void OpenSpriteSheetEditor(const Ref<BoardSpriteSheetAsset>& bssa);
 	private:
 		void ResizeViewport();
 

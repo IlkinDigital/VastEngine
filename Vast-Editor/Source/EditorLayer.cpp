@@ -24,6 +24,8 @@
 #include "AssetManager/AssetImporter.h"
 #include "Serialization/AssetSerializer.h"
 
+#include "Panels/SpriteSheetEditor.h"
+
 #include <imgui.h>
 #include <fstream>
 #include <optick.h>
@@ -65,7 +67,7 @@ namespace Vast {
 		m_ContentBrowser.Open();
 		m_LogPanel.Open();
 
-		OpenProject("D:/Lester_Files/dev/VastProjects/WackoDuel");
+		OpenProject("C:/LesterFiles/dev/VastProjects/WackoDuel");
 
 		const auto& assetManager = m_Project->GetAssetManager();
 
@@ -312,6 +314,19 @@ namespace Vast {
 		auto fbe = CreateRef<FlipbookEditor>();
 		fbe->SetFlipbook(bfa);
 		m_SubwindowManager.PushSubwindow(fbe, bfa->GetUUID());
+	}
+
+	void EditorLayer::OpenSpriteSheetEditor(const Ref<BoardSpriteSheetAsset>& bssa)
+	{
+		if (m_SubwindowManager.HasStorageWithUUID(bssa->GetUUID()))
+		{
+			VAST_ERROR("Couldn't open {0} sprite sheet, it's already opne", bssa->GetName());
+			return;
+		}
+
+		auto sse = CreateRef<SpriteSheetEditor>();
+		sse->SetSpriteSheet(bssa);
+		m_SubwindowManager.PushSubwindow(sse, bssa->GetUUID());
 	}
 
 	void EditorLayer::ResizeViewport()
