@@ -5,6 +5,8 @@
 
 namespace Vast {
 
+	static float s_BaseFontSize = 16.0f;
+
 	struct Font
 	{
 		ImFont* FontsBySize[3]{};
@@ -18,11 +20,11 @@ namespace Vast {
 		switch (size)
 		{
 		case FontSize::Small:
-			return 12.0f;
+			return s_BaseFontSize;
 		case FontSize::Medium:
-			return 15.0f;
+			return s_BaseFontSize * (15.0f / 12.0f);
 		case FontSize::Large:
-			return 20.0f;
+			return s_BaseFontSize * (20.0f / 12.0f);
 		}
 
 		return 15.0f;

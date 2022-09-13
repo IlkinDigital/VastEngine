@@ -9,6 +9,8 @@
 #include "Utils/FileIO/FileDialogs.h"
 
 #include "EditorLayer.h"
+#include "DebugWindow.h"
+
 #include <imgui.h>
 #include <optick.h>
 
@@ -234,6 +236,14 @@ namespace Vast {
 						break;
 					case AssetType::BoardSpriteSheet:
 						EditorLayer::Get()->OpenSpriteSheetEditor(RefCast<BoardSpriteSheetAsset>(asset));
+						break;
+					case AssetType::BoardSprite:
+						auto& sprite = RefCast<BoardSpriteAsset>(asset)->GetSprite();
+						if (sprite)
+							DebugOutput::Image(sprite->GetTexture(), sprite->GetUVCoords()[0], sprite->GetUVCoords()[1]);
+						else
+							VAST_ERROR("Sprite is null");
+						break;
 					}
 				}
 
@@ -267,7 +277,13 @@ namespace Vast {
 						ss.replace_filename("SpriteSheetYay");
 						m_Project->GetAssetManager()->AddAsset(ai.CreateSpriteSheet(RefCast<Texture2DAsset>(asset), ss));
 					}
-
+					if (asset->GetType() == AssetType::BoardSpriteSheet && ImGui::MenuItem("Extract Sprite"))
+					{
+						AssetImporter ai(m_Project);
+						Filepath ss = asset->GetPath();
+						ss.replace_filename("SpriteYaay");
+						m_Project->GetAssetManager()->AddAsset(ai.CreateSprite(RefCast<BoardSpriteSheetAsset>(asset), 0, 0, ss));
+					}
 
 					ImGui::EndPopup();
 				}

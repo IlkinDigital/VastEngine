@@ -98,6 +98,8 @@ namespace Vast {
 		SceneState m_SceneState = SceneState::Edit;
 
 		static EditorLayer* s_Instance;
+
+		friend class DebugOutput;
 	};
 
 }

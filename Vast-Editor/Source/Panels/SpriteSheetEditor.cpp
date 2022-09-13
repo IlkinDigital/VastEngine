@@ -1,6 +1,7 @@
 #include "SpriteSheetEditor.h"
 
 #include "EditorLayout/Layout.h"
+#include "DebugWindow.h"
 
 #include <imgui_internal.h>
 
@@ -42,6 +43,12 @@ namespace Vast {
 		if (ImGui::DragFloat("Stride Y", &strideY))
 			m_SpriteSheet->GetSpriteSheet()->SetStride({ strideX, strideY });
 
+		if (ImGui::Button("Show sprite"))
+		{
+			auto sprite = m_SpriteSheet->GetSpriteSheet()->ExtractSprite(0, 0);
+			DebugOutput::Image(sprite->GetTexture(), sprite->GetUVCoords()[0], sprite->GetUVCoords()[1]);
+		}
+
 		ImGui::End();
 	}
 
@@ -82,7 +89,6 @@ namespace Vast {
 
 			ImGuiID leftID = -1;
 			auto rightID = ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Right, 0.3f, nullptr, &leftID);
-
 
 			ImGui::DockBuilderDockWindow(m_Settings.GetName().c_str(), rightID);
 			ImGui::DockBuilderDockWindow(m_View.GetName().c_str(), leftID);

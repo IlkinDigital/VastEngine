@@ -18,6 +18,19 @@ namespace Vast {
         return RefCast<BoardSpriteSheetAsset>(as.GetAsset());
     }
 
+    Ref<BoardSpriteAsset> AssetImporter::CreateSprite(const Ref<BoardSpriteSheetAsset>& sheet, uint16 col, uint16 row, const Filepath& toPath)
+    {
+        auto bsa = CreateRef<BoardSpriteAsset>(toPath.filename().stem().string(), toPath, UUID());
+        auto sprite = Board2D::Sprite::Create(sheet->GetSpriteSheet(), col, row);
+        bsa->SetSprite(sprite);
+
+        AssetSerializer as(m_Project, bsa);
+        as.Serialize();
+        as.Deserialize(bsa->GetPath());
+
+        return RefCast<BoardSpriteAsset>(as.GetAsset());
+    }
+
     Ref<Texture2DAsset> AssetImporter::ImportTexture(const Filepath& imagePath, const Filepath& toPath)
     {
         OPTICK_EVENT();
