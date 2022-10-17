@@ -25,7 +25,7 @@ namespace Vast {
 
 		Filepath path = FileIO::Normalize(asset->GetPath());
 		if (m_AssetMap.find(path) == m_AssetMap.end())
-			m_AssetMap.insert({ path, asset});
+			m_AssetMap.insert({ path, asset });
 	}
 
 	void AssetManager::RemoveAsset(const Ref<Asset>& asset)

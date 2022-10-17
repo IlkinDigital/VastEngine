@@ -1,7 +1,7 @@
 #include "DebugWindow.h"
 
 #include "EditorLayout/Layout.h"
-#include "EditorLayer.h"
+#include "DebugLayer.h"
 
 namespace Vast {
 
@@ -30,7 +30,7 @@ namespace Vast {
             {
                 ImGui::Image((ImTextureID)m_Texture->GetRendererID(),
                     { (float)m_Texture->GetWidth(), (float)m_Texture->GetHeight() },
-                    { m_UV0.x, m_UV0.y }, { m_UV1.x, m_UV1.y });
+                    { m_UV0.y, m_UV0.x }, { m_UV1.y, m_UV1.x });
             }
 
             ImGui::End();
@@ -50,7 +50,7 @@ namespace Vast {
         debugImage->SetTexture(texture);
         debugImage->SetUV0(uv0);
         debugImage->SetUV1(uv1);
-        EditorLayer::Get()->m_SubwindowManager.PushSubwindow(debugImage, debugImage->GetUUID());
+        DebugLayer::AddDebugSW(debugImage);
     }
 
 }

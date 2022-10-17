@@ -16,7 +16,6 @@ namespace Vast::Board2D {
 
 	Ref<Sprite> SpriteSheet::ExtractSprite(uint16 column, uint16 row)
 	{
-		return Sprite::Create(Ref<SpriteSheet>(this), column, row);
+		return Sprite::Create(CreateRef<SpriteSheet>(m_Sheet, m_Stride), column, row);
 	}
-
 }

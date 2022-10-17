@@ -28,6 +28,7 @@ namespace Vast {
 
 		virtual void DrawPanel() override;
 	private:
+		Ref<Board2D::Sprite> m_Extracted;
 		Ref<BoardSpriteSheetAsset> m_SpriteSheet;
 	};
 

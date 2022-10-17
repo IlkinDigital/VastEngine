@@ -67,7 +67,8 @@ namespace Vast {
 		m_ContentBrowser.Open();
 		m_LogPanel.Open();
 
-		OpenProject("C:/LesterFiles/dev/VastProjects/WackoDuel");
+		//OpenProject("C:/LesterFiles/dev/VastProjects/WackoDuel");
+		OpenProject("C:/Users/Ilkin/IlkinFiles/dev/Projects/Dragons-Ahoy");
 
 		const auto& assetManager = m_Project->GetAssetManager();
 
@@ -267,6 +268,10 @@ namespace Vast {
 		
 		ImGui::Text("%d FPS", s_FrameTime.GetFPS());
 		ImGui::Text("Frame Time: %.4f ms", s_FrameTime.GetFrameTime());
+
+		ImGui::Text("Total Allocated: %d", s_Tracker.TotalAllocated);
+		ImGui::Text("Total Freed: %d", s_Tracker.TotalFreed);
+		ImGui::Text("Total In Use: %d", s_Tracker.CurrentUsage());
 		
 		ImGui::End();
 

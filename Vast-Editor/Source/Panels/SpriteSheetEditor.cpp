@@ -33,7 +33,7 @@ namespace Vast {
 	{
 		ImGui::Begin(m_Name.c_str());
 
-		const Vector2& stride = m_SpriteSheet->GetSpriteSheet()->GetStride();
+		auto stride = m_SpriteSheet->GetSpriteSheet()->GetStride();
 
 		float strideX = stride.x;
 		float strideY = stride.y;
@@ -45,8 +45,8 @@ namespace Vast {
 
 		if (ImGui::Button("Show sprite"))
 		{
-			auto sprite = m_SpriteSheet->GetSpriteSheet()->ExtractSprite(0, 0);
-			DebugOutput::Image(sprite->GetTexture(), sprite->GetUVCoords()[0], sprite->GetUVCoords()[1]);
+			m_Extracted = m_SpriteSheet->GetSpriteSheet()->ExtractSprite(0, 0);
+			DebugOutput::Image(m_Extracted->GetTexture(), m_Extracted->GetUVCoords()[0], m_Extracted->GetUVCoords()[1]);
 		}
 
 		ImGui::End();

@@ -1,6 +1,7 @@
 #include "Vast/ApplicationCore/EntryPoint.h"
 
 #include "EditorLayer.h"
+#include "DebugLayer.h"
 
 class EditorApp : public Vast::Application
 {
@@ -9,6 +10,7 @@ public:
 		: Application(name)
 	{
 		PushLayer(new Vast::EditorLayer("Vast-Editor"));
+		PushLayer(new Vast::DebugLayer("Debug Layer"));
 	}
 
 	~EditorApp() override
