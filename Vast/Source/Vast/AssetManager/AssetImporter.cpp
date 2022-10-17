@@ -11,7 +11,7 @@ namespace Vast {
         auto bssa = CreateRef<BoardSpriteSheetAsset>(toPath.filename().stem().string(), toPath, UUID());
         bssa->SetSpriteSheet(CreateRef<Board2D::SpriteSheet>(texture->GetTexture()));
 
-        AssetSerializer as(m_Project, bssa);
+        AssetSerializer as(bssa);
         as.Serialize();
         as.Deserialize(bssa->GetPath());
 
@@ -24,7 +24,7 @@ namespace Vast {
         auto sprite = Board2D::Sprite::Create(sheet->GetSpriteSheet(), col, row);
         bsa->SetSprite(sprite);
 
-        AssetSerializer as(m_Project, bsa);
+        AssetSerializer as(bsa);
         as.Serialize();
         as.Deserialize(bsa->GetPath());
 
@@ -45,7 +45,7 @@ namespace Vast {
                 fs.read(data.data(), data.size());
                 ta->SetFileData(data);
 
-                AssetSerializer as(m_Project, ta);
+                AssetSerializer as(ta);
                 as.Serialize();
                 as.Deserialize(ta->GetPath());
 

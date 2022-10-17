@@ -14,7 +14,7 @@ namespace Vast {
 	class AssetSerializer
 	{
 	public:
-		AssetSerializer(const Ref<Project>& project, const Ref<Asset>& asset);
+		AssetSerializer(const Ref<Asset>& asset);
 
 		void Serialize();
 		bool Deserialize(const Filepath& path);
@@ -44,7 +44,6 @@ namespace Vast {
 	private:
 		Package m_Package;
 		Ref<Asset> m_Asset;
-		Ref<Project> m_Project;
 	};
 
 }

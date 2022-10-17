@@ -121,7 +121,7 @@ namespace Vast {
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(Texture2DAsset::GetStaticTypeName()))
 					{
 						Asset* ta = (Asset*)payload->Data;
-						component.Texture = RefCast<Texture2DAsset>(AssetManager::Get()->GetAsset(ta->GetPath()))->GetTexture();
+						component.Texture = RefCast<Texture2DAsset>(Project::GetAssetManager()->GetAsset(ta->GetPath()))->GetTexture();
 					}
 					ImGui::EndDragDropTarget();
 				}
@@ -170,7 +170,7 @@ namespace Vast {
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(BoardFlipbookAsset::GetStaticTypeName()))
 					{
 						Asset* ta = (Asset*)payload->Data;
-						component.Flipbook = RefCast<BoardFlipbookAsset>(AssetManager::Get()->GetAsset(ta->GetPath()));
+						component.Flipbook = RefCast<BoardFlipbookAsset>(Project::GetAssetManager()->GetAsset(ta->GetPath()));
 					}
 
 					ImGui::EndDragDropTarget();

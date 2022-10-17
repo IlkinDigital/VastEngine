@@ -52,7 +52,7 @@ namespace Vast {
 		absolute += (path.string() + ".asset");
 		std::filesystem::remove(absolute);
 
-		AssetSerializer as(m_Project, asset);
+		AssetSerializer as(asset);
 		as.Serialize();
 		assetManager->ReplaceAsset(path, asset);
 	}
@@ -96,7 +96,7 @@ namespace Vast {
 			VAST_TRACE("Origin path: {0}", origin.string());
 			VAST_TRACE("New path: {0}", rel.string());
 
-			AssetImporter importer(m_Project);
+			AssetImporter importer;
 			Ref<Texture2DAsset> asset = importer.ImportTexture(origin, rel);
 			m_Project->GetAssetManager()->AddAsset(asset);
 		}
@@ -272,14 +272,14 @@ namespace Vast {
 					}
 					if (asset->GetType() == AssetType::Texture2D && ImGui::MenuItem("Create Sprite Sheet"))
 					{
-						AssetImporter ai(m_Project);
+						AssetImporter ai;
 						Filepath ss = asset->GetPath();
 						ss.replace_filename("SpriteSheetYay");
 						m_Project->GetAssetManager()->AddAsset(ai.CreateSpriteSheet(RefCast<Texture2DAsset>(asset), ss));
 					}
 					if (asset->GetType() == AssetType::BoardSpriteSheet && ImGui::MenuItem("Extract Sprite"))
 					{
-						AssetImporter ai(m_Project);
+						AssetImporter ai;
 						Filepath ss = asset->GetPath();
 						ss.replace_filename("SpriteYaay");
 						m_Project->GetAssetManager()->AddAsset(ai.CreateSprite(RefCast<BoardSpriteSheetAsset>(asset), 0, 0, ss));
@@ -369,9 +369,9 @@ namespace Vast {
 					Filepath path = FileIO::Relative(m_CurrentPath / "NewFlipbook.asset", m_Project->GetContentFolderPath());
 					Ref<BoardFlipbookAsset> bfa = CreateRef<BoardFlipbookAsset>("NewFlipbook", path, UUID());
 					bfa->SetFlipbook(CreateRef<Board2D::Flipbook>());
-					AssetSerializer as(m_Project, bfa);
+					AssetSerializer as(bfa);
 					as.Serialize();
-					AssetManager::Get()->Init();
+					Project::GetAssetManager()->Init();
 				}
 
 				ImGui::EndMenu();

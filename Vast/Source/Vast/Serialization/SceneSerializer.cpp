@@ -145,7 +145,7 @@ namespace Vast {
 						}
 						else
 						{
-							const auto& asset = AssetManager::Get()->GetAsset(path);
+							const auto& asset = Project::GetAssetManager()->GetAsset(path);
 							if (asset->GetType() == AssetType::Texture2D)
 								rc.Texture = RefCast<Texture2DAsset>(asset)->GetTexture();
 						}
@@ -165,7 +165,7 @@ namespace Vast {
 					Filepath path = boardRenderComponent["Sprite"].as<String>();
 					if (path != "")
 					{
-						const auto& asset = AssetManager::Get()->GetAsset(path);
+						const auto& asset = Project::GetAssetManager()->GetAsset(path);
 						if (asset->GetType() == AssetType::BoardSprite)
 							brc.Sprite = RefCast<BoardSpriteAsset>(asset)->GetSprite();
 					}
@@ -184,7 +184,7 @@ namespace Vast {
 					Filepath path = spriteComponent["Flipbook"].as<String>();
 					if (path != "")
 					{
-						sc.Flipbook = RefCast<BoardFlipbookAsset>(AssetManager::Get()->GetAsset(path)->Clone());
+						sc.Flipbook = RefCast<BoardFlipbookAsset>(Project::GetAssetManager()->GetAsset(path)->Clone());
 					}
 				}
 
@@ -260,7 +260,7 @@ namespace Vast {
 				out << YAML::Key << "Color" << YAML::Value << brc.Color;
 				if (brc.Sprite)
 				{
-					out << YAML::Key << "Sprite" << YAML::Value << AssetManager::Get()->FindAsset(brc.Sprite)->GetPath().string();
+					out << YAML::Key << "Sprite" << YAML::Value << Project::GetAssetManager()->FindAsset(brc.Sprite)->GetPath().string();
 				}
 				else
 					out << YAML::Key << "Sprite" << YAML::Value << "";

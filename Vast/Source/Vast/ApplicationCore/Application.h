@@ -37,7 +37,7 @@ namespace Vast {
 		bool OnWindowClose(WindowCloseEvent& event);
 		bool OnWindowResize(WindowResizeEvent& event);
 	private:
-		Scope<Window> m_Window;
+		Ref<Window> m_Window;
 		String m_Name;
 		ImGuiLayer* m_ImGuiLayer;
 

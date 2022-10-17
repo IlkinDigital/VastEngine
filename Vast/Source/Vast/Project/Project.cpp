@@ -8,13 +8,12 @@ namespace Vast {
 	Project::Project()
 	{
 		m_AssetManager = CreateRef<AssetManager>();
-		AssetManager::Set(m_AssetManager);
+		s_LatestProject = this;
 	}
 
 	Project::Project(const String& name, const Filepath& projectPath)
+		: Project()
 	{
-		m_AssetManager = CreateRef<AssetManager>();
-		AssetManager::Set(m_AssetManager);
 		Set(name, projectPath);
 	}
 

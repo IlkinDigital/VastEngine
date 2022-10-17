@@ -2,7 +2,7 @@
 
 #include "RenderComponent.h"
 #include "AssetManager/AssetTypes/BoardFlipbookAsset.h"
-#include "AssetManager/AssetManager.h"
+#include "Project/Project.h"
 
 namespace Vast {
 
@@ -12,7 +12,7 @@ namespace Vast {
 
 		SpriteComponent() = default;
 		SpriteComponent(const SpriteComponent& other)
-			: Flipbook(RefCast<BoardFlipbookAsset>(AssetManager::Get()->GetAsset(other.Flipbook->GetPath())->Clone())) {}
+			: Flipbook(RefCast<BoardFlipbookAsset>(Project::GetAssetManager()->GetAsset(other.Flipbook->GetPath())->Clone())) {}
 		SpriteComponent(const Ref<BoardFlipbookAsset>& flipbook)
 			: Flipbook(flipbook) {}
 	};

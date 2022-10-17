@@ -12,8 +12,8 @@ namespace Vast {
 	class SceneSerializer
 	{
 	public:
-		SceneSerializer(const Ref<Scene>& scene, const Ref<Project>& project)
-			: m_Scene(scene), m_Project(project) {}
+		SceneSerializer(const Ref<Scene>& scene)
+			: m_Scene(scene) {}
 
 		void Serialize(const Filepath& filepath); // DEPRECATED: Use asset serializer
 		bool Deserialize(const Filepath& filepath); // DEPRECATED: Use asset serializer
@@ -27,7 +27,6 @@ namespace Vast {
 		static void SerializeComponent(YAML::Emitter& out, const String& name, Entity entity, Fn function);
 	private:
 		Ref<Scene> m_Scene;
-		Ref<Project> m_Project;
 	};
 
 }

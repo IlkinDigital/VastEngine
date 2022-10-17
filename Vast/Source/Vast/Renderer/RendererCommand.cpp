@@ -5,6 +5,6 @@
 
 namespace Vast {
 
-	RendererInterface* RendererCommand::s_Interface = new OpenGLInterface();
+	Ref<RendererInterface> RendererCommand::s_Interface = CreateRef<OpenGLInterface>();
 
 }

@@ -42,7 +42,7 @@ namespace Vast {
 			s_Interface->DrawLines(vertexCount);
 		}
 	private:
-		static RendererInterface* s_Interface;
+		static Ref<RendererInterface> s_Interface;
 	};
 
 }

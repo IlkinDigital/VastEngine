@@ -11,14 +11,6 @@
 
 namespace Vast {
 
-	Ref<AssetManager> AssetManager::s_Instance = CreateRef<AssetManager>();
-
-	AssetManager::AssetManager(const Ref<Project>& project)
-		: m_Project(project)
-	{
-		Init();
-	}
-
 	void AssetManager::AddAsset(const Ref<Asset>& asset)
 	{
 		OPTICK_EVENT();
@@ -75,14 +67,14 @@ namespace Vast {
 		/// not yet created assets
 		AssetQueue assetQueue;
 
-		IterateAndAddAssets(m_Project->GetContentFolderPath(), assetQueue);
+		IterateAndAddAssets(Project::Get().GetContentFolderPath(), assetQueue);
 
 		{
 			OPTICK_EVENT("AddAssetsToRegistry");
 
 			for (const auto& asset : assetQueue)
 			{
-				AssetSerializer as(m_Project, asset);
+				AssetSerializer as(asset);
 				as.Deserialize(asset->GetPath());
 				AddAsset(as.GetAsset());
 			}
@@ -120,9 +112,9 @@ namespace Vast {
 			{
 				OPTICK_EVENT("ReadHeadAndEnqueueAsset");
 
-				Filepath path = FileIO::Relative(p.path(), m_Project->GetContentFolderPath());
+				Filepath path = FileIO::Relative(p.path(), Project::Get().GetContentFolderPath());
 				Ref<Asset> asset; 
-				AssetSerializer as(m_Project, asset);
+				AssetSerializer as(asset);
 
 				if (as.SerializationType(path) != AssetType::None)
 				{

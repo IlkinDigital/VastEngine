@@ -12,9 +12,9 @@ namespace Vast {
 	static bool s_GLFWInitialized = false;
 
 #ifdef VAST_PLATFORM_WINDOWS
-	Scope<Window> Window::Create(const WindowProps& props)
+	Ref<Window> Window::Create(const WindowProps& props)
 	{
-		return CreateScope<WindowsWindow>(props);
+		return CreateRef<WindowsWindow>(props);
 	}
 #endif
 
@@ -171,7 +171,8 @@ namespace Vast {
 	{
 		glfwDestroyWindow(m_Window);
 
-		// TODO: glfwTerminate
+		// ISSUE: Multiple windows
+		glfwTerminate();
 	}
 
 	void WindowsWindow::OnUpdate()

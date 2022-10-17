@@ -42,7 +42,7 @@ namespace Vast {
 
 		virtual void* GetNativeWindow() const = 0;
 
-		static Scope<Window> Create(const WindowProps& props);
+		static Ref<Window> Create(const WindowProps& props);
 	};
 
 }

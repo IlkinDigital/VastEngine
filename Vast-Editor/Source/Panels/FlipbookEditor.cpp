@@ -122,9 +122,9 @@ namespace Vast {
 			{
 				if (ImGui::MenuItem("Save", "Ctrl + S"))
 				{
-					AssetSerializer as(AssetManager::Get()->GetProject(), m_Flipbook);
+					AssetSerializer as(m_Flipbook);
 					as.Serialize();
-					AssetManager::Get()->Init();
+					Project::GetAssetManager()->Init();
 				}
 
 				ImGui::EndMenu();

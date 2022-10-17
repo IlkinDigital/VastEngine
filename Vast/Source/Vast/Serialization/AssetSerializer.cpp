@@ -8,8 +8,8 @@
 
 namespace Vast {
 
-	AssetSerializer::AssetSerializer(const Ref<Project>& project, const Ref<Asset>& asset)
-		: m_Project(project), m_Asset(asset)
+	AssetSerializer::AssetSerializer(const Ref<Asset>& asset)
+		: m_Asset(asset)
 	{
 	}
 
@@ -42,7 +42,7 @@ namespace Vast {
 			return;
 		}
 
-		Filepath fullPath = m_Project->GetContentFolderPath();
+		Filepath fullPath = Project::Get().GetContentFolderPath();
 		fullPath += m_Asset->GetPath().string() + ".asset";
 
 		std::ofstream fs(fullPath, std::ios::binary);
@@ -102,7 +102,7 @@ namespace Vast {
 	{
 		OPTICK_EVENT();
 
-		Filepath fullPath = m_Project->GetContentFolderPath();
+		Filepath fullPath = Project::Get().GetContentFolderPath();
 		fullPath += path.string() + ".asset";
 
 		if (!std::filesystem::is_regular_file(fullPath))
@@ -199,7 +199,7 @@ namespace Vast {
 		OPTICK_EVENT();
 
 		Ref<SceneAsset> sa = RefCast<SceneAsset>(m_Asset);
-		SceneSerializer ss(sa->GetScene(), m_Project);
+		SceneSerializer ss(sa->GetScene());
 		return ss.Serialize();
 	}
 
@@ -210,7 +210,7 @@ namespace Vast {
 		Ref<SceneAsset> sa = RefCast<SceneAsset>(m_Asset);
 		sa->SetScene(CreateRef<Scene>());
 
-		SceneSerializer ss(sa->GetScene(), m_Project);
+		SceneSerializer ss(sa->GetScene());
 		return ss.Deserialize(source);
 	}
 
@@ -242,7 +242,7 @@ namespace Vast {
 		if (!sheet)
 			return false;
 
-		Ref<Texture2DAsset> texAsset = RefCast<Texture2DAsset>(AssetManager::Get()->GetAsset(sheet.as<String>()));
+		Ref<Texture2DAsset> texAsset = RefCast<Texture2DAsset>(Project::GetAssetManager()->GetAsset(sheet.as<String>()));
 
 		auto asset = RefCast<BoardSpriteSheetAsset>(m_Asset);
 		auto ss = CreateRef<Board2D::SpriteSheet>(texAsset->GetTexture(), stride.as<Vector2>());
@@ -299,7 +299,7 @@ namespace Vast {
 
 		auto asset = RefCast<BoardSpriteAsset>(m_Asset);
 		auto sprite = Board2D::Sprite::Create(
-			RefCast<BoardSpriteSheetAsset>(AssetManager::Get()->GetAsset(spriteSheet.as<String>()))->GetSpriteSheet(),
+			RefCast<BoardSpriteSheetAsset>(Project::GetAssetManager()->GetAsset(spriteSheet.as<String>()))->GetSpriteSheet(),
 			coords);
 		asset->SetSprite(sprite);
 
@@ -355,7 +355,7 @@ namespace Vast {
 
 		for (auto frame : keyFrames)
 		{
-			Ref<Asset> raw = AssetManager::Get()->GetAsset(frame["FrameSource"].as<String>());
+			Ref<Asset> raw = Project::GetAssetManager()->GetAsset(frame["FrameSource"].as<String>());
 			auto asset = RefCast<BoardSpriteAsset>(raw);
 			fb->PushKeyFrame({ asset->GetSprite() });
 		}

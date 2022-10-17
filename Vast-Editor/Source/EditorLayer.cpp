@@ -70,10 +70,7 @@ namespace Vast {
 		//OpenProject("C:/LesterFiles/dev/VastProjects/WackoDuel");
 		OpenProject("C:/Users/Ilkin/IlkinFiles/dev/Projects/Dragons-Ahoy");
 
-		const auto& assetManager = m_Project->GetAssetManager();
-
-		assetManager->SetProject(m_Project);
-		assetManager->Init();
+		Project::GetAssetManager()->Init();
 		
 		s_Skybox = Cubemap::Create("Resources/Cubemap/right.png", "Resources/Cubemap/left.png", "Resources/Cubemap/top.png", "Resources/Cubemap/bottom.png", "Resources/Cubemap/front.png", "Resources/Cubemap/back.png");
 	
@@ -143,6 +140,8 @@ namespace Vast {
 		OPTICK_EVENT();
 
 		EditorLayout::BeginDockspace("Editor Dockspace");
+
+		ImGui::Begin("Vast-Editor");
 
 		// Menu Bar
 		if (ImGui::BeginMenuBar())
@@ -287,6 +286,8 @@ namespace Vast {
 
 		ImGui::ShowDemoWindow((bool*)1);
 
+		ImGui::End();
+
 		EditorLayout::EndDockspace();
 	}
 
@@ -374,7 +375,7 @@ namespace Vast {
 
 			m_Lineup.DeselectEntity();
 
-			AssetSerializer as(m_Project, m_Project->GetAssetManager()->GetAsset(path));
+			AssetSerializer as(m_Project->GetAssetManager()->GetAsset(path));
 			as.Deserialize(path);
 			m_EditorScene = RefCast<SceneAsset>(as.GetAsset())->GetScene();
 
@@ -398,7 +399,7 @@ namespace Vast {
 		{
 			Ref<SceneAsset> scene = CreateRef<SceneAsset>(path.filename().stem().string(), path, UUID());
 			scene->SetScene(m_EditorScene);
-			AssetSerializer as(m_Project, scene);
+			AssetSerializer as(scene);
 			as.Serialize();
 		}
 	}

@@ -36,8 +36,8 @@ namespace Vast {
 		template<typename Ty>
 		Ref<Ty> LoadAsset(const Filepath& path)
 		{
-			VAST_CORE_ASSERT(m_Project->GetAssetManager(), "AssetManager is null");
-			return RefCast<Ty>(m_Project->GetAssetManager()->GetAsset(path)->Clone());
+			VAST_CORE_ASSERT(Project::GetAssetManager(), "AssetManager is null");
+			return RefCast<Ty>(Project::GetAssetManager()->GetAsset(path)->Clone());
 		}
 
 	protected:
@@ -46,9 +46,6 @@ namespace Vast {
 		virtual void OnUpdate(Timestep ts) {}
 		virtual void OnEvent(Event& event) {}
 	private:
-		void SetProject(const Ref<Project>& project) { m_Project = project; }
-	private:
-		Ref<Project> m_Project;
 		bool m_Destroyed = false;
 		Entity m_Entity;
 	};
