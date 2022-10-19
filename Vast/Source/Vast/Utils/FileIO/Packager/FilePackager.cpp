@@ -24,11 +24,14 @@ namespace Vast {
 		auto index = pack.find('\0');
 		if (index == pack.npos)
 		{
-			VAST_CORE_ERROR("Cannot unpack, data is not packed");
+			VAST_CORE_ERROR("Cannot unpack - \"{0}\", data is not packed", pack);
 			return {};
 		}
 
-		return { pack.substr(0, index), pack.substr(index + 1, pack.size() - index - 1) };
+		String first = pack.substr(0, index);
+		String second = pack.substr(index + 1, pack.size() - index - 1);
+
+		return { first, second };
 	}
 
 }

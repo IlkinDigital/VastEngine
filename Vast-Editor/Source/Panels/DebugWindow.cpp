@@ -11,15 +11,22 @@ namespace Vast {
     {
     public:
         DebugImage()
+            : Subwindow("Debug Image")
         {
-            m_ImageName = "Debug View###" + std::to_string(m_UUID);
+            m_ImageName = "Debug View###" + std::to_string(GetUUID());
+        }
+
+        DebugImage(const Ref<Texture2D>& texture, const Vector2& uv0, const Vector2& uv1)
+            : DebugImage() 
+        {
+            m_Texture = texture;
+            m_UV0 = uv0;
+            m_UV1 = uv1;
         }
 
         void SetTexture(const Ref<Texture2D>& texture) { m_Texture = texture; }
         void SetUV0(const Vector2& uv0) { m_UV0 = uv0; }
         void SetUV1(const Vector2& uv1) { m_UV1 = uv1; }
-
-        UUID GetUUID() const { return m_UUID; }
 
         virtual void DrawPanel() override
         {
@@ -31,7 +38,7 @@ namespace Vast {
 
             if (!m_InitializedDockspace)
             {
-                ImGui::SetWindowSize({ (float)m_Texture->GetWidth(), (float)m_Texture->GetHeight() });
+                ImGui::SetWindowSize({ (float)400, (float)400 });
 
                 ImGuiID dockspaceID = GetUUID();
 
@@ -40,8 +47,7 @@ namespace Vast {
                     ImGuiDockNodeFlags_DockSpace | ImGuiDockNodeFlags_PassthruCentralNode);
                 ImGui::DockBuilderSetNodeSize(dockspaceID, ImGui::GetMainViewport()->Size);
 
-                ImGuiID rightID = ImGui::DockBuilderSplitNode(dockspaceID, ImGuiDir_Right, 0.9f, nullptr, nullptr);
-                ImGui::DockBuilderDockWindow(m_ImageName.c_str(), rightID);
+                ImGui::DockBuilderDockWindow(m_ImageName.c_str(), dockspaceID);
 
                 ImGui::DockBuilderFinish(dockspaceID);
                 m_InitializedDockspace = true;
@@ -62,7 +68,6 @@ namespace Vast {
         }
     private:
         Ref<Texture2D> m_Texture;
-        UUID m_UUID;
         Vector2 m_UV0 = { 0, 1 };
         Vector2 m_UV1 = { 1, 0 };
         bool m_InitializedDockspace = false;
@@ -71,10 +76,7 @@ namespace Vast {
 
     void DebugOutput::Image(const Ref<Texture2D>& texture, const Vector2& uv0, const Vector2& uv1)
     {
-        auto debugImage = CreateRef<DebugImage>();
-        debugImage->SetTexture(texture);
-        debugImage->SetUV0(uv0);
-        debugImage->SetUV1(uv1);
+        auto debugImage = CreateRef<DebugImage>(texture, uv0, uv1);
         DebugLayer::AddDebugSW(debugImage);
     }
 

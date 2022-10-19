@@ -3,6 +3,8 @@
 #include "AssetManager/Asset.h"
 #include "Board2D/Sprite/BoardSprite.h"
 
+#include "BoardSpriteSheetAsset.h"
+
 namespace Vast {
 
 	class BoardSpriteAsset : public Asset
@@ -16,9 +18,13 @@ namespace Vast {
 		const Ref<Board2D::Sprite>& GetSprite() const { return m_Sprite; }
 		void SetSprite(const Ref<Board2D::Sprite>& sprite) { m_Sprite = sprite; }
 
+		void SetSpriteSheet(const Ref<BoardSpriteSheetAsset>& spriteSheet) { m_SpriteSheetAsset = spriteSheet; }
+		const Ref<BoardSpriteSheetAsset>& GetSpriteSheet() const { return m_SpriteSheetAsset; }
+
 		ASSET_TYPE_IMPL(AssetType::BoardSprite)
 	private:
 		Ref<Board2D::Sprite> m_Sprite;
+		Ref<BoardSpriteSheetAsset> m_SpriteSheetAsset;
 	};
 
 }

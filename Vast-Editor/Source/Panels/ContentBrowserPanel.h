@@ -10,16 +10,12 @@ namespace Vast {
 	class ContentBrowserPanel : public Panel
 	{
 	public:
-		ContentBrowserPanel(); // DEPRECATED: Takes a path relative to Editor
-		ContentBrowserPanel(const Ref<Project>& project);
-
-		void SetProject(const Ref<Project>& project) { m_Project = project; m_CurrentPath = m_Project->GetContentFolderPath(); }
+		ContentBrowserPanel();
 
 		virtual void DrawPanel() override;
 	private:
 		void RenameAsset(const Filepath& path, const String& newName);
 	private:
-		Ref<Project> m_Project;
 		Filepath m_CurrentPath;
 
 		Ref<Texture2D> m_FolderIcon;

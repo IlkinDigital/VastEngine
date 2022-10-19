@@ -22,6 +22,7 @@ namespace Vast {
     {
         auto bsa = CreateRef<BoardSpriteAsset>(toPath.filename().stem().string(), toPath, UUID());
         auto sprite = Board2D::Sprite::Create(sheet->GetSpriteSheet(), col, row);
+        bsa->SetSpriteSheet(sheet);
         bsa->SetSprite(sprite);
 
         AssetSerializer as(bsa);

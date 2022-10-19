@@ -131,18 +131,37 @@ namespace Vast {
 			{
 				if (component.Sprite)
 				{
-					float height = 1;
-					float width = 0;
-					float tot = height + width;
-					float thumbnailSize = 256.0f;
+					float height = component.GetTexture()->GetHeight();
+					float width = component.GetTexture()->GetWidth();
 					auto uvs = component.GetTextureCoords();
 					ImVec2 uv0 = { uvs[0].x, uvs[0].y };
 					ImVec2 uv1 = { uvs[1].x, uvs[1].y };
+					height = std::abs(uv0.y - uv1.y) * height;
+					width = std::abs(uv0.x - uv1.x) * width;
+					float tot = height + width;
+					float thumbnailSize = 256.0f;
 					ImGui::ImageButton((ImTextureID)component.GetTexture()->GetRendererID(),
 						{ (width / tot) * thumbnailSize, (height / tot) * thumbnailSize }, uv0, uv1);
 				}
 				else
 					ImGui::Button("Drop Board Sprite");
+
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(BoardSpriteAsset::GetStaticTypeName()))
+					{
+						BoardSpriteAsset* asset = (BoardSpriteAsset*)payload->Data;
+						if (asset && asset->GetSprite())
+						{
+							component.Sprite = asset->GetSprite();
+						}
+						else
+						{
+							VAST_ERROR("Invalid BoardSpriteAsset payload");
+						}
+					}
+					ImGui::EndDragDropTarget();
+				}
 			});
 
 

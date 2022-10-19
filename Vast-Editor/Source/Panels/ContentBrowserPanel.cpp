@@ -39,7 +39,7 @@ namespace Vast {
 	{
 		OPTICK_EVENT();
 
-		auto& assetManager = m_Project->GetAssetManager();
+		auto& assetManager = Project::GetAssetManager();
 		auto asset = assetManager->GetAsset(path);
 
 		if (asset->GetType() != AssetType::None)
@@ -48,7 +48,7 @@ namespace Vast {
 			asset->SetPath(path.parent_path() / newName);
 		}
 
-		Filepath absolute = m_Project->GetContentFolderPath();
+		Filepath absolute = Project::Get().GetContentFolderPath();
 		absolute += (path.string() + ".asset");
 		std::filesystem::remove(absolute);
 
@@ -60,26 +60,19 @@ namespace Vast {
 	ContentBrowserPanel::ContentBrowserPanel()
 		: Panel("Content Browser")
 	{
-		m_FolderIcon = Texture2D::Create("Resources/Icons/FolderIcon.png");
-		m_FileIcon = Texture2D::Create("Resources/Icons/FileIcon.png");
-	}
-
-	ContentBrowserPanel::ContentBrowserPanel(const Ref<Project>& project)
-		: Panel("Content Browser"), m_Project(project)
-	{
-		m_CurrentPath = m_Project->GetContentFolderPath();
+		m_CurrentPath = Project::Get().GetContentFolderPath();
 		m_FolderIcon = Texture2D::Create("Resources/Icons/FolderIcon.png");
 		m_FileIcon = Texture2D::Create("Resources/Icons/FileIcon.png");
 	}
 
 	void ContentBrowserPanel::DrawPanel()
 	{
-		if (!m_Project)
+		if (!Project::Exists())
 			return;
 
 		ImGui::Begin(m_Name.c_str());
 
-		if (m_CurrentPath != m_Project->GetContentFolderPath())
+		if (m_CurrentPath != Project::Get().GetContentFolderPath())
 		{
 			ImGui::PushFont(FontManager::GetFont(FontSize::Medium, FontWeight::Bold));
 			if (ImGui::Button("<--"))
@@ -90,7 +83,7 @@ namespace Vast {
 		if (ImGui::Button("Import Texture"))
 		{
 			Filepath origin = FileDialog::OpenFile("");
-			Filepath rel = FileIO::Relative(m_CurrentPath, m_Project->GetContentFolderPath());
+			Filepath rel = FileIO::Relative(m_CurrentPath, Project::Get().GetContentFolderPath());
 			rel /= (origin.filename().stem().string() + ".asset");
 
 			VAST_TRACE("Origin path: {0}", origin.string());
@@ -98,7 +91,7 @@ namespace Vast {
 
 			AssetImporter importer;
 			Ref<Texture2DAsset> asset = importer.ImportTexture(origin, rel);
-			m_Project->GetAssetManager()->AddAsset(asset);
+			Project::GetAssetManager()->AddAsset(asset);
 		}
 
 		static float padding = 3.0f;
@@ -121,7 +114,7 @@ namespace Vast {
 				m_CurrentName = p.path().filename().replace_extension("").string();
 
 			Ref<Asset> asset = noneAsset;
-			auto& assetManager = m_Project->GetAssetManager();
+			auto& assetManager = Project::Get().GetAssetManager();
 
 			bool openRenameDialog = false;
 
@@ -140,7 +133,7 @@ namespace Vast {
 					if (ImGui::MenuItem("Rename"))
 					{
 						openRenameDialog = true;
-						m_RenamePath = FileIO::Relative(p.path(), m_Project->GetContentFolderPath()).replace_extension("");
+						m_RenamePath = FileIO::Relative(p.path(), Project::Get().GetContentFolderPath()).replace_extension("");
 
 					}
 					if (ImGui::MenuItem("Delete"))
@@ -157,7 +150,7 @@ namespace Vast {
 			else if (p.path().extension() == ".asset")
 			{
 				asset = assetManager->GetAsset(
-					FileIO::Relative(p.path(), m_Project->GetContentFolderPath()).replace_extension("")
+					FileIO::Relative(p.path(), Project::Get().GetContentFolderPath()).replace_extension("")
 				);
 
 				ImVec2 frameSize = { thumbnailSize, thumbnailSize * 0.6f };
@@ -171,13 +164,13 @@ namespace Vast {
 				ImGui::BeginChild(assetButtonID++, { thumbnailSize, thumbnailSize + frameSize.y }, true);
 				ImVec2 buttonStart = ImGui::GetCursorPos();
 
-				Filepath relative = FileIO::Relative(p.path(), m_Project->GetContentFolderPath());
+				Filepath relative = FileIO::Relative(p.path(), Project::Get().GetContentFolderPath());
 				relative.replace_extension("");
-				Ref<Asset> asset = m_Project->GetAssetManager()->GetAsset(relative);
+				Ref<Asset> asset = Project::GetAssetManager()->GetAsset(relative);
 				
 				if (asset->GetType() == AssetType::Texture2D)
 				{
-					Ref<Texture2D> tex = RefCast<Texture2DAsset>(m_Project->GetAssetManager()->GetAsset(relative))->GetTexture();
+					Ref<Texture2D> tex = RefCast<Texture2DAsset>(Project::GetAssetManager()->GetAsset(relative))->GetTexture();
 					ImGui::Image((ImTextureID)tex->GetRendererID(), { thumbnailSize, thumbnailSize}, { 0, 1 }, { 1, 0 });
 				}
 				else
@@ -250,8 +243,32 @@ namespace Vast {
 				// Drag and Drop payload
 				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
 				{
-					ImGui::SetDragDropPayload(asset->GetTypeName(), asset.get(), sizeof(*asset.get()));
-					ImGui::EndDragDropSource();
+					// TODO: Figure out more generic way to deal with this
+					switch (asset->GetType())
+					{
+						case AssetType::BoardFlipbook:
+						{
+							auto casted = RefCast<BoardFlipbookAsset>(asset);
+							ImGui::SetDragDropPayload(casted->GetTypeName(), casted.get(), sizeof(*casted.get()));
+							ImGui::EndDragDropSource();
+							break;
+						}
+						case AssetType::BoardSpriteSheet:
+						{
+							auto casted = RefCast<BoardSpriteSheetAsset>(asset);
+							ImGui::SetDragDropPayload(casted->GetTypeName(), casted.get(), sizeof(*casted.get()));
+							ImGui::EndDragDropSource();
+							break;
+						}
+						case AssetType::BoardSprite:
+						{
+							auto casted = RefCast<BoardSpriteAsset>(asset);
+							ImGui::SetDragDropPayload(casted->GetTypeName(), casted.get(), sizeof(*casted.get()));
+							ImGui::EndDragDropSource();
+							break;
+						}
+					}
+
 				}
 
 				// Right click options
@@ -260,7 +277,7 @@ namespace Vast {
 					if (ImGui::MenuItem("Rename"))
 					{
 						openRenameDialog = true;
-						m_RenamePath = FileIO::Relative(p.path(), m_Project->GetContentFolderPath()).replace_extension("");
+						m_RenamePath = FileIO::Relative(p.path(), Project::Get().GetContentFolderPath()).replace_extension("");
 
 					}
 					if (ImGui::MenuItem("Delete"))
@@ -275,14 +292,14 @@ namespace Vast {
 						AssetImporter ai;
 						Filepath ss = asset->GetPath();
 						ss.replace_filename("SpriteSheetYay");
-						m_Project->GetAssetManager()->AddAsset(ai.CreateSpriteSheet(RefCast<Texture2DAsset>(asset), ss));
+						Project::GetAssetManager()->AddAsset(ai.CreateSpriteSheet(RefCast<Texture2DAsset>(asset), ss));
 					}
 					if (asset->GetType() == AssetType::BoardSpriteSheet && ImGui::MenuItem("Extract Sprite"))
 					{
 						AssetImporter ai;
 						Filepath ss = asset->GetPath();
 						ss.replace_filename("SpriteYaay");
-						m_Project->GetAssetManager()->AddAsset(ai.CreateSprite(RefCast<BoardSpriteSheetAsset>(asset), 0, 0, ss));
+						Project::GetAssetManager()->AddAsset(ai.CreateSprite(RefCast<BoardSpriteSheetAsset>(asset), 0, 0, ss.string()));
 					}
 
 					ImGui::EndPopup();
@@ -319,7 +336,7 @@ namespace Vast {
 
 			if (ImGui::Button("Rename"))
 			{
-				Filepath original = m_Project->GetContentFolderPath();
+				Filepath original = Project::Get().GetContentFolderPath();
 				original += m_RenamePath;
 
 				if (std::filesystem::is_directory(original)) // Folder renaming
@@ -339,7 +356,7 @@ namespace Vast {
 				{
 					Filepath newPath = m_RenamePath;
 					newPath.replace_filename(m_CurrentName);
-					if (!m_Project->GetAssetManager()->Exists(newPath) || FileIO::Normalize(m_RenamePath) == FileIO::Normalize(newPath))
+					if (!Project::GetAssetManager()->Exists(newPath) || FileIO::Normalize(m_RenamePath) == FileIO::Normalize(newPath))
 					{
 						RenameAsset(m_RenamePath, m_CurrentName);
 
@@ -366,7 +383,7 @@ namespace Vast {
 			{
 				if (ImGui::MenuItem("Flipbook"))
 				{
-					Filepath path = FileIO::Relative(m_CurrentPath / "NewFlipbook.asset", m_Project->GetContentFolderPath());
+					Filepath path = FileIO::Relative(m_CurrentPath / "NewFlipbook.asset", Project::Get().GetContentFolderPath());
 					Ref<BoardFlipbookAsset> bfa = CreateRef<BoardFlipbookAsset>("NewFlipbook", path, UUID());
 					bfa->SetFlipbook(CreateRef<Board2D::Flipbook>());
 					AssetSerializer as(bfa);

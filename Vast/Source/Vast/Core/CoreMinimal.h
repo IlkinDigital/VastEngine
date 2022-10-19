@@ -25,14 +25,14 @@ namespace Vast {
 
 inline static Vast::AllocationTracker s_Tracker;
 
-inline void* operator new(size_t size) 
-{
-	s_Tracker.TotalAllocated += size;
-	return malloc(size);
-}
-
-inline void operator delete(void* memory, size_t size)
-{
-	s_Tracker.TotalFreed += size;
-	free(memory);
-}
+//inline void* operator new(size_t size) 
+//{
+//	s_Tracker.TotalAllocated += size;
+//	return malloc(size);
+//}
+//
+//inline void operator delete(void* memory, size_t size)
+//{
+//	s_Tracker.TotalFreed += size;
+//	free(memory);
+//}

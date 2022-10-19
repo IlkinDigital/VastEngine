@@ -264,7 +264,7 @@ namespace Vast {
 		DrawQuad(transform, texture, {{ {0.0f, 0.0f}, {1.0f, 1.0f} }});
 	}
 
-	void Renderer2D::DrawQuad(const Mat4& transform, const Ref<Texture2D>& texture, const SArray<Vector2, 2>& uvCoords)
+	void Renderer2D::DrawQuad(const Mat4& transform, const Ref<Texture2D>& texture, SArray<Vector2, 2> uvCoords)
 	{
 		OPTICK_EVENT();
 

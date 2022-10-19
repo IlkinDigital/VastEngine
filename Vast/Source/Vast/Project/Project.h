@@ -9,6 +9,7 @@ namespace Vast {
 	{
 	public:
 		static const Project& Get() { return *s_LatestProject; }
+		static bool Exists() { return s_LatestProject != nullptr; }
 		static Ref<AssetManager>& GetAssetManager() { return s_LatestProject->m_AssetManager; }
 	public:
 		Project();

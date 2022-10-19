@@ -33,7 +33,7 @@ namespace Vast {
 		}
 	protected:
 		String m_Name = "Panel";
-		bool m_IsOpen = false;
+		bool m_IsOpen = true;
 	private:
 		inline static uint16 s_ID = 0;
 	};

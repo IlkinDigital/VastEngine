@@ -64,7 +64,6 @@ namespace Vast {
 		m_Lineup.Open();
 		m_Properties.Open();
 		m_Properties.SetContextEntity(m_Lineup.GetSelectedEntity());
-		m_ContentBrowser.Open();
 		m_LogPanel.Open();
 
 		//OpenProject("C:/LesterFiles/dev/VastProjects/WackoDuel");
@@ -141,8 +140,6 @@ namespace Vast {
 
 		EditorLayout::BeginDockspace("Editor Dockspace");
 
-		ImGui::Begin("Vast-Editor");
-
 		// Menu Bar
 		if (ImGui::BeginMenuBar())
 		{
@@ -170,7 +167,7 @@ namespace Vast {
 				if (ImGui::MenuItem("Properties"))
 					m_Properties.Open();
 				if (ImGui::MenuItem("Content Browser"))
-					m_ContentBrowser.Open();
+					m_ContentBrowser->Open();
 
 				ImGui::EndMenu();
 			}
@@ -281,12 +278,10 @@ namespace Vast {
 		m_Viewport.OnGUIRender();
 		m_Lineup.OnGUIRender();
 		m_Properties.OnGUIRender();
-		m_ContentBrowser.OnGUIRender();
+		m_ContentBrowser->OnGUIRender();
 		m_LogPanel.OnGUIRender();
 
 		ImGui::ShowDemoWindow((bool*)1);
-
-		ImGui::End();
 
 		EditorLayout::EndDockspace();
 	}
@@ -418,7 +413,7 @@ namespace Vast {
 		ProjectSerializer ps(m_Project);
 		ps.Deserialize(filepath);
 
-		m_ContentBrowser.SetProject(m_Project);
+		m_ContentBrowser = CreateScope<ContentBrowserPanel>();
 
 		if (name != m_Project->GetName())
 		{
@@ -449,7 +444,7 @@ namespace Vast {
 
 		RunPremake();
 
-		m_ContentBrowser.SetProject(m_Project);
+		m_ContentBrowser = CreateScope<ContentBrowserPanel>();
 		m_ScriptEngine.Shutdown();
 		ScriptEngine::Get()->GetScriptBuffer().ClearBuffer();
 	}

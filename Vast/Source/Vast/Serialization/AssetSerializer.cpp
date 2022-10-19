@@ -262,7 +262,7 @@ namespace Vast {
 
 		out << YAML::BeginMap;
 
-		out << YAML::Key << "SpriteSheet" << YAML::Value << bsa->GetPath().string();
+		out << YAML::Key << "SpriteSheet" << YAML::Value << bsa->GetSpriteSheet()->GetPath().string();
 
 		out << YAML::Key << "UVCoordinates" << YAML::Value << YAML::BeginSeq;
 
@@ -280,9 +280,7 @@ namespace Vast {
 
 	bool AssetSerializer::DeserializeBoardSprite(const String& source)
 	{
-		Package pack = FilePackager::Unpack(source);
-
-		YAML::Node data = YAML::Load(pack.First);
+		YAML::Node data = YAML::Load(source);
 
 		auto spriteSheet = data["SpriteSheet"];
 		auto uvs = data["UVCoordinates"];
@@ -298,9 +296,8 @@ namespace Vast {
 		}
 
 		auto asset = RefCast<BoardSpriteAsset>(m_Asset);
-		auto sprite = Board2D::Sprite::Create(
-			RefCast<BoardSpriteSheetAsset>(Project::GetAssetManager()->GetAsset(spriteSheet.as<String>()))->GetSpriteSheet(),
-			coords);
+		asset->SetSpriteSheet(RefCast<BoardSpriteSheetAsset>(Project::GetAssetManager()->GetAsset(spriteSheet.as<String>())));
+		auto sprite = Board2D::Sprite::Create(asset->GetSpriteSheet()->GetSpriteSheet(), coords);
 		asset->SetSprite(sprite);
 
 		return true;
