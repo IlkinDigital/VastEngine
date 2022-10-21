@@ -152,7 +152,7 @@ namespace Vast {
 				{
 					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload(BoardSpriteAsset::GetStaticTypeName()))
 					{
-						BoardSpriteAsset* asset = (BoardSpriteAsset*)payload->Data;
+						Ref<BoardSpriteAsset> asset = RefCast<BoardSpriteAsset>(Project::GetAssetManager()->GetAsset(((Asset*)payload->Data)->GetPath()));
 						if (asset && asset->GetSprite())
 						{
 							component.Sprite = asset->GetSprite();

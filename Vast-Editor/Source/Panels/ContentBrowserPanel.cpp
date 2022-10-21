@@ -246,32 +246,8 @@ namespace Vast {
 				// Drag and Drop payload
 				if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID))
 				{
-					// TODO: Figure out more generic way to deal with this
-					switch (asset->GetType())
-					{
-						case AssetType::BoardFlipbook:
-						{
-							auto casted = RefCast<BoardFlipbookAsset>(asset);
-							ImGui::SetDragDropPayload(casted->GetTypeName(), casted.get(), sizeof(*casted.get()));
-							ImGui::EndDragDropSource();
-							break;
-						}
-						case AssetType::BoardSpriteSheet:
-						{
-							auto casted = RefCast<BoardSpriteSheetAsset>(asset);
-							ImGui::SetDragDropPayload(casted->GetTypeName(), casted.get(), sizeof(*casted.get()));
-							ImGui::EndDragDropSource();
-							break;
-						}
-						case AssetType::BoardSprite:
-						{
-							auto casted = RefCast<BoardSpriteAsset>(asset);
-							ImGui::SetDragDropPayload(casted->GetTypeName(), casted.get(), sizeof(*casted.get()));
-							ImGui::EndDragDropSource();
-							break;
-						}
-					}
-
+					ImGui::SetDragDropPayload(asset->GetTypeName(), asset.get(), sizeof(*asset.get()));
+					ImGui::EndDragDropSource();
 				}
 
 				// Right click options
@@ -293,16 +269,24 @@ namespace Vast {
 					if (asset->GetType() == AssetType::Texture2D && ImGui::MenuItem("Create Sprite Sheet"))
 					{
 						AssetImporter ai;
-						Filepath ss = asset->GetPath();
-						ss.replace_filename("SpriteSheetYay");
-						Project::GetAssetManager()->AddAsset(ai.CreateSpriteSheet(RefCast<Texture2DAsset>(asset), ss));
+						Filepath ssPath = asset->GetPath();
+						ssPath.replace_filename("SpriteSheet" + std::to_string(UUID()));
+						auto ss = ai.CreateSpriteSheet(RefCast<Texture2DAsset>(asset), ssPath);
+						Project::GetAssetManager()->AddAsset(ss);
+
+						openRenameDialog = true;
+						m_RenamePath = ss->GetPath();
 					}
 					if (asset->GetType() == AssetType::BoardSpriteSheet && ImGui::MenuItem("Extract Sprite"))
 					{
 						AssetImporter ai;
-						Filepath ss = asset->GetPath();
-						ss.replace_filename("SpriteYaay");
-						Project::GetAssetManager()->AddAsset(ai.CreateSprite(RefCast<BoardSpriteSheetAsset>(asset), 0, 0, ss.string()));
+						Filepath spritePath = asset->GetPath();
+						spritePath.replace_filename("Sprite" + std::to_string(UUID()));
+						auto sprite = ai.CreateSprite(RefCast<BoardSpriteSheetAsset>(asset), 0, 0, spritePath.string());
+						Project::GetAssetManager()->AddAsset(sprite);
+						
+						openRenameDialog = true;
+						m_RenamePath = sprite->GetPath();
 					}
 
 					ImGui::EndPopup();
