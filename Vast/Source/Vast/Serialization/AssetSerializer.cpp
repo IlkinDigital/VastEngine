@@ -321,7 +321,7 @@ namespace Vast {
 		{
 			out << YAML::BeginMap;
 
-			Filepath path = key.Sprite->GetTexture()->GetFilepath();
+			Filepath path = key.Sprite->GetPath();
 			path.replace_extension("");
 			out << YAML::Key << "FrameSource" << YAML::Value << path.string();
 
@@ -354,7 +354,7 @@ namespace Vast {
 		{
 			Ref<Asset> raw = Project::GetAssetManager()->GetAsset(frame["FrameSource"].as<String>());
 			auto asset = RefCast<BoardSpriteAsset>(raw);
-			fb->PushKeyFrame({ asset->GetSprite() });
+			fb->PushKeyFrame({ asset });
 		}
 
 		RefCast<BoardFlipbookAsset>(m_Asset)->SetFlipbook(fb);

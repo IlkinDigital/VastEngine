@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Clock/Timestep.h"
-#include "Sprite/BoardSprite.h"
+#include "AssetManager/AssetTypes/BoardSpriteAsset.h"
 
 namespace Vast::Board2D {
 
 	struct KeyFrame
 	{
-		Ref<Sprite> Sprite;
+		Ref<BoardSpriteAsset> Sprite;
 	};
 
 	class Flipbook
@@ -23,7 +23,7 @@ namespace Vast::Board2D {
 
 		bool IsValid() const { return m_KeyFrames.size(); }
 
-		const Ref<Sprite>& GetCurrentFrame() const { return m_KeyFrames[m_CurrentKeyIndex].Sprite; }
+		const Ref<Sprite>& GetCurrentFrame() const { return m_KeyFrames[m_CurrentKeyIndex].Sprite->GetSprite(); }
 
 		const DArray<KeyFrame>& GetKeyFrames() const { return m_KeyFrames; }
 

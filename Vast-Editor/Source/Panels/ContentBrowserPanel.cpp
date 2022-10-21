@@ -224,6 +224,9 @@ namespace Vast {
 				{
 					switch (asset->GetType())
 					{
+					case AssetType::Texture2D:
+						DebugOutput::Image(RefCast<Texture2DAsset>(asset)->GetTexture());
+						break;
 					case AssetType::BoardFlipbook:
 						EditorLayer::Get()->OpenFlipbookEditor(RefCast<BoardFlipbookAsset>(asset));
 						break;

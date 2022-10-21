@@ -7,6 +7,8 @@
 
 #include "AssetManager/AssetTypes.h"
 
+#include "GUI/GUI.h"
+
 namespace Vast {
 
 	void PropertiesPanel::DrawPanel()
@@ -141,7 +143,7 @@ namespace Vast {
 					float tot = height + width;
 					float thumbnailSize = 256.0f;
 					ImGui::ImageButton((ImTextureID)component.GetTexture()->GetRendererID(),
-						{ (width / tot) * thumbnailSize, (height / tot) * thumbnailSize }, uv0, uv1);
+						{ (width / tot) * thumbnailSize, (height / tot) * thumbnailSize }, VAST_UVS_IMGUI(uvs));
 				}
 				else
 					ImGui::Button("Drop Board Sprite");

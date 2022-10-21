@@ -59,7 +59,7 @@ namespace Vast {
             {
                 ImGui::Image((ImTextureID)m_Texture->GetRendererID(),
                     { (float)m_Texture->GetWidth(), (float)m_Texture->GetHeight() },
-                    { m_UV0.y, m_UV0.x }, { m_UV1.y, m_UV1.x });
+                    { m_UV0.x, m_UV1.y }, { m_UV1.x, m_UV0.y });
             }
 
             ImGui::End();

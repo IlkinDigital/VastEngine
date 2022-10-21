@@ -9,6 +9,8 @@
 #include "AssetManager/AssetTypes.h"
 #include "Serialization/AssetSerializer.h"
 
+#include "GUI/GUI.h"
+
 #include <imgui_internal.h>
 
 namespace Vast {
@@ -183,14 +185,14 @@ namespace Vast {
 			accumWidth += size.x + style.ItemSpacing.x * 2.0f;
 			ImGui::Text("%d", i);
 
-			auto uvs = frame.Sprite->GetUVCoords();
+			auto uvs = frame.Sprite->GetSprite()->GetUVCoords();
 			ImVec2 uv0 = { uvs[0].x, uvs[0].y };
 			ImVec2 uv1 = { uvs[1].x, uvs[1].y };
 
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, { 0.7f, 0.7f, 0.7f, 0.4f });
 			ImGui::PushStyleColor(ImGuiCol_Button, { 1.0f, 1.0f, 1.0f, 0.0f });
-			ImGui::ImageButton((ImTextureID)frame.Sprite->GetTexture()->GetRendererID(),
-				{ size.x, size.y }, uv0, uv1);
+			ImGui::ImageButton((ImTextureID)frame.Sprite->GetSprite()->GetTexture()->GetRendererID(),
+				{ size.x, size.y }, VAST_UVS_IMGUI(uvs));
 			if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
 			{
 				m_Flipbook->RemoveKeyFrame(--i);
@@ -216,7 +218,8 @@ namespace Vast {
 				BoardSpriteAsset* asset = (BoardSpriteAsset*)payload->Data;
 				if (asset && asset->GetSprite())
 				{
-					m_Flipbook->PushKeyFrame({ asset->GetSprite() });
+					auto bsa = Project::GetAssetManager()->GetAsset(asset->GetPath());
+					m_Flipbook->PushKeyFrame({ RefCast<BoardSpriteAsset>(bsa) });
 				}
 				else
 				{
