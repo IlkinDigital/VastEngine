@@ -1,3 +1,4 @@
+#include "vastpch.h"
 #include "EditorControl.h"
 
 #include "GUI/FontManager.h"

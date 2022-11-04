@@ -1,3 +1,4 @@
+#include "vastpch.h"
 #include "ViewportPanel.h"
 
 #include "AssetManager/AssetTypes.h"

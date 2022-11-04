@@ -1,6 +1,6 @@
 #include "SpriteSheetEditor.h"
 
-#include "EditorLayout/Layout.h"
+#include "GUI/EditorLayout/Layout.h"
 #include "DebugWindow.h"
 
 #include <imgui_internal.h>

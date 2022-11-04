@@ -1,3 +1,4 @@
+#include "vastpch.h"
 #include "WrapWidget.h"
 
 #include <imgui.h>

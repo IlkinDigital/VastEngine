@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ApplicationCore/Layer/Layer.h"
-#include "Panels/SubwindowManager.h"
+#include "GUI/Panels/SubwindowManager.h"
 
 namespace Vast {
 	

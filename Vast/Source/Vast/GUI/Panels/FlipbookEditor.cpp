@@ -1,10 +1,11 @@
+#include "vastpch.h"
 #include "FlipbookEditor.h"
 
 #include "Renderer/Renderer2D.h"
 #include "GUI/FontManager.h"
 
-#include "Widgets/WrapWidget.h"
-#include "EditorLayout/Layout.h"
+#include "GUI/Widgets/WrapWidget.h"
+#include "GUI/EditorLayout/Layout.h"
 
 #include "AssetManager/AssetTypes.h"
 #include "Serialization/AssetSerializer.h"

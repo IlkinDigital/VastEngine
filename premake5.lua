@@ -185,4 +185,64 @@ project "Vast-Editor"
         defines "VAST_CONFIG_DISTRIBUTION"
         runtime "Release"
         optimize "on"
-        
+
+project "Mudbox"
+    location "Mudbox"
+    kind "ConsoleApp"
+    language "C++"
+    cppdialect "C++20"
+    staticruntime "off"
+
+    targetdir ("Binaries/" .. outputdir .. "/%{prj.name}")
+    objdir ("Binaries-Int/" .. outputdir .. "/%{prj.name}")
+
+    files
+    {
+        "%{prj.name}/Source/**.h",
+        "%{prj.name}/Source/**.cpp"
+    }
+
+    includedirs
+    {
+        "%{prj.name}/Source",
+        "Vast/Source",
+        "Vast/Source/Vast",
+        "Vast/Source/Vast/Core",
+        "%{Include.spdlog}",
+        "%{Include.glad}",
+        "%{Include.imgui}",
+        "%{Include.glm}",
+        "%{Include.entt}",
+        "%{Include.ImGuizmo}",
+        "%{Include.Optick}"
+    }
+
+    links
+    {
+        "Vast",
+        "Vast/Vendor/Optick/lib/x64/release/OptickCore.lib"
+    }
+
+    filter "system:windows"
+        systemversion "latest"
+
+        defines
+        {
+            "VAST_PLATFORM_WINDOWS"
+        }
+
+    filter "configurations:Debug"
+        defines "VAST_CONFIG_DEBUG"
+        runtime "Debug"
+        symbols "on"
+
+    filter "configurations:Release"
+        defines "VAST_CONFIG_RELEASE"
+        runtime "Release"
+        optimize "on"
+
+    filter "configurations:Distribution"
+        defines "VAST_CONFIG_DISTRIBUTION"
+        runtime "Release"
+        optimize "on"
+

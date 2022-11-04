@@ -1,3 +1,4 @@
+#include "vastpch.h"
 #include "SubwindowManager.h"
 
 namespace Vast {

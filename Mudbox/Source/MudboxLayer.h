@@ -1,12 +1,6 @@
 #pragma once
 
-#include "GUI/Panels/ViewportPanel.h"
-#include "GUI/Panels/LineupPanel.h"
-#include "GUI/Panels/PropertiesPanel.h"
-#include "GUI/Panels/FlipbookEditor.h"
-#include "GUI/Panels/SubwindowManager.h"
 #include "GUI/Panels/LogPanel.h"
-#include "Panels/ContentBrowserPanel.h"
 
 #include "GUI/FontManager.h"
 #include "Project/Project.h"
@@ -15,12 +9,14 @@
 #include "AssetManager/AssetManager.h"
 #include "Scripting/ScriptEngine.h"
 
+#include "Events/KeyboardEvent.h"
+
 namespace Vast {
 
-	class EditorLayer : public Layer
+	class MudboxLayer : public Layer
 	{
 	public:
-		EditorLayer(const String& name)
+		MudboxLayer(const String& name)
 			: Layer(name) 
 		{
 			s_Instance = this;
@@ -36,7 +32,7 @@ namespace Vast {
 
 		virtual void OnEvent(Event& event) override;
 
-		static EditorLayer* Get() { return s_Instance; }
+		static MudboxLayer* Get() { return s_Instance; }
 
 		void OpenFlipbookEditor(const Ref<BoardFlipbookAsset>& bfa);
 		void OpenSpriteSheetEditor(const Ref<BoardSpriteSheetAsset>& bssa);
@@ -61,43 +57,8 @@ namespace Vast {
 		bool OnKeyPressed(KeyPressedEvent& event);
 	private:
 		// Panels
-		ViewportPanel m_Viewport;
-		LineupPanel m_Lineup;
-		PropertiesPanel m_Properties;
-		Scope<ContentBrowserPanel> m_ContentBrowser;
-		LogPanel m_LogPanel;
 
-		SubwindowManager m_SubwindowManager;
-
-		Ref<Gizmo3D> m_Gizmo;
-
-		// Scene
-		Ref<Scene> m_ActiveScene; // Pointer to current scene - editor/runtime
-		Ref<Scene> m_EditorScene, m_RuntimeScene;
-		EditorCamera m_EditorCamera;
-		Filepath m_SceneFilepath;
-
-		Ref<Project> m_Project;
-		ScriptEngine m_ScriptEngine;
-
-		ImVec4* m_Colors = ImGui::GetStyle().Colors;
-
-		Ref<Texture2D> m_PlayIcon;
-		Ref<Texture2D> m_StopIcon;
-		
-		SceneRenderer m_SceneRenderer;
-
-		float m_FPS = 0.0f;
-		float m_FPSWait = 0.0f;
-
-		enum class SceneState
-		{
-			Edit = 0, Play
-		};
-
-		SceneState m_SceneState = SceneState::Edit;
-
-		static EditorLayer* s_Instance;
+		static MudboxLayer* s_Instance;
 
 		friend class DebugOutput;
 	};

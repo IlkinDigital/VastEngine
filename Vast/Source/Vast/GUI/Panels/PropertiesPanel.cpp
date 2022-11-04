@@ -1,6 +1,7 @@
-#include "PropertiesPanel.h"
+#include "vastpch.h"
 
-#include "EditorCore/EditorControl.h"
+#include "PropertiesPanel.h"
+#include "GUI/EditorCore/EditorControl.h"
 
 #include "Scene/Components.h"
 #include "Scripting/ScriptEngine.h"

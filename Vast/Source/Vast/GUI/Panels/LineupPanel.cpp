@@ -1,6 +1,7 @@
+#include "vastpch.h"
 #include "LineupPanel.h"
 
-#include "EditorLayout/Layout.h"
+#include "GUI/EditorLayout/Layout.h"
 
 #include <imgui.h>
 

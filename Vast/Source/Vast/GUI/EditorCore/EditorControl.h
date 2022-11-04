@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Vast.h"
+#include "Math/MathCore.h"
+#include "Scene/Entity.h"
 
 #include <imgui_internal.h>
 

@@ -5,7 +5,7 @@
 
 #include "Board2D/BoardFlipbook.h"
 #include "Scene/Scene.h"
-#include "Panels/PropertiesPanel.h"
+#include "GUI/Panels/PropertiesPanel.h"
 #include "Renderer/SceneRenderer.h"
 
 #include "AssetManager/AssetTypes.h"

@@ -1,12 +1,9 @@
-#include "EditorLayer.h"
+#include "MudboxLayer.h"
 
 #include "Renderer/Renderer2D.h"
 #include "Scripting/ScriptBuffer.h"
 
 #include "Clock/FrameTime.h"
-
-#include "GUI/EditorLayout/Layout.h"
-#include "GUI/EditorCore/EditorControl.h"
 
 #include "Serialization/ProjectSerializer.h"
 #include "Project/ProjectGenerator.h"
@@ -24,8 +21,6 @@
 #include "AssetManager/AssetImporter.h"
 #include "Serialization/AssetSerializer.h"
 
-#include "Panels/SpriteSheetEditor.h"
-
 #include <imgui.h>
 #include <fstream>
 #include <optick.h>
@@ -35,7 +30,7 @@ namespace Vast {
 // Returns relative filepath through project's directory
 #define PROJDIR(path) m_Project->GetProjectPath() / (path)
 
-	EditorLayer* EditorLayer::s_Instance = nullptr;
+	MudboxLayer* MudboxLayer::s_Instance = nullptr;
 
 	static FrameTime s_FrameTime(100);
 	static Ref<Cubemap> s_Skybox;
@@ -45,47 +40,29 @@ namespace Vast {
 	static Vector3 s_SpritePos;
 	static Vector3 s_SpriteScale = { 1.0f, 1.0f, 1.0f };
 
-	void EditorLayer::OnAttach()
+	void MudboxLayer::OnAttach()
 	{
 		OPTICK_EVENT();
 
-		m_SceneRenderer.Init(0, 0);
-
-		m_PlayIcon = Texture2D::Create("Resources/Icons/PlayIcon.png");
-		m_StopIcon = Texture2D::Create("Resources/Icons/StopIcon.png");
-
-		m_Gizmo = CreateRef<Gizmo3D>();
-
-		m_Viewport.Open();
-		m_Viewport.SetDragDropFn([&](const String& filepath) { OpenScene(filepath); });
-		m_Viewport.SetColorAttachment(m_SceneRenderer.GetFramebuffer()->GetColorAttachment());
-		m_Viewport.SetGizmo(m_Gizmo);
-
-		m_Lineup.Open();
-		m_Properties.Open();
-		m_Properties.SetContextEntity(m_Lineup.GetSelectedEntity());
-		m_LogPanel.Open();
-
-		OpenProject("C:/Users/Ilkin/IlkinFiles/dev/Projects/Dragons-Ahoy");
-
-		Project::GetAssetManager()->Init();
+		m_Framebuffer = Framebuffer::Create({ 1920, 1080 });
 		
 		s_Skybox = Cubemap::Create("Resources/Cubemap/right.png", "Resources/Cubemap/left.png", "Resources/Cubemap/top.png", "Resources/Cubemap/bottom.png", "Resources/Cubemap/front.png", "Resources/Cubemap/back.png");
 	
-		//s_SpriteSheet = CreateRef<Board2D::SpriteSheet>(Texture2D::Create("Resources/Textures/CampfireSheet.png"));
-		//s_SpriteSheet->SetStride({ 16.0f, 16.0f });
-		//s_Sprite = s_SpriteSheet->ExtractSprite(1, 0);
+		s_SpriteSheet = CreateRef<Board2D::SpriteSheet>(Texture2D::Create("Resources/Textures/CampfireSheet.png"));
+		s_SpriteSheet->SetStride({ 16.0f, 16.0f });
+		s_Sprite = s_SpriteSheet->ExtractSprite(1, 0);
 	}
 
 
-	void EditorLayer::OnUpdate(Timestep ts)
+	void MudboxLayer::OnUpdate(Timestep ts)
 	{
 		OPTICK_EVENT();
 
 		s_FrameTime.Update(ts);
 
+		
 
-		auto spec = m_SceneRenderer.GetFramebuffer()->GetSpecification();
+		auto spec = m_Framebuffer->GetSpecification();
 		if (spec.Width != m_Viewport.GetWidth() || spec.Height != m_Viewport.GetHeight())
 		{
 			ResizeViewport();
@@ -131,7 +108,7 @@ namespace Vast {
 		}
 	}*/
 
-	void EditorLayer::OnGUIRender()
+	void MudboxLayer::OnGUIRender()
 	{
 		OPTICK_EVENT();
 
@@ -283,12 +260,12 @@ namespace Vast {
 		EditorLayout::EndDockspace();
 	}
 
-	void EditorLayer::OnDetach()
+	void MudboxLayer::OnDetach()
 	{
 
 	}
 
-	void EditorLayer::OnEvent(Event& event)
+	void MudboxLayer::OnEvent(Event& event)
 	{
 		OPTICK_EVENT();
 
@@ -299,7 +276,7 @@ namespace Vast {
 		m_ActiveScene->OnEvent(event);
 	}
 
-	void EditorLayer::OpenFlipbookEditor(const Ref<BoardFlipbookAsset>& bfa)
+	void MudboxLayer::OpenFlipbookEditor(const Ref<BoardFlipbookAsset>& bfa)
 	{
 		OPTICK_EVENT();
 
@@ -314,7 +291,7 @@ namespace Vast {
 		m_SubwindowManager.PushSubwindow(fbe, bfa->GetUUID());
 	}
 
-	void EditorLayer::OpenSpriteSheetEditor(const Ref<BoardSpriteSheetAsset>& bssa)
+	void MudboxLayer::OpenSpriteSheetEditor(const Ref<BoardSpriteSheetAsset>& bssa)
 	{
 		if (m_SubwindowManager.HasStorageWithUUID(bssa->GetUUID()))
 		{
@@ -327,7 +304,7 @@ namespace Vast {
 		m_SubwindowManager.PushSubwindow(sse, bssa->GetUUID());
 	}
 
-	void EditorLayer::ResizeViewport()
+	void MudboxLayer::ResizeViewport()
 	{
 		OPTICK_EVENT();
 
@@ -341,7 +318,7 @@ namespace Vast {
 		}
 	}
 
-	void EditorLayer::NewScene()
+	void MudboxLayer::NewScene()
 	{
 		OPTICK_EVENT();
 
@@ -354,7 +331,7 @@ namespace Vast {
 		m_Lineup.DeselectEntity();
 	}
 
-	void EditorLayer::OpenScene(const Filepath& path)
+	void MudboxLayer::OpenScene(const Filepath& path)
 	{
 		OPTICK_EVENT();
 
@@ -383,7 +360,7 @@ namespace Vast {
 			VAST_ERROR("Invalid path to scene '{0}'", fullPath.string());
 	}
 
-	void EditorLayer::SaveScene(const Filepath& path)
+	void MudboxLayer::SaveScene(const Filepath& path)
 	{
 		OPTICK_EVENT();
 
@@ -396,7 +373,7 @@ namespace Vast {
 		}
 	}
 
-	void EditorLayer::OpenProject(const Filepath& filepath)
+	void MudboxLayer::OpenProject(const Filepath& filepath)
 	{
 		OPTICK_EVENT();
 
@@ -423,7 +400,7 @@ namespace Vast {
 		NewScene();
 	}
 
-	void EditorLayer::NewProject(const String& name, const Filepath& filepath)
+	void MudboxLayer::NewProject(const String& name, const Filepath& filepath)
 	{
 		OPTICK_EVENT();
 
@@ -446,7 +423,7 @@ namespace Vast {
 		ScriptEngine::Get()->GetScriptBuffer().ClearBuffer();
 	}
 
-	void EditorLayer::BuildScripts()
+	void MudboxLayer::BuildScripts()
 	{
 		OPTICK_EVENT();
 
@@ -466,12 +443,12 @@ namespace Vast {
 
 	}
 
-	void EditorLayer::RunPremake()
+	void MudboxLayer::RunPremake()
 	{
 		System::RunCommand(m_Project->GetProjectPath(), "Vendor\\premake\\premake5.exe vs2022");
 	}
 
-	void EditorLayer::OnScenePlay()
+	void MudboxLayer::OnScenePlay()
 	{
 		OPTICK_EVENT();
 
@@ -485,7 +462,7 @@ namespace Vast {
 		ResizeViewport();
 	}
 
-	void EditorLayer::OnSceneStop()
+	void MudboxLayer::OnSceneStop()
 	{
 		OPTICK_EVENT();
 
@@ -497,7 +474,7 @@ namespace Vast {
 		m_Lineup.SetContext(m_ActiveScene);
 	}
 
-	bool EditorLayer::OnKeyPressed(KeyPressedEvent& event)
+	bool MudboxLayer::OnKeyPressed(KeyPressedEvent& event)
 	{
 		if (!Input::IsPressed(Mouse::Right))
 		{
@@ -556,7 +533,7 @@ namespace Vast {
 		return false;
 	}
 
-	bool EditorLayer::OnFilesDrop(FilesDropEvent& event)
+	bool MudboxLayer::OnFilesDrop(FilesDropEvent& event)
 	{
 
 

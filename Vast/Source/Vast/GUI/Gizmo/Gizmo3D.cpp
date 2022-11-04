@@ -1,3 +1,4 @@
+#include "vastpch.h"
 #include "Gizmo3D.h"
 
 #include <imgui.h>

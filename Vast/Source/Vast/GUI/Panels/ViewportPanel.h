@@ -1,7 +1,7 @@
 #pragma once
 
 #include "GUI/Panels/Panel.h"
-#include "Gizmo/Gizmo3D.h"
+#include "GUI/Gizmo/Gizmo3D.h"
 
 namespace Vast {
 	
