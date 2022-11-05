@@ -1,0 +1,63 @@
+Scene: Untitled
+Entities:
+  - Entity: 7326193114781319049
+    TagComponent:
+      Tag: Patrick Star
+    TransformComponent:
+      Translation: [-0.180000007, 0.870000005, 0.5]
+      Rotation: [0, -0, 0]
+      Scale: [0.599999964, 1, 0.999907613]
+    RenderComponent:
+      Color: [0, 0, 0, 1]
+      Texture: Assets/Textures/PatrickAlpha.png
+    NativeScriptComponent:
+      Name: CharacterController
+  - Entity: 687348699967896
+    TagComponent:
+      Tag: Background
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [16, 6, 6]
+    RenderComponent:
+      Color: [0, 0, 0, 1]
+      Texture: Assets\Textures\magic-cliffs-preview-detail.png
+  - Entity: 687346678967896
+    TagComponent:
+      Tag: Terrain
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [16, 6, 6]
+    RenderComponent:
+      Color: [0, 0, 0, 1]
+      Texture: Assets\Textures\magic-cliffs-preview-detail.png
+  - Entity: 6169794551153234054
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [-1, 0.319999993, 0.340000093]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 1
+        PerspectiveFOV: 1
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 2
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+    NativeScriptComponent:
+      Name: Vast::CameraController
+  - Entity: 17391778786752378625
+    TagComponent:
+      Tag: Patrick Star 2
+    TransformComponent:
+      Translation: [-0.899999976, 0.870000005, 0.5]
+      Rotation: [0, -0, 0]
+      Scale: [0.599999964, 1, 0.999907613]
+    RenderComponent:
+      Color: [0, 0, 0, 1]
+      Texture: Assets/Textures/PatrickAlpha.png

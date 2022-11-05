@@ -1,0 +1,49 @@
+Scene: Untitled
+Entities:
+  - Entity: 8391721827389163564
+    TagComponent:
+      Tag: Background
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [16, 6, 6]
+    RenderComponent:
+      Color: [0, 0, 0, 1]
+      Texture: Assets\Textures\magic-cliffs-preview-detail.png
+  - Entity: 7099183590854371840
+    TagComponent:
+      Tag: Patrick Star
+    TransformComponent:
+      Translation: [0.5, 0.5, 0.5]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1.70000064, 0.999907613]
+    RenderComponent:
+      Color: [0, 0, 0, 1]
+      Texture: Assets/Textures/PatrickAlpha.png
+  - Entity: 9208178286222725963
+    TagComponent:
+      Tag: Blue square
+    TransformComponent:
+      Translation: [0.00999999046, -0.0399999619, 1.13999999]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    RenderComponent:
+      Color: [0.200000003, 0.400000006, 0.800000012, 0.552941203]
+      Texture: ""
+  - Entity: 3639848868177076897
+    TagComponent:
+      Tag: Omni camera
+    TransformComponent:
+      Translation: [2, 0, 5]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 1
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true

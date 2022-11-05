@@ -1,0 +1,29 @@
+Scene: Untitled
+Entities:
+  - Entity: 4767305778014974730
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 2.27999997]
+      Rotation: [0, -0, 0]
+      Scale: [1, 1, 1]
+    CameraComponent:
+      Camera:
+        ProjectionType: 0
+        PerspectiveFOV: 1
+        PerspectiveNear: 0.00999999978
+        PerspectiveFar: 1000
+        OrthographicSize: 10
+        OrthographicNear: -1
+        OrthographicFar: 1
+      Primary: true
+  - Entity: 687348678967896
+    TagComponent:
+      Tag: Hell
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Rotation: [0, 0, 0]
+      Scale: [1, 1, 1]
+    RenderComponent:
+      Color: [0.568627477, 0.505882382, 1, 1]
+      Texture: Assets\Textures\PatrickAlpha.png
